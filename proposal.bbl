@@ -1,0 +1,425 @@
+\newcommand{\etalchar}[1]{$^{#1}$}
+\begin{thebibliography}{DLFK{\etalchar{+}}17}
+
+\bibitem[ABF{\etalchar{+}}17]{ABF+}
+Yasemin Acar, Michael Backes, Sascha Fahl, Simson Garfinkel, Doowon Kim,
+  Michelle~L. Mazurek, and Christian Stransky.
+\newblock Comparing the usability of cryptographic {API}s.
+\newblock In {\em 2017 IEEE Symposium on Security and Privacy (SP)}, pages
+  154--171. IEEE, 2017.
+
+\bibitem[ABL{\etalchar{+}}14]{ABL+14}
+Elena Andreeva, Andrey Bogdanov, Atul Luykx, Bart Mennink, Nicky Mouha, and Kan
+  Yasuda.
+\newblock How to securely release unverified plaintext in authenticated
+  encryption.
+\newblock In {\em Advances in Cryptology -- ASIACRYPT 2014: 20th International
+  Conference on the Theory and Application of Cryptology and Information
+  Security, Kaoshiung, Taiwan, R.O.C., December 7-11, 2014. Proceedings, Part
+  I}, pages 105--125. Springer Berlin Heidelberg, 2014.
+
+\bibitem[APW09]{APW09}
+Martin~R. Albrecht, Kenneth~G. Paterson, and Gaven~J. Watson.
+\newblock Plaintext recovery attacks against {SSH}.
+\newblock In {\em Proceedings of the 2009 30th IEEE Symposium on Security and
+  Privacy}, pages 16--26. IEEE, 2009.
+
+\bibitem[BBN{\etalchar{+}}09]{BBN+}
+Mihir Bellare, Zvika Brakerski, Moni Naor, Thomas Ristenpart, Gil Segev, Hovav
+  Shacham, and Scott Yilek.
+\newblock Hedged public-key encryption: How to protect against bad randomness.
+\newblock In {\em Advances in Cryptology -- ASIACRYPT 2009: 15th International
+  Conference on the Theory and Application of Cryptology and Information
+  Security, Tokyo, Japan, December 6-10, 2009. Proceedings}, pages 232--249.
+  Springer-Verlag, 2009.
+
+\bibitem[BBO07]{BBO07}
+Mihir Bellare, Alexandra Boldyreva, and Adam O'Neill.
+\newblock Deterministic and efficiently searchable encryption.
+\newblock In {\em Proceedings of the 27th Annual International Cryptology
+  Conference on Advances in Cryptology}, pages 535--552. Springer Berlin
+  Heidelberg, 2007.
+
+\bibitem[BCS09]{BCS-journal09}
+John Black, Martin Cochran, and Thomas Shrimpton.
+\newblock On the impossibility of highly-efficient blockcipher-based hash
+  functions.
+\newblock {\em J. Cryptology}, 22(3):311--329, 2009.
+
+\bibitem[BDPS12]{BDPS12}
+Alexandra Boldyreva, Jean~Paul Degabriele, Kenneth~G. Paterson, and Martijn
+  Stam.
+\newblock Security of symmetric encryption in the presence of ciphertext
+  fragmentation.
+\newblock In {\em Proceedings of the 31st Annual International Conference on
+  Theory and Applications of Cryptographic Techniques}, pages 682--699.
+  Springer-Verlag, 2012.
+
+\bibitem[BDPS14]{BDPS13}
+Alexandra Boldyreva, Jean~Paul Degabriele, Kenneth~G. Paterson, and Martijn
+  Stam.
+\newblock On symmetric encryption with distinguishable decryption failures.
+\newblock In {\em Fast Software Encryption: 20th International Workshop, FSE
+  2013, Singapore, March 11-13, 2013. Revised Selected Papers}, pages 367--390.
+  Springer Berlin Heidelberg, 2014.
+
+\bibitem[BFK{\etalchar{+}}13]{BFK+13}
+Karthikeyan Bhargavan, Cedric Fournet, Markulf Kohlweiss, Alfredo Pironti, and
+  Pierre-Yves Strub.
+\newblock Implementing {TLS} with verified cryptographic security.
+\newblock In {\em Proceedings of the 2013 IEEE Symposium on Security and
+  Privacy}, pages 445--459. IEEE, 2013.
+
+\bibitem[BFS12]{FHM+12}
+Lars Baumg\"{a}rtner, Bernd Freisleben, and Matthew Smith.
+\newblock Why {E}ve and {M}allory love android: {A}n analysis of android {SSL}
+  (in)security.
+\newblock In {\em Proceedings of the 2012 ACM Conference on Computer and
+  Communications Security}, pages 50--61. ACM, 2012.
+
+\bibitem[BH05]{BH05}
+Boaz Barak and Shai Halevi.
+\newblock A model and architecture for pseudo-random generation with
+  applications to {\tt/dev/random}.
+\newblock In {\em Proceedings of the 12th ACM Conference on Computer and
+  Communications Security}, pages 203--212. ACM, 2005.
+
+\bibitem[BH15]{BH15}
+Mihir Bellare and Viet~Tung Hoang.
+\newblock Resisting randomness subversion: Fast deterministic and hedged
+  public-key encryption in the standard model.
+\newblock In {\em Advances in Cryptology - EUROCRYPT 2015: 34th Annual
+  International Conference on the Theory and Applications of Cryptographic
+  Techniques, Sofia, Bulgaria, April 26-30, 2015, Proceedings, Part II}, pages
+  627--656. Springer Berlin Heidelberg, 2015.
+
+\bibitem[BKN04]{BKN02}
+Mihir Bellare, Tadayoshi Kohno, and Chanathip Namprempre.
+\newblock Breaking and provably repairing the {SSH} authenticated encryption
+  scheme: A {C}ase study of the encode-then-encrypt-and-{MAC} paradigm.
+\newblock {\em ACM Trans. Inf. Syst. Secur.}, 7(2):206--241, 2004.
+
+\bibitem[BMM{\etalchar{+}}15]{BMM+15}
+Christian Badertscher, Christian Matt, Ueli Maurer, Phillip Rogaway, and
+  Bj\"orn Tackmann.
+\newblock Augmented secure channels and the goal of the {TLS} 1.3 record layer.
+\newblock In {\em 9th International Conference, ProvSec 2015, Kanazawa, Japan,
+  November 24-26, 2015, Proceedings}, pages 85--104. Springer-Verlag, 2015.
+
+\bibitem[BN00]{BN}
+Mihir Bellare and Chanathip Namprempre.
+\newblock Authenticated encryption: Relations among notions and analysis of the
+  generic composition paradigm.
+\newblock In {\em Advances in Cryptology --- ASIACRYPT 2000: 6th International
+  Conference on the Theory and Application of Cryptology and Information
+  Security Kyoto, Japan, December 3--7, 2000 Proceedings}. Springer Berlin
+  Heidelberg, 2000.
+
+\bibitem[BPS17]{BPS}
+Alexandra Boldyreva, Christopher Patton, and Thomas Shrimpton.
+\newblock Hedging public-key encryption in the real world.
+\newblock In {\em Advances in Cryptology -- CRYPTO 2017: 37th Annual
+  International Cryptology Conference, Santa Barbara, CA, USA, August 20--24,
+  2017, Proceedings, Part III}, pages 462--494. Springer-Verlag, 2017.
+
+\bibitem[BR93]{BR93}
+Mihir Bellare and Phillip Rogaway.
+\newblock Entity authentication and key distribution.
+\newblock In {\em Proceedings of the 13th Annual International Cryptology
+  Conference on Advances in Cryptology}, pages 232--249. Springer-Verlag New
+  York, Inc., 1993.
+
+\bibitem[BRSS10]{BRSS10}
+John Black, Phillip Rogaway, Thomas Shrimpton, and Martijn Stam.
+\newblock An analysis of the blockcipher-based hash functions from {PGV}.
+\newblock {\em Journal of Cryptology}, 23(4):519--545, 2010.
+
+\bibitem[CAE]{caesar}
+The {CAESAR} authenticated cipher competition.
+\newblock The homepage \url{https://competitions.cr.yp.to}, accessed 15 Nov
+  2017.
+
+\bibitem[CGPR15]{Cash15}
+David Cash, Paul Grubbs, Jason Perry, and Thomas Ristenpart.
+\newblock Leakage-abuse attacks against searchable encryption.
+\newblock In {\em Proceedings of the 22Nd ACM SIGSAC Conference on Computer and
+  Communications Security}, pages 668--679. ACM, 2015.
+
+\bibitem[CJJ{\etalchar{+}}13]{CJJ+13}
+David Cash, Stanislaw Jarecki, Charanjit Jutla, Hugo Krawczyk,
+  Marcel-C{\u{a}}t{\u{a}}lin Ro{\c{s}}u, and Michael Steiner.
+\newblock Highly-scalable searchable symmetric encryption with support for
+  boolean queries.
+\newblock In {\em Advances in Cryptology -- CRYPTO 2013: 33rd Annual Cryptology
+  Conference, Santa Barbara, CA, USA, August 18-22, 2013. Proceedings, Part I},
+  pages 353--373. Springer Berlin Heidelberg, 2013.
+
+\bibitem[CNS{\etalchar{+}}17]{CNS+17}
+Animesh Chhotaray, Adib Nahiyan, Thomas Shrimpton, Domenic Forte, and Mark
+  Tehranipoor.
+\newblock Standardizing bad cryptographic practice: {A} teardown of the {IEEE
+  P1735} standard for protecting electronic-design intellectual property.
+\newblock In {\em Proceedings of the 2017 ACM SIGSAC Conference on Computer and
+  Communications Security}, pages 1533--1546. ACM, 2017.
+
+\bibitem[DCRS12]{dyer2012peek}
+Kevin~P Dyer, Scott~E Coull, Thomas Ristenpart, and Thomas Shrimpton.
+\newblock Peek-a-boo, {I} still see you: Why efficient traffic analysis
+  countermeasures fail.
+\newblock In {\em Security and Privacy (SP), 2012 IEEE Symposium on}, pages
+  332--346. IEEE, 2012.
+
+\bibitem[DCRS13]{Dyer-2013}
+Kevin~P. Dyer, Scott~E. Coull, Thomas Ristenpart, and Thomas Shrimpton.
+\newblock Protocol misidentification made easy with format-transforming
+  encryption.
+\newblock In {\em Proceedings of the 2013 ACM SIGSAC Conference on Computer and
+  Communications Security}, pages 61--72. ACM, 2013.
+
+\bibitem[DF17]{dodis2017unilateral}
+Yevgeniy Dodis and Dario Fiore.
+\newblock Unilaterally-authenticated key exchange.
+\newblock In {\em Proceedings of the 21st International Conference on Financial
+  Cryptography and Data Security.}, 2017.
+
+\bibitem[DLFK{\etalchar{+}}17]{DLFK+17}
+A.~Delignat-Lavaud, C.~Fournet, M.~Kohlweiss, J.~Protzenko, A.~Rastogi,
+  N.~Swamy, S.~Zanella-Beguelin, K.~Bhargavan, J.~Pan, and J.~K. Zinzindohoue.
+\newblock Implementing and proving the {TLS} 1.3 record layer.
+\newblock In {\em 2017 IEEE Symposium on Security and Privacy (SP)}, pages
+  463--482. IEEE, 2017.
+
+\bibitem[DPR{\etalchar{+}}13]{DPR+13}
+Yevgeniy Dodis, David Pointcheval, Sylvain Ruhault, Damien Vergniaud, and
+  Daniel Wichs.
+\newblock Security analysis of pseudo-random number generators with input:
+  {\tt/dev/random} is not robust.
+\newblock In {\em Proceedings of the 2013 ACM SIGSAC Conference on Computer and
+  Communications Security}, pages 647--658. ACM, 2013.
+
+\bibitem[DPW11]{DPW11}
+J.~P. Degabriele, K.~Paterson, and G.~Watson.
+\newblock Provable security in the real world.
+\newblock {\em IEEE Security \& Privacy}, 9(3):33--41, 2011.
+
+\bibitem[DRS09]{DRS09}
+Yevgeniy Dodis, Thomas Ristenpart, and Thomas Shrimpton.
+\newblock Salvaging {Merkle-Damg{\aa}rd} for practical applications.
+\newblock In {\em Advances in Cryptology - EUROCRYPT 2009: 28th Annual
+  International Conference on the Theory and Applications of Cryptographic
+  Techniques, Cologne, Germany, April 26-30, 2009. Proceedings}, pages
+  371--388. Springer Berlin Heidelberg, 2009.
+
+\bibitem[FGMP15]{FPMG15}
+Marc Fischlin, Felix G\"unther, Giorgia~Azzurra Marson, and Kenneth Paterson.
+\newblock Data is a stream: {S}ecurity of stream-based channels.
+\newblock In {\em Advances in Cryptology -- CRYPTO 2015: 35th Annual Cryptology
+  Conference, Santa Barbara, CA, USA, August 16-20, 2015, Proceedings, Part
+  II}, pages 545--564. Springer Berlin Heidelberg, 2015.
+
+\bibitem[FLR{\etalchar{+}}10]{fischlin2010random}
+M.~Fischlin, A.~Lehmann, T.~Ristenpart, T.~Shrimpton, M.~Stam, and S.~Tessaro.
+\newblock {Random oracles with(out) programmability}.
+\newblock In {\em Advances in Cryptology -- ASIACRYPT 2010}, pages 303--320.
+  Springer Berlin Heidelberg, 2010.
+
+\bibitem[FTE]{libfte}
+Libfte.
+\newblock Source code available at \url{https://github.com/kpdyer/libfte},
+  accessed 15 Nov 2017.
+
+\bibitem[GRS17]{GRS17}
+Paul Grubbs, Thomas Ristenpart, and Vitaly Shmatikov.
+\newblock Why your encrypted database is not secure.
+\newblock In {\em Proceedings of the 16th Workshop on Hot Topics in Operating
+  Systems}, pages 162--168. ACM, 2017.
+
+\bibitem[GSB{\etalchar{+}}17]{GSB+17}
+P.~Grubbs, K.~Sekniqi, V.~Bindschaedler, M.~Naveed, and T.~Ristenpart.
+\newblock Leakage-abuse attacks against order-revealing encryption.
+\newblock In {\em 2017 IEEE Symposium on Security and Privacy (SP)}, pages
+  655--672. IEEE, 2017.
+
+\bibitem[Har08]{rfc5297}
+D.~Harkins.
+\newblock Synthetic initialization vector ({SIV}) authenticated encryption
+  using the advanced encryption standard (aes).
+\newblock RFC 5297, RFC Editor, October 2008.
+\newblock \url{http://www.rfc-editor.org/rfc/rfc5297.txt}.
+
+\bibitem[HHL{\etalchar{+}}17]{HHL+17}
+P.~Holzinger, B.~Hermann, J.~Lerch, E.~Bodden, and M.~Mezini.
+\newblock Hardening java's access control by abolishing implicit privilege
+  elevation.
+\newblock In {\em 2017 IEEE Symposium on Security and Privacy (SP)}, pages
+  1027--1040. IEEE, 2017.
+
+\bibitem[HKR15]{HKR15}
+Viet~Tung Hoang, Ted Krovetz, and Phillip Rogaway.
+\newblock Robust authenticated-encryption: {AEZ} and the problem that it
+  solves.
+\newblock In {\em Advances in Cryptology -- EUROCRYPT 2015: 34th Annual
+  International Conference on the Theory and Applications of Cryptographic
+  Techniques, Sofia, Bulgaria, April 26-30, 2015, Proceedings, Part I}, pages
+  15--44. Springer Berlin Heidelberg, 2015.
+
+\bibitem[HRRV15]{HRRV15}
+Viet~Tung Hoang, Reza Reyhanitabar, Phillip Rogaway, and Damian Viz{\'a}r.
+\newblock Online authenticated-encryption and its nonce-reuse
+  misuse-resistance.
+\newblock In {\em Advances in Cryptology -- CRYPTO 2015: 35th Annual Cryptology
+  Conference, Santa Barbara, CA, USA, August 16-20, 2015, Proceedings, Part I},
+  pages 493--517. Springer Berlin Heidelberg, 2015.
+
+\bibitem[IKND16]{IKND16}
+Soumya Indela, Mukul Kulkarni, Kartik Nayak, and Tudor Dumitra\c{s}.
+\newblock Helping johnny encrypt: Toward semantic interfaces for cryptographic
+  frameworks.
+\newblock In {\em Proceedings of the 2016 ACM International Symposium on New
+  Ideas, New Paradigms, and Reflections on Programming and Software}, pages
+  180--196. ACM, 2016.
+
+\bibitem[Kra16]{krawczyk2016unilateral-to-mutual}
+Hugo Krawczyk.
+\newblock A unilateral-to-mutual authentication compiler for key exchange (with
+  applications to client authentication in {TLS} 1.3).
+\newblock In {\em Proceedings of the 2016 ACM SIGSAC Conference on Computer and
+  Communications Security}, pages 1438--1450. ACM, 2016.
+
+\bibitem[KS13]{KS13}
+Robert K{\"u}nnemann and Graham Steel.
+\newblock {YubiSecure}? {F}ormal security analysis results for the {YubiKey}
+  and {YubiHSM}.
+\newblock In {\em Security and Trust Management: 8th International Workshop,
+  STM 2012, Pisa, Italy, September 13-14, 2012, Revised Selected Papers}, pages
+  257--272. Springer Berlin Heidelberg, 2013.
+
+\bibitem[LDJ{\etalchar{+}}14]{luchaup2014libfte}
+Daniel Luchaup, Kevin~P. Dyer, Somesh Jha, Thomas Ristenpart, and Thomas
+  Shrimpton.
+\newblock {LibFTE}: {A} toolkit for constructing practical, format-abiding
+  encryption schemes.
+\newblock In {\em Proceedings of the 23rd USENIX conference on Security
+  Symposium}, pages 877--891. USENIX Association, 2014.
+
+\bibitem[LSRJ14]{luchaup2014formatted}
+Daniel Luchaup, Thomas Shrimpton, Thomas Ristenpart, and Somesh Jha.
+\newblock Formatted encryption beyond regular languages.
+\newblock In {\em ACM Conference on Computer and Communications Security}. ACM,
+  2014.
+
+\bibitem[LST12]{clrw}
+Will Landecker, Thomas Shrimpton, and R.~Terashima.
+\newblock Tweakable blockciphers with beyond birthday-bound security.
+\newblock In {\em Advances in Cryptology--CRYPTO '12}, volume 7417 of {\em
+  Lecture Notes in Computer Science}, pages 14--30. Springer Berlin /
+  Heidelberg, 2012.
+
+\bibitem[LW16]{KW16}
+Kevin Lewi and David~J. Wu.
+\newblock Order-revealing encryption: New constructions, applications, and
+  lower bounds.
+\newblock In {\em Proceedings of the 2016 ACM SIGSAC Conference on Computer and
+  Communications Security}, pages 1167--1178. ACM, 2016.
+
+\bibitem[Mar]{marionette}
+The {Marionette} traffic obfuscation system.
+\newblock Project hosted at \url{https://github.com/marionette-tg}, accessed 15
+  Nov 2017.
+
+\bibitem[NKW15]{NKW15}
+Muhammad Naveed, Seny Kamara, and Charles~V. Wright.
+\newblock Inference attacks on property-preserving encrypted databases.
+\newblock In {\em Proceedings of the 22Nd ACM SIGSAC Conference on Computer and
+  Communications Security}, CCS '15, pages 644--655. ACM, 2015.
+
+\bibitem[NRS14]{NRS}
+Chanathip Namprempre, Phillip Rogaway, and Thomas Shrimpton.
+\newblock Reconsidering generic composition.
+\newblock In {\em Advances in Cryptology -- EUROCRYPT 2014: 33rd Annual
+  International Conference on the Theory and Applications of Cryptographic
+  Techniques, Copenhagen, Denmark, May 11-15, 2014. Proceedings}, pages
+  257--274. Springer Berlin Heidelberg, 2014.
+
+\bibitem[{\"O}SS10]{OSS}
+Onur {\"O}zen, Thomas Shrimpton, and Martijn Stam.
+\newblock Attacking the {Knudsen-Preneel} compression functions.
+\newblock In {\em Fast Software Encryption}, volume 6147, pages 94--115, 2010.
+
+\bibitem[PRS11]{PRS11}
+Kenneth~G. Paterson, Thomas Ristenpart, and Thomas Shrimpton.
+\newblock Tag size \textit{does} matter: {A}ttacks and proofs for the {TLS}
+  record protocol.
+\newblock In {\em Advances in Cryptology -- ASIACRYPT 2011: 17th International
+  Conference on the Theory and Application of Cryptology and Information
+  Security, Seoul, South Korea, December 4-8, 2011. Proceedings}, pages
+  372--389. Springer Berlin Heidelberg, 2011.
+
+\bibitem[Res17]{tls13}
+Eric Rescorla.
+\newblock The {T}ransport {L}ayer {S}ecurity {(TLS)} {P}rotocol version 1.3.
+\newblock Internet-Draft draft-ietf-tls-tls13-21, IETF Secretariat, 2017.
+\newblock \url{https://tools.ietf.org/html/draft-ietf-tls-tls13-21}.
+
+\bibitem[Rog04]{Rog04}
+Phillip Rogaway.
+\newblock Nonce-based symmetric encryption.
+\newblock In {\em Fast Software Encryption: 11th International Workshop, FSE
+  2004, Delhi, India, February 5-7, 2004. Revised Papers}, pages 348--358.
+  Springer Berlin Heidelberg, 2004.
+
+\bibitem[RS06]{RS06}
+Phillip Rogaway and Thomas Shrimpton.
+\newblock A provable-security treatment of the key-wrap problem.
+\newblock In {\em Advances in Cryptology - EUROCRYPT 2006: 24th Annual
+  International Conference on the Theory and Applications of Cryptographic
+  Techniques, St. Petersburg, Russia, May 28 - June 1, 2006. Proceedings},
+  pages 373--390. Springer Berlin Heidelberg, 2006.
+
+\bibitem[RS09]{RS09}
+Phillip Rogaway and Till Stegers.
+\newblock Authentication without elision.
+\newblock In {\em Proceedings of the 2009 22Nd IEEE Computer Security
+  Foundations Symposium}, pages 26--39. IEEE, 2009.
+
+\bibitem[RSS11]{RSS}
+Thomas Ristenpart, Hovav Shacham, and Thomas Shrimpton.
+\newblock Careful with composition: Limitations of the indifferentiability
+  framework.
+\newblock In Kenneth~G. Paterson, editor, {\em Advances in
+  Cryptology--EUROCRYPT '11}, volume 6632 of {\em Lecture Notes in Computer
+  Science}, pages 487--506, 2011.
+
+\bibitem[SSW16]{SSW}
+Thomas Shrimpton, Martijn Stam, and Bogdan Warinschi.
+\newblock A modular treatment of cryptographic {APIs}: The symmetric-key case.
+\newblock In {\em Advances in Cryptology -- CRYPTO 2016: 36th Annual
+  International Cryptology Conference, Santa Barbara, CA, USA, August 14-18,
+  2016, Proceedings, Part I}, pages 277--307, 2016.
+
+\bibitem[ST13]{tct}
+Thomas Shrimpton and R.~Seth Terashima.
+\newblock A modular framework for building variable-input-length tweakable
+  ciphers.
+\newblock In {\em Advances in Cryptology - ASIACRYPT 2013: 19th International
+  Conference on the Theory and Application of Cryptology and Information
+  Security, Bengaluru, India, December 1-5, 2013, Proceedings, Part I}, pages
+  405--423. Springer Berlin Heidelberg, 2013.
+
+\bibitem[ST15]{ST15}
+Thomas Shrimpton and R.~Seth Terashima.
+\newblock A provable-security analysis of {Intel's Secure Key RNG}.
+\newblock In {\em Advances in Cryptology -- EUROCRYPT 2015: 34th Annual
+  International Conference on the Theory and Applications of Cryptographic
+  Techniques, Sofia, Bulgaria, April 26-30, 2015, Proceedings, Part I}, pages
+  77--100. Springer Berlin Heidelberg, 2015.
+
+\bibitem[Vau02]{Vau02}
+Serge Vaudenay.
+\newblock Security flaws induced by {CBC} padding -- applications to {SSL},
+  {IPSEC}, {WTLS}...
+\newblock In {\em Proceedings of the International Conference on the Theory and
+  Applications of Cryptographic Techniques: Advances in Cryptology}, pages
+  534--546. Springer-Verlag, 2002.
+
+\end{thebibliography}

@@ -1,0 +1,123 @@
+\documentclass[10pt]{article}
+\setlength{\topmargin}{-0.5in}
+\setlength{\textwidth}{6.25in}
+\setlength{\textheight}{9in}
+\setlength{\oddsidemargin}{-0.125in}
+\setlength{\evensidemargin}{-0.125in}
+
+\newenvironment{packeditemize}{
+\begin{list}{$\bullet$}{
+\setlength{\labelwidth}{8pt}
+\setlength{\itemsep}{0pt}
+\setlength{\leftmargin}{\labelwidth}
+\addtolength{\leftmargin}{\labelsep}
+\setlength{\parindent}{0pt}
+\setlength{\listparindent}{\parindent}
+\setlength{\parsep}{0pt}
+\setlength{\topsep}{3pt}}}{\end{list}}
+
+%\input{tomsdefs.tex}
+
+\begin{document}
+\thispagestyle{empty}
+
+\begin{center}
+{\Large SaTC: CORE: Small }\\ 
+{\Large API-Centric Cryptography\\} 
+\end{center}
+
+\noindent
+The prevailing mindset in the academic cryptography community is that
+we produce theoretically secure and (one hopes) efficient
+cryptographic primitives, and it is the job of security engineers and
+software developers to turn these into real pieces of software that
+are useful for applications.  Implicitly, it is their job to respect
+the syntax that we formalize, and to properly implement the
+provably-secure constructions that we develop.  But
+the gap between what suffices as a
+specification of a primitive in the literature, and an actual
+implementation ---~one that is correct, efficient, and flexible enough
+to support applications~--- is large.  Moreover, various 
+people (e.g., Paul Kocher in his Crypto '16 invited lecture) have
+voiced the concern that cryptographers do not appreciate how
+difficult it is to develop good cryptographic libraries, in particular
+good APIs; nor that APIs are relatively inflexible once fielded,
+because changing them (say, to accomodate the latest crypto theory
+results) wreaks havoc on applications that call them.
+
+Motivated by this, we propose an alternative viewpoint: it is
+\emph{our} job to respect the relatively inflexible nature of
+real-world libraries and their APIs, and it is \emph{our} job to make
+theoretical cryptography that is as easy as possible to implement
+correctly, and that is resilient to misuse by applications. We refer to this viewpoint as
+\emph{API-centric cryptography}.  This approach suggests at least
+three consequences for the way we develop theory: existing formalisms
+should be carefully re-examined with respect to the actual APIs that
+libraries export; new realizations of existing abstract primitives
+should take into consideration how easy it will be to implement them
+with broadly adopted libraries; and that the formalization of new
+abstract primitives should include syntax that is clear about the
+functionalities that will need to be implemented. Said another way, syntax
+should be ``API-like''.
+
+Concretely, we identify a collection of research tasks that adhere to
+this API-centric point of view.  The first group addresses the
+application of the approach to secure channels, authenticated key
+exchange, as well as examining standards for cryptographic APIs.  It
+also includes efforts to survey existing libraries and software
+artifacts, in order to understand what are the \emph{effective}
+cryptographic primitives that are exported by the APIs; in particular
+APIs aimed at application developers, who have relatively little
+crypto expertise.  
+%
+The second group takes aim at developing
+theoretical primitives that are misuse-forgiving.  Here too, we
+propose tasks designed to better understand the landscape of misuse.
+This group contains tasks to revisit so-called ``hedged'' cryptography
+in a way that more closely matches practice, and to develop primitives
+that are expressly meant to handle (natively) the highly structured
+data that is common in practice.
+%
+The third group addresses an effort to produce abstract syntax for
+cryptographic primitives that is more API-like.
+  
+
+\smallskip
+\noindent \textbf{Intellectual Merit:} This work will develop a new
+viewpoint on cryptographic primitives and protocols, one that treats the
+implementation and deployment needs of cryptographic practice as a
+primary guide for theory.  The work will require us to develop new styles of
+abstract syntax, and new methods for specifying realizations of these
+abstractions.  
+%It will require new methodologies to integrate real-world insights that empirical,
+%data-driven study provides, with formal security analysis, the latter
+%in the vein of modern cryptography's provable security paradigm. 
+We believe this work can form the foundation of a new approach to
+development of secure cryptographic tools that are easier for
+software engineers to implement correctly, and that are more robust against
+misuse.  
+
+\smallskip
+
+\noindent {\bf Broader Impact:}  We have arranged our research program to
+maximize its potential for broad impact on a number of groups. We have
+experience transitioning our research results to industry, as well as to tools for the anti-censorship
+activist community. We target similar impact for the proposed
+work. We will actively engage industry, both to glean real-world requirements
+as well as to advertise our new approaches.  This will also help
+the proposed work to more broadly build bridges between the practitioner
+and academic communities, through workshop development, exposure of academics to 
+research questions of applied value, and educational activities stemming from
+the new research methodologies we will develop. We will carefully examine
+standards (IEEE and ISO, for example) and inform the appropriate
+committees of our
+findings. Finally, we expect that the proposed API-centric viewpoint will find utility in a broad array
+of future research efforts in cryptography.
+
+%%
+\vspace{1ex}
+\noindent 
+{\bf Key words:} cryptography, APIs, cryptographic formalisms,
+authenticated encryption, secure channels, hedged cryptography
+
+\end{document}

@@ -1,0 +1,473 @@
+%-------------------------------------------------------------------------------------
+\section{A Unifying Framework for Distribution-Sensitive Cryptography}
+
+
+
+In the previous sections, we have described a number of applications for which we
+will develop DSC techniques. From each thrust, cross-cutting methodologies
+emerge, including practice-driven threat modeling, empirical estimation of
+relevant distributions, and provable-security design. Our
+efforts will take advantage of these themes and developing a unified
+methodological framework for DSC. 
+%ltimately, fielded cryptographic tools that measurably improve security.  In
+%the introduction we already outlined our initial expectations for such a
+%framework, though it is likely to evolve as we gain further experience while
+%exploring applications.  Having illustrated the approach and its benefits, 
+It is likely to evolve as we gain further experience while exploring
+applications; here we provide further details on what we expect to be its key
+ingredients.
+
+\vspace{2mm}
+\noindent \textbf{(1) Practice-driven modeling:} A key enabler for DSC is the ability to
+estimate distributions of interest, such as message spaces, covertexts, passwords, and so on. This often requires obtaining access to, or
+gathering from scratch, appropriate data sets (password leaks, captured network
+traffic, etc.), methods for compactly representing these empirically observed
+distributions, and statistical approaches to analyzing them. A second part of
+this step is distilling out realistic threat models to ensure that our work
+addresses attacks of real-world import. For example, we will investigate real
+DPI system capabilities and assess experimentally the viability of various
+attacks, as discussed in~\secref{subsec:beyond_FTE}.
+
+
+\vspace{2mm}
+\noindent \textbf{(2) Robust, distribution-sensitive definitions:} DSC primitives require
+new formal security notions. For example, we have new target-distribution
+message recovery, semantic security, and nonmalleability notions for HE, each an
+adaptation from previous distribution-agnostic notions.
+For steganography, we have a head start with the pre-existing security
+notions from Hopper et al.~\cite{Hopper:Provable_Stego}, but 
+adaptations will be needed in the low-entropy key case. 
+And we are able to adapt
+the target-distribution message-recovery notion to apply to secure sketches. 
+A common recipe emerges: revisit previous notions of security and replace
+adversarially chosen messages or message distributions with draws from a
+specific distribution known to the protocol designer. This leads to a new
+viewpoint on security definition development. 
+%feasibility 
+%of constructions that  provide security
+%beyond fundamental barriers faced in distribution-agnostic notions.
+
+%technically challenging
+%It views
+%steganography as a cryptographic primitive in which confidentiality is not
+%achieved by a uniform distribution of outputs in the view of an adversary, as in
+%classical ciphers, but by ciphertexts that match a target covertext
+%distribution. Similarly, in the message-recovery security definition for honey
+%encryption, plaintexts that are presumed to originate from a target
+%distribution, rather than being adversarially selected, as in classical
+%indistinguishability games. In general, our approach illuminates an extensive
+%new definitional terrain, exposing questions such as relationships between new
+%notions, feasibility and impossibility results for new security notions, etc.
+%Detailed examples follow in later sections.
+
+A potential problem with DSC is when the scheme ends up used with messages
+that are not distributed as expected by the designer, or when adversaries have
+unexpected side-information about messages or secrets. In such cases, our DSC
+security goals may not be achievable. We therefore also explicitly target
+robustness: in addition to these distribution-sensitive
+goals, we will also formalize appropriate, best-possible ``fallback'' security notions. 
+%We
+%propose to define best-possible security when distribution estimates by scheme
+%designers (see next step) end up wrong. 
+For example, for HE the fallback notion
+is a variant of semantic security suitable for PBE~\cite{bellare2012multi} and
+for steganography we seek standard confidentiality and authenticity as in
+  authenticated encryption.
+
+\vspace{2mm}
+\noindent \textbf{(3) Practical constructions and implementation:} Given 
+empirical models for a target application and  corresponding formalism, 
+we then seek constructions for an appropriate DSC
+primitive.  A key challenge is producing
+compact and computationally efficient message-distribution models for incorporation
+into these primitives. We will draw on a
+variety of established modeling techniques, including regular
+expressions, Markov models, probabilistic context-free grammars, 
+special-purpose sampling algorithms (e.g., prime number samplers)---most 
+of which we have begun exploring in
+prior~\cite{BRRS09,Dyer-2013,luchaup2014libfte,HoneyEnc-EC:2014,luchaup2014formatted} and ongoing
+work\cite{GenoGuard:2014,SweetPass:2014}---and also appeal to other new application-driven techniques.
+ 
+\vspace{2mm} \noindent \textbf{(4) Experimental and formal analyses:} We will
+target constructions that are both practical and have demonstrable 
+security properties. For the
+latter we will blend empirical work with provable security analysis, relative to our
+newly formulated DSC notions and their associated fallback notions.
+
+Let us provide a few more details. 
+%We expect that analyze DSC security, which we
+%expect to be technically challenging.
+%(Other measures of model quality may additionally support our approach.) 
+Given sound underlying cryptographic primitives, the theorem
+statements resulting from these analyses 
+will ensure security when the measured quality of distribution
+estimates falls within certain ranges.  
+(When they do not fall in
+this range, security will revert to the appropriate fallback notions.)
+% We will furthermore analyze
+%fallback security to account for situations in which the distribution models
+%underlying new primitives are unexpectedly poor, due either to failures in
+%empirical methodology or to fresh data disclosures or other sources of
+%modeling advances.
+This proof approach 
+enables us to restrict attention specifically to the difference in
+quality of the DSC-primitive
+distribution estimates, and those of an adversary. 
+%In many cases it will
+%enable conceptually simple metrics of model quality, such as statistical
+%distance, to be translated into upper bounds relative to formal cryptographic
+%security definitions. 
+We will give confidence in these estimates using two approaches. 
+
+When possible, we will employ measures of the {\em absolute quality} of
+DSC-primitive distribution
+estimates relative to real distributions. This will work when the distribution
+has some well-understood and relatively precise characterization.  An example is
+uniform prime numbers in our prior work on HE~\cite{HoneyEnc-EC:2014}.
+Additionally, we will investigate the goodness of a primitive in terms of the {\em
+relative quality} or {\em gap} between the attacker's and defender's knowledge
+of the true distribution or between the quality of the modeling techniques they
+employ. This will be useful when distributions can only be captured 
+empirically, as with
+human-generated distributions (passwords, biometrics, English text), 
+or complex covertext
+protocols, such as those seen by network operators on the Internet. 
+%Empirically-driven modeling is challenging in many DSC settings due to
+%limitations of %established modeling techniques or a lack of data on which to
+%base distribution estimates. %The application of HE in SweetPass illustrates
+%the issue (as detailed in~\cite{}): while large %password breaches (e.g.,
+%RockYou) have provided researchers (and attackers) with ample %data about user
+%selection of individual passwords, the rarity of publicly posted %compromised
+%password vaults means that little is known about how users choose the suites
+%%of passwords in password vaults. It is hard therefore to validate the
+%SweetPass construction %against ground truth, namely real vaults.
+While empirically-driven modeling is challenging in many DSC settings, an
+adversary confronts exactly the same challenges in distribution estimation as
+the designer of a DSC primitive. Thus, even if a defender designs a primitive
+that does not exactly match real-world data, an attacker may have little usable
+advantage in attacking the scheme. 
+
+A key challenge is quantifying that advantage.
+We can do so empirically for various specific adversarial strategies. 
+To obtain broader guarantees, we will also explore {\em reductionist} security bounds similar 
+to those provided traditionally in provable-security 
+cryptography, but here based on hard problems from distribution estimation or learning theory.
+The target will be theorem statements of the following form. 
+A computationally efficient adversary's ability to distinguish well between a
+DSC scheme's estimates and a real distribution implies either: (1) a modeling tool for the
+real distribution %(e.g., a sampling or compression algorithm) 
+that is superior
+to (e.g., faster or more space-efficient) the state of the art, or (2) an adversarial model that
+is informed by superior access to real data. For example, an adversary with a
+significant distinguishing advantage against a DTE based on state-of-the-art
+password cracking (e.g.,~\cite{SweetPass:2014}) can be translated into a
+significant advance in password cracking technology.
+%This approach resembles
+%the complexity-theoretic reductions employed for provable-security in
+%cryptography, where a successful adversarial algorithm translates into a
+%breakthrough in solving a hard problem.  
+So assuming adversaries and designers
+have similar access to the real-world distribution,  such reductionist
+security results will rule out successful attacks unless an adversary
+achieves an unexpected algorithmic breakthrough.  %, e.g., a superior machine
+%learning algorithm, or a large gap in knowledge relative to the defender,
+%e.g., or access to much more data about a real-world distribution. 
+
+In cases where crisp security reductions are elusive, our estimates of
+adversarial capability will be best-effort and experimental.
+%human-generated distributions (passwords or biometrics) or complex covertext
+%protocols such as those seen by network operators on the Internet. In these
+That is, we will provide experimental quantification of how well various
+adversarial strategies (such as machine learning approaches, statistical tests,
+etc.) can be made to work.  
+
+\iffalse
+\tnote{This idea just occurred to me. For the steganography case it somehow
+seems a bit likely that we can do this, since the adversarial game is a bunch of
+real samples versus a bunch of fake samples. But what would this ``improvement''
+be, and how can we show a reduction to it? We need to formalize the estimation
+problem. Perhaps we can use learning theory.}
+\fi
+
+\begin{task}
+\label{task:unified-framework}
+We will develop a unified framework for analysis of 
+DSC schemes that
+blends techniques from provable-security cryptographic theory, 
+distribution estimation, and empiricism.
+\end{task}
+
+
+\heading{An inclusive open-source library.}
+%While we the framework will evolve in response to our investigations in each
+%application context, we expect to eventually use in turn apply it to help
+%drive building DSC-enabled security tools. We propose
+%is critical because it will mean we will at least always be providing the
+%best-possible security when estimates are wrong. Typically,  fallback notions
+%will simply be the conventional security goals of non-DSC cryptography.
+As a final contribution, we propose
+to bring together the various DSC scheme implementations within a single  open-source library, tentatively 
+named \texttt{libdsc}, that provides easy-to-use APIs for
+our new cryptographic primitives, as well as lower-level access to the
+underlying mechanisms for researchers. Here we will build off the PIs' previous experience 
+building similar libraries such as \texttt{libfte}~\cite{luchaup2014libfte}. 
+
+\begin{task}
+\label{task:libdsc} We will implement an open-source library around our
+various DSC constructions to support experimental evaluation and impact. 
+\end{task}
+
+%analyze our constructions from the lens of provable security relative to our
+%newly formulated DSC notions and the appropriate fallback notions. The latter
+%is critical because it will mean we will at least always be providing the 
+%best-possible security when estimates are wrong. Typically,  fallback notions
+%will simply be the conventional security goals of non-DSC cryptography.
+
+\iffalse
+We will finally specify appropriate fallback security notions to account for
+situations in which the distribution models underlying new primitives are
+unexpectedly poor, due either to failures in designer's empirical methodology,
+to unforeseen advances in modeling, or simply due to mistakes in deployment.  A
+well-engineered construction then will satisfy mainline DSC notions of security
+given good distribution models and provide robust fallback security guarantees
+in the event of poor ones. 
+\fi
+
+
+
+
+
+%To complete security analysis, then, we propose to return to empiricism to measure the
+%distribution estimate quality. Take for example stegonagraphy: we will 
+%seek out the best known ways to distinguish
+
+%We finally will return to empiricism
+%(also used in step 1) to quantify how well estimators of distributions perform
+%in practice.  This can be viewed as providing concrete values that we can plug
+%into the theorems resulting from the formal analyses to provide strong evidence
+%regarding the bounds one will get in the DSC setting.  \tnote{This is a bit
+%fuzzy still needs to be sharpened up.}
+
+
+
+
+\iffalse
+\begin{enumerate} 
+\item Consider real-world applications in which we can realistically obtain an
+estimate of relevant distributions. Examples of the latter include passwords,
+plaintexts, biometrics, and benign cover traffic. 
+
+\item Retool security notions to be distribution-dependent. Examples include
+steganography, HE for message recovery, DSSS's for certain messages. Consider as
+well "fallback security" notions when estimates of distributions by system
+designers are wrong. 
+
+\item Construct cryptographic schemes that take advantage of foreknowledge of distribution
+estimates and analyze their security relative to the distribution-based notions.
+Analysis will be both via proofs under assumed estimate accuracy and empiricism
+to validate estimate accuracy.
+\end{enumerate}
+
+In exploring this framework we'll see common tools fall out, DTE being the
+obvious example. So instead of DTEs being the unifying framework they are a
+natural consequence of the framework. 
+
+\subsection{Cryptographically Useful Distribution Estimation via DTEs}
+\label{sec:dte}
+
+
+One benefit of a unified viewpoint is that it can foster techniques
+with broad utility across distinct DSC settings. We propose to investigate
+distribution-transforming encoders (DTEs) as one such technique. In prior work, PIs Juels
+and Ristenpart introduced these specialized encoding schemes for the purposes of
+honey encryption. Briefly, a DTE scheme consists of a randomized encoding
+algorithm $\encode$ and a possibly randomized decoding algorithm $\decode$. The
+former maps elements drawn from a set $\mspace$, called the message space, to
+strings in $\bits^\ell$ for some $\ell$. We refer to the latter as the seed
+space, for reasons that should become clear momentarily. Decoding reverses
+encoding.  Suppose $\mdist$ is the distribution of messages in some application.
+A ``good'' DTE scheme is one such that an adversary
+cannot distinguish between the pair $(\msg,\encode(\msg))$ for $\msg\getm
+\mspace$ (meaning, sample $\msg$ from $\mspace$ according to~$\mdist$) and the pair
+$(\decode(\seed),\seed)$ for  $\seed \getsr \bits^\ell$ with more than a small probability. 
+%
+Intuitively, then, $\decode$ behaves as a sampler of messages according
+to~$\mdist$ using its input as randomness,\footnote{Note that the security goal
+mandates more than just this. In particular, encoding must encode a message by
+picking randomly from all seeds that decode to the message.} hence the name seed
+space for $\bits^\ell$. 
+
+In honey encryption, a DTE serves as a mechanism to generate the plausible-looking fake plaintexts that emerge under decryption with an incorrect key. (Specifically, decryption produces a seed $\seed$ that is mapped into the message distribution as $\decode(\seed)$.) In a broader view, though, a DTE is a form of invertible mapping between two distributions with accompanying formalism to characterize the ``goodness'' of the mapping for cryptographic purposes. We will explore a much more expansive application of DTEs across a range of applications. 
+
+\tsnote{Compact discussion of generalized DTEs commented out, and
+  reincorporated into Section 4.}
+\ignore{
+%\subsection{DTE extension to other primitives}
+\paragraph{Generalized DTEs.} As conceived above and in our prior work, a DTE
+maps from some non-uniform distribution~$\xdist$ to a uniform
+distribution~$\ydist$ over bit strings. This viewpoint derived
+from the particular context of HE, where it was used to encode plaintexts drawn
+from some non-uniform distribution before encryption; a
+\textit{DTE-then-encrypt} composition.
+%We will investigate the
+%utility of a more general conception 
+%of DTEs as encompassing transforms from a distribution over one set to another distribution over
+%a possibly different set. 
+
+Now, consider the FTE schemes from our prior work. Roughly speaking,
+these encrypt arbitrary plaintext data with a conventional scheme, and
+then treat the resulting, random bit string as an index into a particular set called
+the ciphertext format (e.g., the set of all strings with HTTP
+headers).\footnote{We have shown in prior work how formats might be
+  defined using regular expressions~\cite{DCRS,luchaup2014libfte} or
+  context-free grammars~\cite{luchaup2014formatted} in a way that
+  supports fast indexing into the language.}
+%Following Goldberg and Sipser~\cite{GS85}, mapping
+%from elements of a language to indexes is called ranking; the inverse is
+%unranking.  
+We can see this as an \textit{encrypt-then-DTE} construction,
+with~$\xdist$ and~$\ydist$ both uniform, over appropriately defined sets.
+%however, unranking is a transformation from uniform bit strings to uniform samples from a
+%language. 
+As we will discuss in more detail in \secref{sec:DME}, the fact that FTE
+ciphertexts are uniformly distributed may expose exploitable weaknesses
+in anti-censorship applications.  In this setting, a DTE that admitted
+non-uniform output distributions, preferably user-specifiable ones,
+would yield a significant step forward in the state of the art.  
+
+In the abstract, one might ask for DTE schemes that, given the
+descriptions of arbitrary sets $\xspace,\yspace$ with respective
+distributions $\xdist,\ydist$, encodes $\xdist$-sampled $X\in\xspace$
+into $Y\in\yspace$ that appear to be $\ydist$-distributed; and vice versa.
+Unfortunately, it is not hard to see that secure DTEs for arbitrary
+input/output distributions are not feasible.
+Correctness mandates the ability to invert, and so building a DTE that maps from
+a high-entropy distribution to a very low-entropy one will, in general, be
+information-theoretically infeasible. 
+
+That said, we will explore the boundaries of such negative
+results, finding positive examples when possible and formally ruling out
+efficient constructions elsewhere. %The result will be
+%that encodes uniform bit strings to non-uniform outputs can be constructed using
+%rejection sampling: simply run $\gen(R\concat M)$ 
+%We will investigate
+%possibility and impossibility results.
+
+\begin{task}
+\label{task:gen-dte}We will formalize a more general notion of
+distribution-transforming encoders (DTEs), investigate provably secure
+constructions, and obtain bounds showing the impossibility of certain
+combinations of input/output distribution pairs. 
+\end{task}
+
+
+\tsnote{Left over from attempt to compact this section}
+\textcolor{red}{\#----\#}
+This generalization captures as a special case the prime-number DTE for HE
+mentioned above by setting $\xdist$ to be uniform over $\xspace$ the set of
+prime numbers in some range and $\ydist$ to be uniform over bit strings. The
+unranking mechanism used for ciphertext generation in FTE is covered as well,
+via $\xdist$ uniform over bit strings and $\ydist$ uniform over a format set
+defined by a regular or context-free language. 
+
+This viewpoint immediately points to other possible constructions.  
+Consider replacing the simple unranking DTE used in FTE to a DTE with
+output distribution $\ydist$ being non-uniform. This moves us a step closer to
+full-blown provably secure steganography in the sense of Hopper, Langford, and
+van Ahn~\cite{Hopper:Provable_Stego}. We will discuss this approach in more
+detail in \secref{sec:DME}, noting here only that it is powered by this more
+generalized conception of DTEs.  
+\textcolor{red}{\#----\#}
+
+}
+
+\fi
+
+
+
+
+\iffalse
+
+\subsection{New primitives}
+
+Talk about how our enlarged DTE definition, by elucidating the connection
+between HE and stego, may give rise to password-based stego and stego for
+password-based key agreement. 
+
+\subsubsection{Indexable DTEs}
+
+Explain how ``indexable'' DTEs can be used in a block-chaining construction to
+achieve high-rate 
+
+
+We seek security beyond the status quo for a variety of cryptographic
+applications. In most of the settings we consider, however, there exist
+fundamental limits on security achievable in practice via conventional
+approaches.  The key observation we capitalize on, arising from our prior
+work, is that these limits can be transcended through sensitivity to application-specific distributions. 
+
+\paragraph{Example challenge applications.}
+Password-based encryption (PBE) provides a telling example. Textbook approaches to
+encryption urge primitive design that is agnostic to plaintext distribution. Security
+goals such as semantic security~\cite{..} and its progeny formalize this
+viewpoint by mandating security in the face of attackers that can choose
+arbitrarily distributed messages. 
+%Schemes whose security analysis assumes a 
+%particular message distribution are considered problematic.
+But PBE schemes designed this way fall to brute-force attacks when passwords are
+weak, which is common in practice. The problem is that semantic security is
+unachievable when keys are low-entropy. 
+
+PIs Juels and Ristenpart introduced honey encryption as a way to resolve this
+tension~\cite{HoneyEnc-EC:2014}. The idea is to build PBE schemes that use
+estimates of the expected message
+distribution for an application context. Should this estimate be
+good, and the resulting scheme be soundly designed, then even for low entropy keys 
+one can prove a meaningful level of security. This represents a big improvement 
+over traditional schemes that provide no security in this case. 
+
+Yet building schemes whose security depends on correct message distribution
+estimates sounds problematic. Isn't this weakening general-purpose security
+guarantees? in particular, what happens when message-distribution estimates are
+wrong?  We can hedge against such estimation failures by designing HE schemes
+that also provably meet the security targeted by conventional PBE schemes. Thus
+when estimates are bad, we fall back to standard security guarantees. When
+estimates are good, we do better.
+%In our prior work we showed that one can do better by building
+%distribution-sensitive PBE schemes. 
+
+Another example arises in the context of steganography. Here the
+application-specific distribution is that of the benign ``covertexts'' that
+ciphertexts should mimic. Hopper, Langford, von Ahn~\cite{Hopper:Provable_Stego}
+define semantic-security style goals for steganography and show how to provably
+achieve them. Their schemes, however, are impractical, as they assume efficient
+samplability of the precise covertext distribution and require multiple
+covertexts per single bit of plaintext. Moreover, as with PBE, if the secret key
+actually is low-entropy, then their security goals are unachievable. 
+
+In prior work, PIs Ristenpart and Shrimpton introduced format-transforming
+encryption (FTE). FTE can be roughly viewed as steganography against limited
+adversaries that only perform syntactical ``format'' checks against ciphertexts.
+So here the covertext distribution is assumed to be uniform over all strings
+from some set, such as the set of all bit strings that encode valid HTTP
+headers. This works for steganography when adversaries do not have more precise knowledge
+of the true covertext distribution. If they indeed do, then in theory, and possibly in practice, statistical attacks are possible that
+distinguish FTE ciphertexts from true benign messages. To do better, we again need
+distribution-sensitive cryptography, finding practical steganographic schemes
+that do better than FTE to resist attacks. 
+
+We will see further examples later, and indeed our proposed framework will
+surface new primitives as well, such as password-based steganography, that
+combine techniques from FTE and HE. 
+
+\subsection{Proposed Work: Developing Sound Methodologies for DSC Development}
+
+The examples reveal common underlying themes in what are, at first glance,
+otherwise quite disparate settings. We propose to explore the commonalities
+across various distribution-sensitive applications, and in so doing produce
+methodologies and viewpoints that together will form the foundation for the 
+new area of cryptographic research that we term DSC. 
+
+\fi
+
+

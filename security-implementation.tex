@@ -1,0 +1,29 @@
+\section{Ease of Correct Implementation as Security Property}
+
+\paragraph{Prior Work.}
+
+\tsnote{This thread has
+the biggest risk of failure.  But also has potential for large return, as it
+would change the way we think about security in the community}
+\tsnote{Need to do some digging outside of crypto here!}
+
+\todo{Rogaway's Authentication without Elision paper}
+\cpnote{This is what their framework buys us. The full protocol is divided into the
+``protocol core'' (PC) and the ``protocol details'' (PD). The PC is specified
+by the cryptographer and the PD is specified by the engineer. The PC ``calls''
+the PD in the course of the protocols execution. In the security analysis, we
+assume the PD is utterly controlled by the adversary. This allows cryptographers
+to ``partially specify'' a protocol that remains secure even as engineer's
+requirements change; the PC must be implemented precisely, but the PD may change
+to suit the programmers' needs.
+%
+So in this framework we're not formalizing ``implementation risk'' directly;
+instead, we're proving security of protocols that have flexibility in their
+implementation. It says precisely what parts you \emph{must} get right in order
+to have security, and what parts are not crucial.
+}
+
+\paragraph{Tasks.}
+\cpnote{We could move ``secure channels'' down here, or ``authenticated key
+exchange.'' Personally I prefer leaving this under the ``API-centric crypto''
+section.}

@@ -1,0 +1,150 @@
+\section{Project Description}
+\label{sec:intro}
+
+Contemporary encryption schemes are almost exclusively {\em
+distribution-agnostic}. Their security properties are independent of the
+statistical characteristics of plaintexts and they yield ciphertexts that are
+uniformly distributed in the view of an adversary. Distribution-agnostic
+cryptography is conceptually simple and often convenient in practice. It fails,
+however, to meet certain basic, common security needs. Password-based encryption
+using a conventional, distribution-agnostic cipher, for example, is vulnerable
+to brute-force cracking---especially given the weak passwords typically chosen
+by users. Similarly, ciphertexts produced using distribution-agnostic encryption
+are distinguishable from typical plaintext messages and thus fail to conceal the
+existence of encrypted communications, i.e., support steganography. 
+
+A need thus exists to advance beyond conventional approaches and devise
+innovative and rigorous cryptographic primitives that are specifically tailored
+to non-uniform plaintext and/or ciphertext distributions. In our proposed work,
+we will both enlarge the existing universe of such primitives and break through
+the conceptual barriers that treat them as isolated notions. We will draw such
+primitives together within a unifying framework that can inform and expand their
+range of application, a framework that we call {\em distribution-sensitive
+cryptography} (DSC). 
+
+\paragraph{Motivating applications.} As a springboard for advances in DSC, we
+propose to tackle key practical problems. In each of the settings below
+conventional cryptography fails to provide satisfactory security and,
+simultaneously, there exists opportunities for
+for DSC to lead us to 
+improvements.  %Examples include censorship circumvention (steganography), securing
+%password-based encryption (PBE) against brute-force cracking, and managing
+%human-generated (noisy) secrets in authentication. Partial solutions have seen
+%deployment, but tend to overlook research-driven results or incorporate them in
+%an ad hoc way without rigorous security metrics. 
+%Conversely, many theoretical
+%solutions remain uninformed by empirical study. We will bridge the gap between
+%theory and practice in key problem areas by designing novel DSC schemes with
+%{\em empirically-driven, provable security}, as for these motivating problems:
+
+\begin{newitemize} 
+\item{\em Light-weight stegonagraphy for censorship
+circumvention:} Several nation states conduct focused or blanket censorship by
+using deep-packet inspection (DPI) to detect and block particular protocols,
+such as
+Tor~\cite{Tor:iran_block-2011,Tor:iran_block,Tor:china_block_one,Tor:china_block,
+Tor:china_active_probe,Winter2012,Clayton06ignoringthe},
+TLS~\cite{TLS:iran_block}, and Skype VoIP~\cite{China_skype_ban,UAE_skype_ban}.
+Recent research by PIs Ristenpart and Shrimpton has yielded a primitive called
+format-transforming encryption (FTE)~\cite{..}.  FTE's speed and its ability to
+bypass existing regular-expression-based DPI filters have lead to its 
+deployment already with a number of tools, but it {\em cannot} defeat 
+statistically-based traffic filtering by adversaries with knowledge of normal
+message distributions. Existing relevant steganographic techniques that take
+into account such distributions, moreover, present a gap: They are rigorous but
+impractical~\cite{Hopper:Provable_Stego} or practical but lacking rigorous
+security assurances~\cite{Stegotorus}. %, such as the ability to rule out
+%detection
+%by certain classes of adversaries. 
+
+%We will develop {\em distribution-matching encryption} techniques that permit
+%fast encoding of ciphertexts to match the statistical properties of normal
+%traffic and lift the provable security benefits of FTE into a much stronger
+%adversarial model. Our research will see foundational benefit from connections
+%with honey encryption (see below) in our DSC framework; on the empirical side,
+%it will be informed by measurement studies and modeling of real-world internet
+%traffic and examination of deployed DPI tools. We will formulate both
+%complexity-theoretic adversarial models and empirically-driven ones reflecting
+%APIs in censorship tools, andwill use resulting bounds to model and validate
+%lightweight classes of DME. We will also use our models to study emerging
+%censorship-circumvention approaches, such as tunneling through existing
+%communication protocols to resist software-specific and active-probing attacks
+%by censors.
+
+\item{\em Brute-force-resistant password-based encryption:} Users tend to select
+weak passwords. Their password-based encryption (PBE) ciphertexts are thus
+vulnerable to brute-force password cracking attacks. This is a serious and
+pervasive problem, as PBE commonly protects highly sensitive data such as
+password vaults on mobile devices and in the cloud.\footnote{At least one
+password management service, LastPass, has already suffered a breach in which
+PBE vaults were apparently exposed~\cite{}.}  PIs Juels and Ristenpart recently
+proposed {\em honey encryption} (HE)~\cite{HoneyEnc-EC:2014}, a DSC-style
+approach that transcends the brute-force barrier in PBE security. At core it
+requires building schemes that incorporate models of a particular
+application's plaintext distributions. But known HE schemes handle only relatively
+simple message distributions, not the messy ones found in many settings.
+
+%HE strengthens PBE ciphertexts by generating fake plaintexts
+%that statistically resemble real ones when decryption occurs under the wrong
+%key. Existing HE schemes are narrow (e.g., perform credit-card number
+%encryption) or impractical, e.g., yielding ciphertext expansion for RSA private
+%keys that is linear in their bit length~\cite{HoneyEnc-EC:2014}. We will
+%innovate approaches to HE that radically improve its efficiency and bring it
+%into the realm of practicality. For example, we propose below a new approach (a
+%``programmable'' PRG construction) that reduces the ciphertext expansion in HE
+%for RSA private keys from linear to {\em constant}. 
+
+\item{\em Securing human-generated authentication secrets:} Users make typos
+when they key in passwords. Biometrics, such as fingerprints, are noisy.
+Conventional crypto, however, is fragile in the face of error-prone data, and
+storing standard error-correcting codes can leak to attackers significant
+information about the user's secret. Existing primitives such as secure
+sketches~\cite{} and fuzzy extractors~\cite{} are distribution agnostic, and
+leak less information, but still too much for most practical settings. 
+%To
+%accommodate noisy data, researchers have developed cryptographic primitives such
+%as secure sketches, a component of fuzzy extraction~\cite{}. These primitives
+%have not yet seen real-world use, in many cases because they incur excessive
+%entropy loss in practice. 
+%We will overcome this barrier to adoption through a
+%fundamentally new DSC-type approach called a {\em distribution-sensitive secure
+%sketch} (DSSS) whose innovation is incorporation into the design of the
+%primitive of underlying message distributions. Through empirical study of
+%password databases leaked in the wild, we will engineer a practical DSSS scheme
+%for password-typo detection whose many applications include more useable honey
+%  encryption.  
+\end{newitemize}
+
+
+\paragraph{A unifying framework}  Exploration by the research community of problems like those illustrated above has been largely disjointed, but close inspection reveals a common theme in DSC. We have brought
+together the three PIs for this proposal in order to explore and exploit
+the synergies of this underlying theme. We will unify disparate threads of research on DSC concepts and primitives into a single, overarching, formal framework. The explanatory power of this framework will yield new insights, permit a cross-pollination of concepts and techniques, and spawn new tools and techniques for a range of practical security problems. The DSC framework tailors and applies cryptographic primitives to real-world problem domains methodologically through the following sequence of steps:
+
+\begin{enumerate}
+\item{\em Modeling:} A class of real-world applications is identified and corresponding message distributions estimated, yielding an application model. In our examples above, messages of interest include passwords, biometrics, and cover traffic. An example model of password selection is the RockYou corpus of leaked passwords~\cite{}.
+\item{\em Definition retooling:} Relevant security concepts and accompanying definitions / metrics are retooled to achieve or amplify distributional sensitivity. Steganography, for example, may be conceptualized as encryption with sensitivity to ciphertext distributions, honey encryption as encryption with sensitivity to plaintext distributions, and DSSS as a bounded-leakage error-detecting (or correcting) code with message-distribution sensitivity. (We give formal security definitions for all three below.)
+\item{\em Construction:} Distribution-sensitive primitives are built that take advantage of application models to meet reformulated security definitions. Additionally, a key design principle in DSC is {\em hedging}, i.e., building in security assurances against application modeling failures. 
+\item{\em Analysis:} The security of the newly conceived primitives is tested against the underlying formalism, both under the application model and through empirical validation.
+\end{enumerate}
+
+By applying this framework to a body of examples, we will bring to light common definitions and tools. One example emerging from DSC framework application across problem areas is a concept called a {\em distribution-transforming encoder} (DTE). The lynchpin of the honey encryption construction in~\cite{}, a DTE is a 
+pair $\DTE = (\encode,\decode)$ of algorithms, where $\encode$ is a mapping from a message space $\mspace$ to a space $\sspace$ of what are called {\em seeds}, and $\decode$ maps seeds to messages. In the original DTE definition, a good DTE is one in which the encoding of seeds selected uniformly at random yields a distribution close to a target one $\mdist$ over $\mspace$. The DSC framework points the way to a natural broadening of DTEs to take in non-uniform seed spaces, and subsequently to a DTE definition that encompasses honey encryption, FTE, steganography, and other primitives. 
+
+This expanded DTE definition resulting from the DSC framework in turn opens of a vista of potential new cryptographic primitives that we will explore in this proposal. These include new forms of information-theoretic security in applications that use low-entropy secrets (such as passwords), namely: (1) Password-based steganography and (2) Steganography for password-based key-agreement protocols. Additionally, as we explain below, a special class of DTEs offers a novel approach in some settings to: (3) Highly efficient yet provably secure steganography. \noteari{We need to discuss this or drop it.}
+
+%Our DSC framework also brings into view another key conceptual connection, between %DSC and techniques from simulation-based proofs of security. These proofs often %involve creating an environment that contains a ``trap'' value, but is statistically %indistinguishable by an adversary from a real environment. Similar techniques can be %used in a DSC primitive to embed a user secret (rather than a ``trap'' value) in a %distribution that is indistinguishable from a target message distribution. Our HE %construction (mentioned above) that yields practical RSA private key encryption is a %simple instance of this idea. It gives rise to a key class of DTEs based on rejection %sampling that immediately leads to more efficient honey encryption and promises %efficiency improvements in steganography and other applications.
+
+\paragraph{Experiments and artifact deployment} Within the DSC framework, we will inform our explorations into foundations and new constructions through empirical study of deployment environments and the construction of practical tools. One key effort will be statistical evaluation and modeling of packets captured in a large-scale traffic measurement study. For empirically observed traffic, we will aim to design efficient tools (via DTEs) that can be parlayed into techniques for circumvention of statistical DPI filtering on the internet. Building on our existing, deployed DPI-circumvention tools, we publicly release novel tools resulting from the research in this proposal.
+
+Another example tool that we will deploy addresses a drawback to honey encryption, namely its silent decryption failures when keys contain errors, e.g., when there are typos in passwords. DSSS points the way to a solution.
+Drawing on real-world password and password-vault breach data we will construct DSSS schemes that can detect typos in a client with minimal degradation in password entropy. In preliminary work, we have observed what we call embedded codebook structure in popular passwords in the wild and devised ways to capitalize on such structure to engineer efficient DSSS schemes. We will deploy DSSS code in conjunction with SweetPass, a honey-encryption-based password vault under development, and extend this research also to biometric data. 
+
+
+\paragraph{Team}
+
+
+\paragraph{Organization}
+
+
+
+

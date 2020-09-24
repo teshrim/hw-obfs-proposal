@@ -1,0 +1,132 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Low-entropy Steganographic Security and Password-based DSE}
+\label{sec:pwstego}
+%\tnote{Need to massage to ensure we have proper relationship between DSE and
+%Stego sorted out here and in previous section}
+%\tnote{Remember to cite \cite{Cachin:Info_Theory_Stego} regarding DSE
+%constructions, probably in last section is better.}
+%
+The previous discussion of distribution-sensitive encryption was
+strongly focused on the real-world censorship circumvention
+problem. Let us step back now to consider a broader perspective on
+steganography and new opportunities for DSC to have positive impact.
+
+%\paragraph{Stegonagraphy in practice.}  
+A classic approach for steganography 
+attempts to hide a conventionally encrypted message
+in the low bits of pixel data in an image
+(c.f.,~\cite{johnson1998exploring,cheddad2010digital,chandramouli2004image}).
+We first observe that this can be viewed as an encrypt-then-DTE
+construction, just like the DSE schemes discussed in the last section:
+here the DTE scheme is parameterized by one or more images, and encodes by substituting
+ciphertext bits into appropriate locations in order to create the
+covertext. 
+The security target for image-based steganography is most often ad hoc, essentially
+that human observers cannot distinguish between the original image and
+the one with ciphertext embedded. But
+this target leads to weak schemes, as simple statistical tests or other
+algorithmic approaches can easily detect the presence of an embedded
+ciphertext~\cite{chandramouli2004image,provos2003hide}. 
+
+Compounding this is the fact that,
+as with conventional encryption, many practical uses of conventional 
+steganographic tools rely upon human-memorizable passwords. 
+This makes them vulnerable to offline,
+brute-force attacks that not only confirm the existence of hidden content but
+also \textit{reveal the password and message}, as suggested by Provos and
+Honeyman~\cite{provos2003hide}. The procedure is as follows.
+Given a possible covertext~$C$, run decryption with each of the
+plausible passwords.  
+Should none decrypt to properly formatted plaintexts then one can conclude correctly,
+with high probability, that~$C$ is in fact a benign message.  Otherwise, $C$~is
+indeed a covertext and the message and password are revealed. The format might
+be correct ASCII encoding of text or the like.  In a chosen-message attack
+setting, including the steganographic security definition formalized by Hopper
+et al., the attacker knows not just the format, but the entire plaintext.
+
+%\paragraph{Steganographic security with low-entropy keys.} 
+A priori, it may seem that secure steganography with
+low-entropy keys is impossible.  But in specific settings,
+message distributions are known (or can be well estimated), a fact we will seek to 
+leverage.  As a concrete example, and one that is also
+potentially important in the censorship setting, we will consider
+password-protected, steganographic key distribution.  Here, 
+the goal is to transmit the public key of
+an asymmetric encryption or signature scheme to another party, while
+hiding the exchange.  In this case, the messages 
+come from a clearly-defined distribution, such as an element sampled uniformly
+from a group suitable for discrete-log-based schemes, or a uniformly sampled RSA modulus and public
+exponent.\footnote{Interestingly, we expect that the latter will be very
+challenging, in fact it may only be feasible with machinery such as cryptographic
+obfuscation~\cite{garg2013candidate}. The reason is that it would seem to require
+having a sampling routine that produces a RSA modulus without knowing the
+factors.} Crucially, the coins used to sample from these
+distributions should be unknown to parties external to the exchange protocol.
+%In other contexts, we will investigate use of empirically educated
+%estimates of the message distribution. \tsnote{This last sentence
+%  fizzles out.}
+
+
+\begin{task}
+\label{task:pwstego-defs}
+We will formalize security notions for steganographic systems when used with
+low-entropy keys such as human passwords. 
+\end{task}
+
+Specifically, we will develop security notions of \textit{low-entropy steganographic
+  security}, wherein covertexts must be indistinguishable from
+non-steganographic ``benign'' channel messages, even when low-entropy keys are used.
+The key to achieving such a notion, as we've just suggested, 
+will be to target security when the challenge messages are 
+drawn from a distribution with coins unknown to the attacker.  
+We will explore settings in which the attacker and scheme designer
+know the distribution, as well as (arguably more practical) 
+settings in which they are only able to each obtain some number of samples drawn
+from it. 
+
+
+\paragraph{New steganographic constructions.}
+We will also pursue the design of constructions that meet
+this new goal of low-entropy steganographic security.  This will not be a simple matter of tweaking existing
+schemes that are provably secure when given high-entropy keys.
+For example, our preliminary work shows that the schemes from Hopper et
+al.~\cite{Hopper:Provable_Stego} are vulnerable, in the low-entropy
+key setting, to a brute-force attack similar to
+the one described above, even when the underlying message is 
+a uniform bit string.  (The weakness in these schemes is the use of redundancy to ensure low
+probability of decryption errors.) 
+
+\begin{task}
+\label{task:attack-hopper}
+We will show an attack against the low-entropy steganographic security of the
+Hopper et al.~scheme for uniformly selected random messages.
+\end{task}
+
+\noindent
+Our initial approach will be to extend the encrypt-then-DTE construction to
+include the techniques from HE.  That is, we will first apply a DTE tailored
+to the plaintext distribution, then apply a carefully selected 
+password-based encryption scheme, and finally, to obtain the ciphertext, apply to the intermediate ciphertext a DTE tailored to the cover
+distribution. We call this a \textit{DTE-encrypt-DTE} construction.  When the
+plaintext and ciphertext distributions are amenable to building DTEs,
+such a construction has the potential to provide steganographic
+security (the attacker can't determine if it is an encryption or just a ``benign''
+message), \emph{even} in the face of 
+brute-force attacks like the one described above. The reason will be that for any password,
+decryption of a message, whether it be benign or the output of DTE-encrypt-DTE,
+will produce a 
+plausible plaintext message.   DTE-encrypt-DTE is just one framework for
+building low-entropy steganography (and DSE), and we expect that our
+work will uncover others.
+
+\begin{task}
+\label{task:pwstego-approaches}
+We will develop new approaches to low-entropy, and especially
+password-based, steganography.
+\end{task}
+
+%
+%\tnote{need to work through this more...}
+%\tsnote{Made a pass through this section, integrating with earlier DSE
+%  stuff. Not sure we need to say much more.}
+

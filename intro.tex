@@ -1,0 +1,673 @@
+\section{Introduction}
+\label{sec:intro}
+
+For years, the cryptography research community has been imploring developers to ``please stop rolling your own crypto!''  An
+expanded version of this might be: cryptography is hard, so let the
+crypto experts handle the crypto; you (just) worry about implementing what we
+provide. 
+%
+There is good sense in this message.  Cryptography \emph{is} hard.
+The security theorems that we prove can depend crucially, and
+subtly, on parameter choices, padding schemes, protocol logic, etc. 
+Our research community has developed a collective wisdom that helps
+guide us to good solutions (or at least to avoid pitfalls).
+
+To their credit, most software developers do seem to be heeding our plea.  
+But there is a rejoinder that we academic cryptographers have largely
+missed, or disregarded.
+%
+To paraphrase Paul Kocher's invited lecture at Crypto'16, and various
+speakers (e.g., David McGrew (Cisco), Daniel Kahn-Gilmore (ACLU), Thai
+Duong (Google)) at Real World Crypto:
+%
+cryptographers must understand that the design of cryptographic
+libraries, specifically the APIs they export, \emph{is hard
+  too}. Moreover, fielded APIs have long-lifetimes, because changing them wreaks havoc upstream. 
+%Changing APIs breaks the applications that call them, and
+%fixing the applications costs real money.
+%
+So if a theoretical primitive it is hard to realize with existing libraries and
+their APIs, then either it won't be
+implemented, or (worse) it will be prone to being implemented incorrectly.
+
+Motivated by this reality, our position is that \emph{it is incumbent upon
+academic cryptographers to accept practical
+implementation and deployment needs as a guide for developing theory.}
+%
+%\cpnote{I would say this differently. ``This proposal adopts the position that
+%\emph{it is incumbent on cryptographers to bridge this gap between theory and
+%implementation complexity}.}
+%
+Specifically, the research directions that we propose here are founded on our
+beliefs that:
+\begin{itemize}
+  \item Theory is considerably more useful to real-world security
+    when it is mindful of its translation to practice.
+%    In particular, when it endeavors to respect the APIs that existing crypto
+%    libraries expose.
+%
+ \item Ease-of-correct-implementation should be treated as a first-class
+    security consideration.
+%
+  \item Cryptographic primitives should aim to be forgiving of misuse.
+\end{itemize}
+%when theory gives formal syntax for a primitive, it should be clearly
+%    suggestive of an actual API that is aligned with what developers want; and
+
+\noindent
+In support of the first, we suggest an \emph{API-centric} approach to
+the development of cryptographic theory.  By this we mean several
+things.  
+%
+First, that existing theory ---~in particular the formal
+syntax that we have developed to describe cryptographic primitives,
+and our theoretical realizations of them~---
+should be carefully reexamined with respect to the actual APIs that
+libraries export.  As prior works by PI Shrimpton~\cite{NRS,BPS} and
+others~(e.g.~\cite{FPMG15}) show, mismatches may be common and lead to
+theory that is less useful than we might think, or even damaging.
+%
+Second, that new realizations of existing primitives should take into
+consideration how easy they will be to implement with (at least)
+broadly adopted libraries.
+%
+Third, that the formalization of new primitives should include syntax
+that is clear about the functionalities that will need to be
+implemented, i.e. syntax that is ``API-like''.  Relatedly, security
+notions should consider these functionalities, so as to have a more
+practice-grounded view of the security of primitives.  All of the
+research that we propose here adheres to an agenda of \emph{API-centric
+cryptography}.
+
+To the second point, ease of correct implementation is not something
+that is formally considered as part of the provable-security paradigm
+that underpins modern cryptography. We think this is unfortunate, as
+security vulnerabilities that result from incorrect implementation are
+far more common than vulnerabilities from bad theory.  In the best
+case, we would like to see ease-of-correct-implementation quantified
+and incorporated into security theorems.  This is something that we
+will work towards as part of our research agenda, but in this proposal
+we will focus on a slightly different tact.  In lieu of a direct
+quantification, we look to a little-known work by 
+Rogaway and Stegers~\cite{RS09}. Loosely speaking, they model cryptographic
+protocols as being comprised of a partially specified protocol (PSP)
+and protocol details (PD).   The PSP is the cryptographic core of the
+protocol, and it is assumed that this portion of the actual real-world
+scheme is specified in sufficient detail to be implemented correctly.
+The PD is the rest of the scheme, i.e., all of the details
+that are not attended to by the theory.\footnote{Rogaway and Stegers
+  take aim at protocol standards, but one can just as easily consider
+  academic papers.}  In their modeling, the PD is \emph{adversarially}
+controlled. Thus, a proof of security provides evidence of robustness
+to errors in the implementation of the protocol.  Rogaway and Stegers
+apply this interesting approach to entity authentication protocols, but we
+believe it can much more broadly applied to cryptographic protocols
+and primitives.  Some of the concrete tasks that we propose reflect
+this.
+
+The third point, that cryptographic primitives should aim to be
+forgiving of misuse in practice, has recently gained some traction
+in the symmetric-key crypto community.  
+Intuitively, the idea is to
+preemptively mitigate the damage resulting from common misuses of
+cryptographic primitives, by building the misuse into the adversarial
+model. Concretely misuse-resistance was
+introduced by Rogaway and PI Shrimpton~\cite{RS06} in order to build
+nonce-based authenticated encryption schemes that do not forfeit all
+provable-security guarantees when a nonce is repeated.  Since then,
+nonce-misuse-resistance has appeared in a number of papers
+(e.g., \cite{ABL+14,HRRV15,HKR15}), and as one of the desiderata in the CAESAR
+competition~\cite{caesar}.  Recent work by PI Shrimpton~\cite{BPS}
+looks at hedged public-key encryption, which can be seen as a kind of
+misuse-resistance where the encryption scheme is used with bad
+randomness.  (This was done from an API-centric perspective, too, as
+we will discuss.)  By interacting with industrial developers, we will
+seek out other forms of misuse, and push to protect a broad range of
+cryptographic primitives ---~and practitioners who wish to use
+them~--- against real-world usage errors.
+
+
+\ignore{
+\paragraph{API-centric Cryptography.}
+\todo{Chris: Summarize body section, focusing on tasks and (very briefly)
+  prior work by me.}
+\tsnote{Possible subsume implementation-considerate formalisms into this?}
+
+\paragraph{Misuse-Forgiving Primitives.}
+\todo{Tom: Summarize body section, focusing on tasks and (very briefly)
+  prior work by me.}
+
+
+\paragraph{Implementation-Considerate Formalisms.}
+\todo{Summarize body section, focusing on tasks and (very briefly)
+  prior work by me.}
+}
+
+\subsection{Public artifacts and broader impacts}
+In addition to publications at venues targeted at expert
+cryptographers and security researchers, we will produce higher-level
+and survey articles appropriate for a more general computer science
+audience.  Whenever possible, we will implement the theory that we
+develop, and make the software open-source.  Likewise, any software
+tools that we develop in support of the tasks outlined here will be
+made open source.  We specifically propose to work closely with
+industrial contacts in order to develop a better understanding of
+real-world APIs, real-world patterns of misuse, etc., and we will
+provide feedback and assistance to industry in return.  We
+specifically propose to examine standards, and we will provide
+feedback and support to the standards committees and/or their
+organizing bodies as appropriate.
+The PI has a track record of not only releasing public, open-source
+research systems (e.g. LibFTE~\cite{libfte}, Marionette~\cite{marionette}),
+but also going the extra mile to help incorporate such implementations into production
+systems, such as Tor and Google's uProxy. 
+(See \secref{sec:outreach} for more information about our track record in this
+regard.)
+We will target similar impact for the proposed work
+
+We will also make data sets publicly available by default, the exception being
+cases in which we have privacy or confidentiality obligations. See the Data
+Management Plan for more details regarding our handling of data.
+
+\subsection{PI Qualifications}
+PI Shrimpton has a proven track record of successful research in security, cryptography, and system
+development.   We have already mentioned some of the relevant work
+that prepares us to make progress on the the proposed research.  For
+more than a decade, PI Shrimpton has pursued an agenda of making
+cryptography that is relevant to practice and forgiving of misuse
+(e.g.,\cite{RS06} and the related RFC \cite{rfc5297},\cite{BRSS10,PRS11,luchaup2014libfte,ST15}), of
+examining standards~\cite{NRS,SSW,CNS+17}, and more recently of explicitly considering
+cryptography with respect to real libraries and APIs~\cite{BPS}.
+PI Shrimpton also has a mature network of colleagues that may benefit
+this work. Several (e.g., Phillip Rogaway, Kenny Paterson, Thomas Ristenpart, Trevor
+Perrin) have already expressed interest in collaborating on the
+research proposed here.
+%which
+%will be useful when extending cryptographic design methods to incorporate 
+%techniques from other disciplines (e.g.\ learning theory, natural
+%language processing). 
+%See the Collaboration Plan for more details about PI backgrounds and
+%our logistical plans.
+\subsection{Proposal Organization and Tasks}
+In the following sections, we will provide background and motivation
+for the research threads will pursue. Throughout, we identify the concrete tasks we
+will undertake with the visual call-out {\bf Task}.  Our list of tasks serves
+as a compact outline of what we will deliver, at a minimum.  We follow
+the technical material with a discussion of the broader
+impact of our research agenda. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ignore{
+Contemporary encryption schemes are almost exclusively {\em
+distribution-agnostic}. Their security properties are independent of the
+statistical characteristics of plaintexts, and they yield ciphertexts that are
+uniformly distributed bit strings, irrespective of the use case.
+Distribution-agnostic cryptography is conceptually simple and its generality
+is often convenient in practice. It fails, however, to meet basic security needs in
+several important, real-world contexts.  To address these needs, and
+those of applications yet uncovered, we will pursue a line of work centered on
+what we call \emph{distribution-sensitive cryptography}.
+%This will require a new methodology
+%for building context-specific cryptographic schemes, the output of which will be
+%  improved security supported by a blend of empirical and formal analyses.
+
+
+
+%Password-based encryption
+%using a conventional, distribution-agnostic cipher, for example, is vulnerable
+%to brute-force cracking---especially given the weak passwords typically chosen
+%by users. Similarly, ciphertexts produced using distribution-agnostic encryption
+%are distinguishable from typical plaintext messages and thus fail to conceal the
+%existence of encrypted communications, i.e., support steganography.
+
+%A need thus exists to advance beyond conventional approaches and devise
+%innovative and rigorous cryptographic primitives that are specifically tailored
+%to non-uniform plaintext and/or ciphertext distributions. In our proposed work,
+%we will both enlarge the existing universe of such primitives and break through
+%the conceptual barriers that treat them as isolated notions. We will draw such
+%primitives together within a unifying framework that can inform and expand their
+%range of application, a framework that we call {\em distribution-sensitive
+%cryptography} (DSC).
+
+\paragraph{Motivating problems.}
+%Much of our work will be driven
+%by three settings in which conventional cryptographic thinking
+%has missed the mark, because the tools it has delivered are
+%fundamentally mismatched problem presented, or because practical usage
+%and deployment issues render them unusable.
+Our research agenda will target important problems
+for which conventional cryptography has failed to yield adequate solutions.
+%tackle several important practical problems for which security
+%has been historically elusive.
+At first glance, these problems seem unrelated to one another.
+%On the contrary, they are connected in a way that calls out for the development of DSC.
+Our research in DSC, however, will surface deep underlying connections and overlapping practical challenges in problems such as:
+
+%simultaneously, there exists opportunities for
+%for DSC to lead us to
+%improvements.  %Examples include censorship circumvention (steganography), securing
+%password-based encryption (PBE) against brute-force cracking, and managing
+%human-generated (noisy) secrets in authentication. Partial solutions have seen
+%deployment, but tend to overlook research-driven results or incorporate them in
+%an ad hoc way without rigorous security metrics.
+%Conversely, many theoretical
+%solutions remain uninformed by empirical study. We will bridge the gap between
+%theory and practice in key problem areas by designing novel DSC schemes with
+%{\em empirically-driven, provable security}, as for these motivating problems:
+
+\begin{newitemize}
+
+\item{\em Brute-force attacks on password-based encryption.}
+  Users tend to select weak passwords. Their password-based encryption (PBE)
+  ciphertexts are thus vulnerable to brute-force password cracking attacks
+  that try to decrypt under guessed passwords and then check if the resulting
+  plaintext is plausible.  This problem is serious and pervasive: In the face
+  of today's frequent compromise of mobile devices and cloud systems, PBE is
+  often the last line of defense for highly sensitive data.  (Password
+    manager~\cite{whitney11} compromise in the cloud is one example arising in
+    practice.)
+%such as
+%password vaults. 
+%(At least one password
+%management service, LastPass, has already suffered a breach in which PBE vaults
+%were apparently exposed~\cite{}\fixme{fill in}.) 
+%
+%Traditional encryption fails in this setting because it does nothing
+%to frustrate efforts to check the plausibility of plaintexts.
+
+%PIs Juels and Ristenpart recently
+%proposed {\em honey encryption} (HE)~\cite{HoneyEnc-EC:2014}, a DSC-style
+%approach that transcends the brute-force barrier in PBE security. At core it
+%requires building schemes that incorporate models of a particular
+%application's plaintext distributions. But known HE schemes handle only relatively
+%simple message distributions, not the messy ones found in many settings.
+
+%HE strengthens PBE ciphertexts by generating fake plaintexts
+%that statistically resemble real ones when decryption occurs under the wrong
+%key. Existing HE schemes are narrow (e.g., perform credit-card number
+%encryption) or impractical, e.g., yielding ciphertext expansion for RSA private
+%keys that is linear in their bit length~\cite{HoneyEnc-EC:2014}. We will
+%innovate approaches to HE that radically improve its efficiency and bring it
+%into the realm of practicality. For example, we propose below a new approach (a
+%``programmable'' PRG construction) that reduces the ciphertext expansion in HE
+%for RSA private keys from linear to {\em constant}. 
+
+
+\item{\em Censorship of encrypted protocols:} Censorship is so pervasive and
+heavy-handed in some nations that Reporters Without Borders labels them
+``Internet Black Holes''~\cite{NorthKorea:2006}. Deep-packet inspection (DPI)
+helps censors identify
+and block encrypted network protocols 
+%Several nation states conduct focused or blanket censorship by
+%using deep-packet inspection (DPI) to detect and block particular protocols,
+such as
+Tor~\cite{Tor:iran_block-2011,Tor:iran_block,Tor:china_block_one,Tor:china_block,
+Tor:china_active_probe,Winter2012,Clayton06ignoringthe},
+TLS~\cite{TLS:iran_block}, and Skype VoIP~\cite{China_skype_ban,UAE_skype_ban}.
+Anti-censorship tools require encryption primitives capable
+of producing ciphertexts that appear to be distributed like ``benign'' cover traffic, 
+at least to a level of fidelity that deceives real DPI-based censorship tools
+monitoring realistic volumes of traffic. Some existing steganographic tools can achieve
+provable assurance that ciphertexts match cover traffic distributions~\cite{Hopper:Provable_Stego,Cachin:Info_Theory_Stego,BC04,lysyanskaya2006provably}, but they
+are impractical for most settings.
+
+
+%\item{\em Censorship of internet traffic.}
+%A significant, and increasing, number of nation-states use deep-packet
+%inspection (DPI) technology to enforce traffic censorship policies.
+%DPI allows censors to base policies on information contained within packet
+%payloads.  For example, which protocols are being transported, and
+%whether or not encryption is being used (thereby hiding rapid analysis
+%of URLs and message text).  Recently
+%Tor~\cite{Tor:iran_block-2011,Tor:iran_block,Tor:china_block_one,Tor:china_block,
+%Tor:china_active_probe,Winter2012,Clayton06ignoringthe},
+%TLS~\cite{TLS:iran_block}, and Skype
+%VoIP~\cite{China_skype_ban,UAE_skype_ban} have all been the subject of
+%DPI-powered blocking.
+%To fight back, anti-censorship tools need encryption primitives
+%capable of producing ciphertexts that appear to be distributed like
+%`benign' traffic, at least to a level of fidelity that fools real DPI
+%when observing realistic volumes of traffic.
+%Recent research by PIs Ristenpart and Shrimpton has yielded a primitive called
+%format-transforming encryption (FTE)~\cite{..}.  FTE's speed and its ability to
+%bypass existing regular-expression-based DPI filters have lead to its 
+%deployment already with a number of tools, but it {\em cannot} defeat 
+%statistically-based traffic filtering by adversaries with knowledge of normal
+%message distributions. Existing relevant steganographic techniques that take
+%into account such distributions, moreover, present a gap: They are rigorous but
+%impractical~\cite{Hopper:Provable_Stego} or practical but lacking rigorous
+%security assurances~\cite{Stegotorus}. %, such as the ability to rule out
+%detection
+%by certain classes of adversaries. 
+
+%We will develop {\em distribution-matching encryption} techniques that permit
+%fast encoding of ciphertexts to match the statistical properties of normal
+%traffic and lift the provable security benefits of FTE into a much stronger
+%adversarial model. Our research will see foundational benefit from connections
+%with honey encryption (see below) in our DSC framework; on the empirical side,
+%it will be informed by measurement studies and modeling of real-world internet
+%traffic and examination of deployed DPI tools. We will formulate both
+%complexity-theoretic adversarial models and empirically-driven ones reflecting
+%APIs in censorship tools, and will use resulting bounds to model and validate
+%lightweight classes of DME. We will also use our models to study emerging
+%censorship-circumvention approaches, such as tunneling through existing
+%communication protocols to resist software-specific and active-probing attacks
+%by censors.
+
+\item{\em Securing human-generated authentication secrets.} Users make typos
+when they key in passwords. Biometrics, such as fingerprints, are noisy.
+Conventional crypto, however, is fragile in the face of error-prone data. 
+Existing approaches for cryptographic error-correcting codes such as secure
+sketches and fuzzy extractors~\cite{DORS08} seek to address this problem, but leak too much
+information about low-entropy user secrets to be of practical use.
+%Existing primitives such as secure
+%sketches~\cite{} and fuzzy extractors~\cite{} are distribution agnostic, and
+%leak less information, but still too much for most practical settings. 
+%To
+%accommodate noisy data, researchers have developed cryptographic primitives such
+%as secure sketches, a component of fuzzy extraction~\cite{}. These primitives
+%have not yet seen real-world use, in many cases because they incur excessive
+%entropy loss in practice. 
+%We will overcome this barrier to adoption through a
+%fundamentally new DSC-type approach called a {\em distribution-sensitive secure
+%sketch} (DSSS) whose innovation is incorporation into the design of the
+%primitive of underlying message distributions. Through empirical study of
+%password databases leaked in the wild, we will engineer a practical DSSS scheme
+%for password-typo detection whose many applications include more useable honey
+%  encryption.  
+\end{newitemize}
+What is common among these settings is that 
+typical cryptographic approaches fail to account for, or leverage to
+their benefit, the \textit{distributions} of plaintexts, ciphertexts, and
+secrets.
+Decryption with a PBE scheme under the wrong
+password results in messages that are not distributed like real ones; symmetric
+encryption does not produce ciphertexts with the distribution of ``benign''
+traffic; and secure sketches and fuzzy extractors cannot capitalize on structure within
+distributions of the secret data to which they are applied. 
+%These issues here not restricted to particular algorithms, but rather the
+%limitations are inherent in the classic security goals targeted by designers: no
+%scheme meeting these goals can do better.
+
+\paragraph{Preliminary DSC-style approaches.}
+Recent work by the PIs in two of the three problem domains highlights the
+promise of DSC-style solutions. PIs Juels and Ristenpart recently introduced
+honey encryption (HE), a primitive that yields PBE schemes in which decryption with the
+wrong password outputs plausibly distributed decoy plaintexts. The result is provable security in settings where plaintext distributions can be accurately modeled, even when passwords are low-entropy.  While our initial  work on HE introduced
+schemes for some simple plaintext distributions, such as
+credit-card numbers and prime numbers, extending this work to
+other plaintext spaces, such as password managers, documents, and so forth, will require design innovations.
+
+In a separate line of work, PIs Ristenpart and Shrimpton introduced a primitive
+called format-transforming encryption (FTE)~\cite{Dyer-2013} for which
+ciphertexts appear to be
+uniform samples from a regular~\cite{Dyer-2013,luchaup2014libfte} 
+or context-free~\cite{luchaup2014formatted} language.
+Using appropriate languages for network message formats, the resulting
+ciphertexts can be viewed as steganography that mimics 
+benign traffic only approximately. The resulting 
+schemes, however, are faster than prior steganographic approaches and work against
+existing real-world DPI systems. Still, FTE only yields {individual} ciphertexts that
+mimic benign traffic formatting, and it does not support non-uniformly 
+distributed messages. Thus it is potentially
+vulnerable to statistical attacks.  
+ 
+\iffalse
+Decryption with a PBE scheme under the wrong password results in
+messages that are not distributed like real ones, making plausibility
+of plaintexts easy to check.  Recent work on Honey Encryption (HE) by PIs Juels and
+Ristenpart begins to address this.  For a few specific applications,
+they were able to build PBE schemes for which decryption with the wrong
+password outputs plausibly distributed decoy plaintexts. 
+%We gave
+%proof-of-concept schemes for some simple plaintext distributions, such as
+%uniform CCNs and prime numbers.  
+Our work will significantly expand upon these results; see Section~\ref{sec:he}
+
+Similarly, conventional encryption does not consider the distribution
+of `benign' traffic, so its random bitstring ciphertexts stand
+out~\cite{KBMP13}.  Folklore might suggest that steganography 
+is the right tool for the job.  However, existing
+steganographic tools are either provably secure, yet not suited for
+practical uses~\cite{Hopper:Provable_Stego}; or they can support
+practical uses, but lack rigorously established security
+assurances. (Most traditional steganography falls into the latter category.)
+Recent work on Format-Transforming Encryption (FTE) by PIs Ristenpart
+and Shrimpton shows that lightweight steganographically enabled
+encryption can fool real DPI and support real usage.  Still, FTE only makes
+{individual} ciphertexts that mimic `benign' traffic formatting.  
+It fails to account for \textit{distributional characteristics} of
+traffic, leaving it potentially vulnerable to statistical attacks.  
+Our work will address this; see Section~\ref{sec:dse}
+
+
+Finally, secure
+sketches and fuzzy extractors ignore the details of the distribution of secret
+data. \tnote{The last one sounds a bit vague. Can we firm it up?}
+\tsnote{Parallelize with previous two paragraphs}
+%Recent work by the PIs has pointed towards DSC-style solutions in two of these
+%domains.  PIs Ristenpart and Shrimpton introduced a primitive called
+%format-transforming encryption (FTE)~\cite{..} for which ciphertexts are uniform
+%samples from a regular or context-free language. Using appropriate languages for
+%network message formats, the resulting ciphertexts can be viewed as crudely
+%approximating benign traffic. The resulting schemes are faster 
+%than prior steganographic approaches. PIs Juels and Ristenpart recently introduced honey
+%encryption (HE) that builds PBE schemes for which decryption with the wrong
+%password outputs plausibly distributed decoy plaintexts. We gave
+%proof-of-concept schemes for some simple plaintext distributions, such as
+%uniform CCNs and prime numbers. 
+
+%FTE's speed and its ability to
+%bypass existing regular-expression-based DPI filters have lead to its 
+%deployment already with a number of tools, but it {\em cannot} defeat 
+%statistically-based traffic filtering by adversaries with knowledge of normal
+%message distributions.
+
+%cross-cutting limitation is that existing cryptographic
+%primitives are distribution agnostic: in-use symmetric encryption disregards
+%normal traffic distributions; PBE tools do not consider plaintext distributions
+%and so allow brute-force attackers to pick out the proper message; and secure
+%sketches and fuzzy extractors must work for arbitrary high-entropy message
+%distributions, not specific ones. 
+\fi
+
+While offering promising approaches to addressing the shortcomings of
+conventional cryptography, our initial work also highlights the scope of the associated
+challenges and the need for bold conceptual advances in developing and
+deploying DSC.  Instead of pursuing the challenges in isolation, therefore, we
+%propose to develop a broad framework around them.
+have brought together a team of PIs to develop a broad framework for DSC. 
+We will leverage this framework to develop improved security tools in the
+contexts of PBE and censorship avoidance, and also use it to identify and solve
+additional problems, such as those arising in the management of noisy
+%authentication 
+secrets.  
+%and for which we only have a plan of attack due to the viewpoints derived from
+%this DSC framework.
+
+%goal, with real potential to affect both products \textit{and} people.  But the
+%problems will also serve as important tools in the development of a
+%theory of DSC, which is the main scientific objective of this work.
+%\tsnote{stopped here}
+
+\newpage
+
+\paragraph{Unifying framework.}
+%In following sections, we will discuss all of this in much more detail.
+%From a structural perspective, 
+We will develop DSC through a principled methodological 
+blend of hands-on empirical study, cryptographic theory, and
+system design. We view this framework itself as a research contribution capable
+of complementing and supporting the agendas of other research teams.  
+Our framework will consist of four parts:
+%The end goal will be a new viewpoint for tackling problems
+%We will unify disparate threads of research on DSC concepts
+%and primitives into a single, overarching, formal framework. The explanatory
+%power of this framework will yield new insights, permit a cross-pollination of
+%concepts and techniques, and spawn new tools and techniques for a range of
+%practical security problems. The DSC framework tailors and applies
+%cryptographic primitives to real-world problem domains methodologically
+%through the following sequence of steps:
+\begin{newenum}
+
+\item{\em Practice-driven modeling:} A key initial step for any new application will be to 
+experimentally characterize real-world adversarial threats. In the
+anti-censorship setting, for example,  we will study the capabilities of state-of-the-art DPI
+systems, like those used by censors.
+At the same time, we will gather or generate datasets to train 
+distribution models and also provide testing data for evaluation. 
+Example data include real-world network traffic for censorship settings, 
+and password leaks like RockYou~\cite{RockYou:2009} for PBE. 
+%  All this will in turn educate practically relevant adversarial
+%models: what types of attacks are the most important 
+%adversaries  
+%A class of real-world applications is identified and
+%corresponding message distributions estimated, yielding an application model. In
+%our examples above, messages of interest include passwords, biometrics, and
+%cover traffic. An example model of password selection is the RockYou corpus of
+%leaked passwords~\cite{}.
+
+\item{\em Robust, distribution-sensitive definitions:} 
+We will develop formal security definitions that are
+distribution-sensitive. Generally, this will mean revisiting existing notions
+and adapting them to the DSC setting. Using the approach of modern 
+provable-security cryptography, we will be able to formally characterize interrelationships among the resulting new
+definitions, as well as show feasibility and impossibility results. 
+%and accompanying
+%definitions / metrics are retooled to achieve or amplify distributional
+%sensitivity. Steganography, for example, may be conceptualized as encryption
+%with sensitivity to ciphertext distributions, honey encryption as encryption
+%with sensitivity to plaintext distributions, and DSSS as a bounded-leakage
+%error-detecting (or correcting) code with message-distribution sensitivity. (We
+%give formal security definitions for all three below.) 
+In addition to distribution-sensitive goals, we will also formalize
+``fallback'' security notions that provide best-possible security in case estimates are wrong.
+
+\item{\em Practical constructions and implementation:}  
+We will construct distribution-sensitive schemes. These will incorporate
+models of application-specific distributions, supporting formal
+proofs of security relative to the new DSC and fallback definitions. Performance will be a key consideration. We will
+aim to construct practical, easy-to-deploy mechanisms.
+%Additionally, a key design principle in DSC is {\em hedging}, i.e., building in
+%security assurances against application modeling failures. 
+
+\item{\em Experimental and formal analysis:} Finally, we will analyze the
+practicality and security of our constructions. We will build
+research prototypes of security tools that incorporate DSC techniques, and
+experimentally evaluate the utility of these prototypes.  We will also formally analyze security of
+our schemes via reduction-based approaches. Typically this will involve some
+assumption about the gap between the primitive-designer's estimate of a
+relevant distribution and an adversary's estimate. We will explore new,
+reductionist approaches to formal bounds on these gaps, as well as
+empirically validate assumptions via appropriate application-specific
+experiments, e.g., traffic measurements, analysis of biometric databases, etc. 
+\end{newenum}
+
+By developing this framework within the context of several concrete problems,
+we will not only provide real security improvements in each setting, but also
+bring to light cross-cutting definitions and tools. One common tool that
+already emerges is a concept called a {\em distribution-transforming encoder}
+(DTE). The lynchpin of the honey encryption construction
+in~\cite{HoneyEnc-EC:2014}, a DTE is an encoding scheme whose decoder, given a
+uniformly random input bit string, yields a distribution close to a target one
+$\mdist$ over a set $\mspace$. The DSC framework points the way to a natural
+broadening of DTEs to handle transformations of random variables from one
+distribution to another, and subsequently to a DTE definition that supports
+use within honey encryption, FTE, steganography, and other primitives. 
+
+This DSC framework also opens up a vista of new cryptographic primitives beyond
+those identified in previous work. To handle noisy secrets, we propose later a
+new DSC primitive called a {\em distribution-sensitive secure sketch} (DSSS).
+Our exploration of DSC has also led us to recognize that password-based
+steganography, while used widely in practice, has not received a formal, modern
+cryptographic treatment. We propose to rectify this gap and, by incorporating use of an
+appropriate DTE, achieve provable steganographic security even for low-entropy
+passwords.  
+
+%We will seek out other opportunities, and either work on them
+%ourselves or simply advertise implied open problems to the broader research
+%community.
+
+%Additionally, as we explain below, a special class of
+%DTEs offers a novel approach in some settings to: (3) Highly efficient yet
+%provably secure steganography. \noteari{We need to discuss this or drop it.}
+
+%Our DSC framework also brings into view another key conceptual connection,
+%between %DSC and techniques from simulation-based proofs of security. These
+%proofs often %involve creating an environment that contains a ``trap'' value,
+%but is statistically %indistinguishable by an adversary from a real
+%environment. Similar techniques can be %used in a DSC primitive to embed a user
+%secret (rather than a ``trap'' value) in a %distribution that is
+%indistinguishable from a target message distribution. Our HE %construction
+%(mentioned above) that yields practical RSA private key encryption is a %simple
+%instance of this idea. It gives rise to a key class of DTEs based on rejection
+%%sampling that immediately leads to more efficient honey encryption and
+%promises %efficiency improvements in steganography and other applications.
+
+\paragraph{Public artifacts and broader impacts.} An explicit step in our work
+will be implementation of DSC tools. These tools will aid our research, but will also
+serve as a springboard for technology transfer and for impact on
+security in practice. The PIs have a strong track record of not only releasing
+public, open-source research systems, 
+but also going the extra mile to help incorporate such implementations into production
+systems, such as Tor and Google's uProxy. 
+(See \secref{sec:outreach} for more information about our track record in this
+regard.)
+We will target similar impact for the
+proposed work, the ultimate goal being that users of password management systems, 
+activists making use of anti-censorship tools, and
+others will benefit from the security improvements that our DSC research will provide. 
+ 
+
+We will by default also make data sets publicly available, the exception being
+cases in which we have privacy or confidentiality obligations. See the Data
+Management Plan for more details regarding our handling of data.
+
+
+\paragraph{Team.} Our efforts are cross-cutting, involving data
+analysis, experimental work, and cryptographic theory.   Together, our skills, track record, and momentum 
+uniquely qualify us to pursue the
+(admittedly lofty) goal of crafting a new approach to cryptographic design.
+%, and may borrow tools from variety of
+%other expertise areas, such as learning theory and natural language
+%processing. 
+%
+%The right team will be required to make progress toward 
+%the admittedly lofty goal of crafting a
+%new approach to cryptographic design (one that is complementary to existing
+%approaches).
+%Beyond being involved in the preliminary DSC efforts, we 
+%believe the PIs more broadly have the right mix of expertise and
+%collaborative spirit to perform. 
+%We have brought together a team with the right backgrounds to
+%tackle the development of DSC. 
+PIs Juels, Ristenpart and Shrimpton have a lengthy track record of
+successful collaborations in security, cryptography, and system
+development.  Most recently, Juels and Ristenpart have collaborated on
+honey encryption, and Ristenpart and Shrimpton on format-transforming
+encryption.  We have collective experience
+in both theoretical and empirical exploration of modern security
+artifacts, and a shared vision in which experimental research supports good
+theory, and vice versa.  
+%Given that our inherently broad explorations are likely to draw from diverse
+%disciplines, we will seek out area experts with whom to collaborate; 
+The PIs also have an extensive history of interdisciplinary research and a mature network of colleagues in other areas that may
+benefit our work.
+%which
+%will be useful when extending cryptographic design methods to incorporate 
+%techniques from other disciplines (e.g.\ learning theory, natural
+%language processing). 
+See the Collaboration Plan for more details about PI backgrounds and our logistical plans.
+
+\paragraph{Proposal Organization and Tasks.} In the following sections, we will
+discuss in turn the three key DSC applications mentioned above, along with
+three respective solution approaches: honey encryption (HE), a new primitive
+called Distribution-Sensitive Encryption (DSE) that generalizes and enhances FTE,
+and Distribution-Sensitive Secure Sketches (DSSS). We will then give further
+details on our unifying framework, followed by a discussion of the broader
+impact of our research agenda.  Throughout, we identify the concrete tasks we
+will undertake with the visual call-out {\bf Task}.  Our list of tasks serves
+as a compact outline of what we will deliver (at a minimum); a task schedule
+may be found in Section~\ref{sec:collabplan}.
+
+}

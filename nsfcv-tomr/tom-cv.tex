@@ -1,0 +1,481 @@
+% CV for Thomas Ristenpart
+
+\documentclass[10pt]{article}
+
+\usepackage{url}
+\usepackage{setspace}
+%\usepackage{multibib}
+\usepackage[hmargin=.75in,top=0.5in,bottom=1in]{geometry}
+
+%\newcites{pub,man}{,Masters Thesis}
+
+\newcommand{\hpagess}[4]{
+        \begin{tabular}{cc}
+        \begin{minipage}[c]{#1\textwidth} #3 \end{minipage} & 
+        \begin{minipage}[c]{#2\textwidth} #4 \end{minipage}
+        \end{tabular}
+    }
+
+\newcommand{\highlight}[1]{\textsf{\emph{#1}}}
+\newcommand{\schighlight}[1]{{#1}}
+
+\newcommand{\bigline}[1]
+      {\setlength{\unitlength}{.01in}
+      \begin{picture}(#1,1) \put(#1,5){\line(-1,0){#1}} \end{picture}}
+
+\newcommand{\authorfont}[1]{\textnormal{#1}}
+\newcommand{\marker}{*\hspace*{.3em}}
+%\newcommand{\secfont}[1]{{\textbf{\Large{#1}}}}
+%\newcommand{\secfont}[1]{\bigline{30}\textbf{\Large{\hspace*{10pt}#1}}}
+\newcommand{\secfont}[1]{\textbf{\Large{#1}}\medskip}
+
+\newcommand\Tvsp{\rule{0pt}{2.6ex}}
+\newcommand\Bvsp{\rule[-1.2ex]{0pt}{0pt}}
+\newcommand{\TabPad}{\hspace*{5pt}}
+\newcommand\TabSep{@{\hspace{5pt}}|@{\hspace{5pt}}}
+\newcommand\TabSepLeft{|@{\hspace{5pt}}}
+\newcommand\TabSepRight{@{\hspace{5pt}}|}
+ 
+\newcommand{\mycite}[1]{[\ref{#1}]}
+\newcommand{\mycitee}[2]{[\ref{#1},\,\ref{#2}]}
+\newcommand{\myciteee}[3]{[\ref{#1},\,\ref{#2},\,\ref{#3}]}
+
+\newcommand{\sep}{0em}
+\newcommand{\secsep}{\vspace*{1.50em}}
+\newcommand{\inconsep}{\vspace*{8pt}}
+\newcommand{\leftper}{.16}
+\newcommand{\leftperpub}{.105}
+\newcommand{\contentper}{.75}
+\newcommand{\contentperpub}{.75}
+\newcommand{\halfcontentper}{.375}
+
+\long\def\symbolfootnote[#1]#2{\begingroup%
+\def\thefootnote{\fnsymbol{footnote}}\footnote[#1]{#2}\endgroup} 
+
+\newcommand{\squishenum}{
+   \begin{enumerate}
+    { \setlength{\itemsep}{0pt}      \setlength{\parsep}{3pt}
+      \setlength{\topsep}{3pt}       \setlength{\partopsep}{1pt}
+      \setlength{\leftmargin}{-0.5em} \setlength{\labelwidth}{1em}
+      \setlength{\labelsep}{0.5em} } }
+
+\newcommand{\squishenumend}{
+	\end{enumerate}	}
+
+\newcommand{\myitemize}{
+   \begin{list}{$*$}
+    {  \setlength{\leftmargin}{4em} \setlength{\labelwidth}{2em}
+       } }
+
+
+\newcommand{\myitemizeend}{
+    \end{list}  }
+
+\newcounter{Lcount}
+\newcommand{\myenum}{
+\begin{list}{[\arabic{Lcount}]}
+{ \usecounter{Lcount}
+%\setlength{\itemsep}{0pt}
+%\setlength{\parsep}{0pt}
+%\setlength{\topsep}{0pt}
+%\setlength{\partopsep}{0pt}
+\setlength{\leftmargin}{4.3em}
+\setlength{\labelwidth}{2em}
+%\setlength{\labelsep}{0.5em} 
+} }
+
+\newcommand{\myenumend}{
+\end{list} }
+
+
+\newcommand{\squishlist}{
+   \begin{list}{$\bullet$}
+    { \setlength{\itemsep}{0pt}      \setlength{\parsep}{5pt}
+      \setlength{\topsep}{3pt}       \setlength{\partopsep}{0pt}
+      \setlength{\leftmargin}{3.5mm} \setlength{\labelwidth}{1em}
+      \setlength{\labelsep}{0.5em} } }
+
+
+\newcommand{\squishend}{
+    \end{list}  }
+
+
+\newcommand{\cdotlarge}{\bullet}
+
+%\settowidth{\cvlabelwidth}{\cvlistheadingfont Spring 2004-present}
+
+\begin{document}
+%\begin{cv}{}
+%\small
+
+\begin{center}
+\textbf{\Large{Thomas Ristenpart}}\\\smallskip
+\textbf{Assistant Professor}\\
+\textbf{Department of Computer Sciences}\\
+\textbf{University of Wisconsin -- Madison}\\
+ {rist@cs.wisc.edu} \\
+ {\url{www.cs.wisc.edu/~rist/}}  
+\end{center}
+\vspace*{-1.5em}
+
+\noindent\hrulefill
+\\
+
+%\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}cc}
+%    \multicolumn{2}{c}{\textbf{\Large{Thomas C. Ristenpart}}}\\
+%    \multicolumn{2}{c}{808 F Street \#309}\\
+%    \multicolumn{2}{c}{Davis, CA 95616}\\
+%    \multicolumn{2}{c}{530-297-6538}\\
+%    \multicolumn{2}{c}{tcristenpart[at]ucdavis.edu}\\
+%    \multicolumn{2}{c}{http://wwwcsif.cs.ucdavis.edu/$\sim$ristenpa/}\\
+%\end{tabular*}
+
+%\secsep 
+
+% EDUCATION
+%\section*{Education}
+
+%%%%%
+{%\setstretch{1.2}
+\noindent\secfont{Professional Preparation}
+
+%\begin{itemize}
+\begin{tabular}{lll}
+  \schighlight{University of California, Davis}  & Computer Science \& Engineering & B.S. 2003\\
+  \schighlight{University of California, Davis}  & Computer Science \& Engineering & M.S. 2005\\
+  \schighlight{University of California, San Diego}  & Computer Science & Ph.D. 2010
+\end{tabular}
+
+%\myitemizeend 
+
+
+\iffalse
+\halign{\hspace{2em} #\hfil  &\hspace{2em} #\hfil  &\hspace{4.5em}\hfil  # \cr
+            \marker  \emph{University of California, San Diego}
+                    & Ph.D. in Computer Science \hspace*{10em}& \textsf{June 2010}\cr}\smallskip
+
+\noindent \hspace*{3em}Advisor: Professor Mihir Bellare 
+
+\bigskip
+
+
+\halign{ \hspace*{2em} #\hfil  &\hspace{2em} #\hfil  &\hspace{4.5em}\hfil  # \cr
+			\marker  \emph{University of California, Davis}\hspace*{2em}
+                    & M.S. in Computer Science \hspace*{10.45em}& \emph{June 2005}\cr}\smallskip
+
+\noindent \hspace*{3em}Advisor: Professor Matt Bishop  \hspace*{3.8em}
+``Time Stamp Synchronization of Distributed Sensor Logs:\\ 
+\hspace*{21.2em}
+ Impossibility Results and Approximation Algorithms''
+
+\bigskip
+
+\halign{\hspace*{3em} #\hfil  &\hspace{2em} #\hfil  &\hspace{8.5em}\hfil  # \cr
+            \marker  \emph{University of California, Davis}\hspace*{2em}
+                    & B.S. in Computer Science \& Engineering & \emph{June 2003}\cr}
+					\fi
+}
+\bigskip
+
+\noindent\secfont{Appointments}
+
+
+\myitemize
+\item \highlight{Assistant Professor} \hspace*{6em} 2011  --  present\\
+\hspace*{3em} Department of Computer Sciences\\
+\hspace*{3em} \schighlight{University of Wisconsin -- Madison}
+
+\item \highlight{Graduate student researcher} \hspace*{2.3em} 2005  --  2010\\
+\hspace*{3em} \schighlight{UC San Diego}
+%\item \highlight{Visiting researcher}, \schighlight{U.~of Lugano (Switzerland)}, 
+%                    Apr~2008 -- Jun~2008
+%\item \highlight{Visiting researcher}, \schighlight{U.~of Washington}, Jun~2008 -- Sep~2008
+\item \highlight{Graduate student researcher} \hspace*{2.3em} 2003 -- 2005\\
+\hspace*{3em} \schighlight{UC Davis}
+%\item \highlight{Software security intern}, \schighlight{Center for Computing Sciences}, ~2004 -- Aug~2004
+%\item \highlight{Software development engineering intern}, \schighlight{Microsoft}, Jun~2001 -- Sep~2001 \& Jun~2002 -- Sep~2002
+%\item \highlight{Software engineering intern}, \schighlight{Micron Technologies, Inc.}, Jun~1999 -- Sep~1999 \& Jun~2000 -- Sep~2000
+\myitemizeend
+
+
+
+
+\bigskip
+\noindent\secfont{Publications}
+%\medskip
+
+\renewcommand{\labelenumi}{[\arabic{enumi}]}
+
+\noindent
+(i) Related Publications
+\myenum
+
+\item \label{DCRS13}
+\authorfont{K.~Dyer, S.~Coull, T.~Ristenpart, and T.~Shrimpton}.
+Protocol Misidentification Made Easy with Format-Transforming Encryption.
+\emph{Computer and Communications Security~-- CCS 2013}, ACM, 2013
+
+\item \label{BRRS09}
+\authorfont{M.~Bellare, T.~Ristenpart, P.~Rogaway, and T.~Stegers}.
+Format-Preserving Encryption.
+  \emph{Selected Areas in Cryptography~-- SAC `09}, LNCS vol. 5867, pp.
+  295--312. Springer, 2009
+
+\item \label{LDJRS14}
+\authorfont{D. Luchaup, K. Dyer, S. Jha, T. Ristenpart, and T. Shrimpton}.
+LibFTE: A Toolkit for Constructing Practical Format-Abiding Encryption Schemes.
+\emph{USENIX Security Symposium}, USENIX, 2014
+
+\item \label{LSRJ14}
+\authorfont{D. Luchaup, T. Shrimpton, T. Ristenpart, S. Jha}.
+Formatted Encryption Beyond Regular Languages.
+\emph{Computer and Communications Security~-- CCS 2014}, ACM, 2014
+
+\item \label{JR14}
+\authorfont{A.~Juels and T.~Ristenpart}.
+Honey Encryption: Security Beyond the Brute-force Bound.
+\emph{Advances in Cryptology~-- Eurocrypt 2014}, Springer, 2014
+
+\newcounter{Lcount_saved}
+\setcounter{Lcount_saved}{\value{Lcount}}
+\myenumend
+
+
+
+\iffalse
+\item \label{RTSS09}
+\authorfont{T.~Ristenpart, E.~Tromer, H.~Shacham, and S.~Savage}.
+Hey, You, Get Off of My Cloud: Exploring Information Leakage in
+  Third-party Compute Clouds.
+%In E.~Al-Shaer, S.~Jha, and A.~D. Keromytis, eds., 
+\emph{Computer and Communications Security~-- CCS~`09}, pp. 199--212. ACM, 2009
+
+
+  \item \label{PRS11}
+\authorfont{K.~Paterson, T.~Ristenpart, and T.~Shrimpton}.
+Tag Size Does Matter: Attacks and Proofs for the TLS Record Protocol.
+\emph{Advances in Cryptology~-- ASIACRYPT~`11}, LNCS vol.~7073, pp.~372--389, Springer, 2011
+
+
+\item \label{ZJRR12}
+\authorfont{Y. Zhang, A.~Juels, M.~Reiter, and T.~Ristenpart}.
+Cross-VM Side Channels and their Use to Extract Private Keys.
+\emph{Computer and Communications Security~-- CCS~`12}, ACM, 2012
+
+\item \label{VKFRS12}
+\authorfont{V.~Varadarajan, T.~Kooburat, B.~Farley, T.~Ristenpart, and M.~Swift}.
+Resource-Freeing Attacks: Improve Your Cloud Performance (at Your Neighbor's Expense)
+\emph{Computer and Communications Security~-- CCS~`12}, ACM, 2012
+
+
+\item \label{FVBJRS12}
+\authorfont{B.~Farley, V.~Varadarajan, K.~Bowers, A.~Juels, T.~Ristenpart, and M.~Swift}.
+More for Your Money: Exploiting Performance Heterogeneity in Public Clouds
+\emph{Symposium on Cloud Computing~-- SOCC~`12}, ACM, 2012.
+\fi
+
+
+\bigskip
+
+
+\noindent (ii) Other Publications:
+\myenum
+\setcounter{Lcount}{\value{Lcount_saved}}
+
+\item \label{RTSS09}
+\authorfont{T.~Ristenpart, E.~Tromer, H.~Shacham, and S.~Savage}.
+Hey, You, Get Off of My Cloud: Exploring Information Leakage in
+  Third-party Compute Clouds.
+%In E.~Al-Shaer, S.~Jha, and A.~D. Keromytis, eds., 
+\emph{Computer and Communications Security~-- CCS~`09}, pp. 199--212. ACM, 2009
+
+\item \label{DRS09}
+\authorfont{Y.~Dodis, T.~Ristenpart, and T.~Shrimpton}.
+Salvaging Merkle-Damg{\aa}rd for Practical Applications.
+\emph{Advances in Cryptology~-- EUROCRYPT `09}, LNCS
+  vol. 5479, pp. 371--388. Springer, 2009
+
+
+\item \label{ZJRR14}
+\authorfont{Y. Zhang, A. Juels, M. Reiter, and T. Ristenpart}.
+Cross-tenant Side-channel Attacks in PaaS Clouds
+\emph{Computer and Communications Security~-- CCS 2014}, ACM, 2014
+
+
+\item \label{RY10}
+\authorfont{T.~Ristenpart and S.~Yilek}.
+When Good Randomness Goes Bad: Virtual Machine Reset Vulnerabilities
+  and Hedging Deployed Cryptography.
+\emph{Network and Distributed Systems Security~-- NDSS~`10}, ISOC,
+  2010
+
+
+%\item \label{BBNRSSY09}
+%\authorfont{M.~Bellare, Z.~Brakerski, M.~Naor, T.~Ristenpart, 
+%G.~Segev, H.~Shacham, and S.~Yilek}.
+%Hedged Public-key Encryption: How to Protect against Bad Randomness.
+%\emph{Advances in Cryptology~-- ASIACRYPT `09}, 
+%  LNCS vol. 5912, pp. 232--249. Springer, 2009
+
+\item \label{FLJLPR14}
+\authorfont{M. Fredrikson, E. Lantz, S. Jha, S. Lin, D. Page, and T.
+Ristenpart}.
+Privacy in Pharmacogenetics: An End-to-End Case Study of Personalized Warfarin Dosing.
+\emph{USENIX Security Symposium}, USENIX, 2014
+
+%\end{revnumerate}
+\myenumend
+
+
+%\bibliographypub{cv-pub}
+%\input{pub.bbl}
+
+
+%\newpage 
+%\begin{center}\highlight{\Large{Thomas C. Ristenpart}}\end{center}\bigskip
+
+%\nociteman{R05}
+%\bibliographystyleman{mine}
+%\newcounter{manpointnumber}
+%\setcounter{manpointnumber}{2} % nummans + 1
+%\makeatletter
+%\renewcommand*{\@biblabel}[1]{[\themanpointnumber
+%\addtocounter{manpointnumber}{-1}]}
+%\makeatother
+%\bibliographyman{cv-man}
+%\input{man.bbl}
+\bigskip
+
+
+
+%%%%%
+\noindent\secfont{Synergistic Activities}
+
+\myitemize
+\item \highlight{Research community service}: 
+Fast Software Encryption 2009, 2010 / Selected Areas in Cryptography 2010 /
+Cloud Computing Security Workshop 2010, 2011 (co-Program chair), 2012, 2013,
+2014  /
+Financial Crypto 2011 /  HotCloud 2011, 2012 / CCS 2011, 2012 / Eurocrypt 2012,
+2014 / 
+Oakland 2012, 2013, 2015 / NDSS 2013 / Crypto 2013 / DSN 2014; USENIX Security
+2014, 2015 / FOCI 2014 / SoCC 2014 / 
+Journal of Cryptology / Designs, Codes and Cryptography / Journal of Computer Security. 
+Organizing committee for a new workshop on ``Real World Cryptography'' to promote
+the applied crypto research community. General chair Crypto 2015.
+
+%\item \highlight{Invited panels}: NIST ``How to choose SHA-3?''~panel 2008 /
+%DARPA ISAT Future Ideas Symposium 2010 / Payment Card Industry 2
+
+\item \highlight{Industry standards}: Techniques from \mycite{DRS09} used 
+in evaluating NIST SHA-3 competitors / \mycite{BRRS09} basis for 
+NIST and ANSI standard proposal named FFX / \mycite{RTSS09} referenced by
+Cloud Security Alliance's cloud security guide, European Network and Information 
+Security Agency's report on cloud security / New security issues and analyses
+of HMAC (Crypto 2012), TLS (Asiacrypt 2011), and PKCS\#2 (Crypto 2012)
+%
+\item \highlight{Open-source software}: Adeona privacy-preserving device tracking software
+%covered by
+%\emph{The New York Times}, \emph{Technology Review}, \emph{ABC News}, and many others.  
+downloaded $>$113,000 times since July~2008. Various vulnerabilities found in my work
+responsibly disclosed to Mozilla, Google, Microsoft, Intuit, Amazon, and many
+other companies. FTE implementations from~\myciteee{DCRS13}{LDJRS14}{LSRJ14} 
+open source and public. FTE now deployed with Tor and other anti-censorship
+tools.
+
+
+\item \highlight{Curriculum development}: I developed two new graduate-level 
+courses, Applied Cryptography and Computer Security (CS 838), at Wisconsin, and have taught it
+successfuly twice.  I developed an entirely new curriculum for the 
+existing undergraduate class, Computer Security (CS 642), at Wisconsin.
+%The curriculum included significant project components working with virtual machines and
+%included some initial content related to cloud computing. 
+These classes have been well-received by students, whose evaluations ranked it
+repeatedly rank it amongst the very best in the department.
+
+\item \highlight{Student advising including underrepresented groups}: 
+Advised or co-advised five graduated 
+masters students at Wisconsin  (WesLee Frisby, MS 2012, now at Sandia National Laboratories /  
+Thawan Kooburat, MS 2012, first employment at Facebook 
+Benjamin Farley, MS 2012, first employment at Amazon, Robert Jellinek, MS 2014, 
+first employment Amazon, Alexis Fisher, MS 2013, first employment at Sandia National Laboratories).
+Advised two undergraduate student now graduated (Benjamin Moench, BS 2014 and Adam Vail, BS 2012, now at 
+Univ of Wisconsin for MS). Currently advising 
+one masters student (Lichao Zao), two PhD students (Rahul Chatterjee, Liang
+Wang), and co-advising three PhD students (Venkatanathan Varadarajan, Adam Everspaugh, Yan
+Zhai).
+
+%%
+%\item Mozilla, Google developers acknowledge security vulnerabilities 
+%found in \mycite{RY10}
+%
+%\item Cloud computing attacks~\mycite{RTSS09} featured 
+%in \emph{Technology Review}, \emph{PC World}, and others. 
+%European Network and Information Security Agency cites my 
+%work~\mycite{RTSS09} in report on best practices for
+%cloud computing security.
+%
+%\item Proposed standard for encryption methods for
+%credit cards, SSNs, healthcare records based on \mycite{BRRS09}
+\myitemizeend
+
+\bigskip
+
+
+%%%%%
+\noindent\secfont{Collaborators \& Other Affiliations}
+
+\myitemize
+\item \highlight{Collaborators and Co-Editors}:
+Aditya Akella (Univ of Wisconsin),
+Mihir Bellare (UC San Diego),
+Juan Caballero (IMDEA, Spain),
+Stephen Checkoway (Johns Hopkins),
+Scott Coull (RedJack),
+Drew Davidson (Univ of Wisconsin),
+Yevgeniy Dodis (New York Univ),
+Kevin Dyer (Portland State Univ),
+Adam Everspaugh (Univ of Wisconsin),
+Benjamin Farley (Univ of Wisconsin),
+Alexis Fisher (Univ of Wisconsin),
+Matthew Fredrikson (Univ of Wisconsin),
+WesLee Frisby (Univ of Wisconsin),
+Aaron Gembler (Univ of Wisconsin),
+Matt Green (Johns Hopkins),
+Keqiang He (Univ of Wisconsin),
+Daniel J. Bernstein (UI Chicago / TU Eindhoven),
+Robert Jellinek (Univ of Wisconsin),
+Somesh Jha (Univ of Wisconsin),
+Ari Juels (Cornell Tech),
+Sriram Keelveedhi  (UC San Diego),
+Thawan Kooburat (Univ of Wisconsin),
+Tanja Lange (TU Eindhoven),
+Eric Lantz (Univ of Wisconsin),
+Simon Lin (Marshfield Clinic),
+Daniel Luchaup (Carnegie Mellon Univ),
+Jake Maskiewicz (UC San Diego),
+Benjamin Moench (Univ of Wisconsin),
+Antonio Nappa (IMDEA, Spain),
+Ruben Niederhagen (TU Eindhoven),
+David Page (Univ of Wisconsin),
+Benjamin Recht (Berkeley),
+Michael Reiter (Univ North Carolina),
+Hovav Shacham (UC San Diego),
+Thomas Shrimpton (Portland State Univ),
+John Steinberger (Tsinghua Univ, China),
+Michael Swift (Univ of Wisconsin),
+Stefano Tessaro (UC Santa Barbara),
+Salil Vadhan (Harvard),
+Venkatanathan Varadarajan  (Univ of Wisconsin),
+Liang Wang (Univ of Wisconsin),
+Scott Yilek (St. Thomas Univ),
+Yan Zhai (Univ of Wisconsin),
+Yinqian Zhang (Univ North Carolina)
+\item \highlight{Graduate Advisors and Postdoctoral Sponsors}: Mihir Bellare (UC San Diego)
+\item \highlight{Thesis Advisor and Postgraduate-Scholar Sponsor}: Matt Bishop (UC Davis)
+\myitemizeend
+
+
+
+\end{document}
+

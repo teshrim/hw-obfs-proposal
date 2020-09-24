@@ -1,0 +1,310 @@
+\documentclass[10pt]{article}
+\usepackage{palatino}
+\usepackage{pslatex}
+\usepackage{hyperref}
+\usepackage{breakurl}
+%-- Classes to use -------------------------------
+\usepackage{latexsym}
+\usepackage{enumerate}
+\usepackage[compact]{titlesec}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{graphicx}
+%\usepackage{subfigure}
+\usepackage{subfig}
+\usepackage{capt-of}
+\usepackage{url}
+\usepackage{cite}
+\usepackage{color}
+%\usepackage{soul}          % for highlighting comments
+%\usepackage[draft,inline,nomargin]{fixme}
+\usepackage{xspace}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{wrapfig}
+\usepackage{epsfig}
+\hypersetup{colorlinks=false, pdfborder= 0 0 0}
+\usepackage{fancyhdr}
+
+\pagestyle{plain}
+\lhead{}
+\chead{Draft of \today.  Please do not distribute.}
+\rhead{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+%-- Macros ---------------------------------------
+\newcommand{\myemph}[1]{\textbf{\emph{#1}}}
+
+\newenvironment{packeditemize}{
+\begin{list}{$\bullet$}{
+\setlength{\labelwidth}{8pt}
+\setlength{\itemsep}{0pt}
+\setlength{\leftmargin}{\labelwidth}
+\addtolength{\leftmargin}{\labelsep}
+\setlength{\parindent}{0pt}
+\setlength{\listparindent}{\parindent}
+\setlength{\parsep}{0pt}
+\setlength{\topsep}{3pt}}}{\end{list}}
+
+\newcommand{\ignore}[1]{}
+
+\newcounter{tasknmbr}
+\newcounter{tasklabel}
+\renewcommand{\thetasklabel}{\textbf{\thetasknmbr}}
+\newenvironment{task}{
+\begin{list}{\textbf{Task }\thetasklabel:}{\usecounter{tasklabel}\stepcounter{tasknmbr}\item\em}}{\\[-7pt]\end{list}}
+
+
+
+% ========================================================================
+% Lists
+
+\newlength{\saveparindent}
+\setlength{\saveparindent}{\parindent}
+\newlength{\saveparskip}
+\setlength{\saveparskip}{\parskip}
+
+\newcounter{ctr}
+\newcounter{savectr}
+\newcounter{ectr}
+
+\newenvironment{newitemize}{%
+\begin{list}{$\bullet$}{\labelwidth=9pt%
+\labelsep=7pt \leftmargin=16pt \topsep=1pt%
+\setlength{\listparindent}{\saveparindent}%
+\setlength{\parsep}{\saveparskip}%
+\setlength{\itemsep}{1pt} }}{\end{list}}
+
+\newenvironment{newenum}{%
+\begin{list}{{\rm (\arabic{ctr})}\hfill}{\usecounter{ctr} \labelwidth=18pt%
+\labelsep=7pt \leftmargin=25pt \topsep=3pt%
+\setlength{\listparindent}{\saveparindent}%
+\setlength{\parsep}{\saveparskip}%
+\setlength{\itemsep}{2pt} }}{\end{list}}
+
+\newenvironment{tiret}{%
+\begin{list}{\hspace{2pt}\rule[0.5ex]{6pt}{1pt}\hfill}{\labelwidth=15pt%
+\labelsep=3pt \leftmargin=22pt \topsep=4pt%
+\setlength{\listparindent}{\saveparindent}%
+\setlength{\parsep}{\saveparskip}%
+\setlength{\itemsep}{4pt}}}{\end{list}}
+
+\newenvironment{bigtiret}{%
+\begin{list}{\hspace{2pt}\rule[0.5ex]{6pt}{1pt}\hfill}{\labelwidth=15pt%
+\labelsep=3pt \leftmargin=22pt \topsep=10pt%
+\setlength{\listparindent}{\saveparindent}%
+\setlength{\parsep}{\saveparskip}%
+\setlength{\itemsep}{10pt}}}{\end{list}}
+
+\newenvironment{bigblock}{%
+\begin{list}{\hfill}{\labelwidth=0pt%
+\labelsep=0pt \leftmargin=0pt \topsep=6pt%
+\setlength{\listparindent}{\saveparindent}%
+\setlength{\parsep}{\saveparskip}%
+\setlength{\itemsep}{6pt}}}{\end{list}}
+
+\newenvironment{blocklist}{\begin{list}{}{\labelwidth=0pt%
+\labelsep=0pt \leftmargin=0pt \topsep=10pt%
+\setlength{\listparindent}{\saveparindent}%
+\setlength{\parsep}{\saveparskip}%
+\setlength{\itemsep}{20pt}}}{\end{list}}
+
+\newenvironment{blocklistindented}{\begin{list}{}{\labelwidth=0pt%
+\labelsep=25pt \leftmargin=25pt\topsep=2pt%
+\setlength{\listparindent}{\saveparindent}%
+\setlength{\parsep}{\saveparskip}%
+\setlength{\itemsep}{2pt}}}{\end{list}}
+
+\newenvironment{onelist}{%
+\begin{list}{\textbf{\arabic{ctr}.}\hfill}{\usecounter{ctr} \labelwidth=16pt%
+\labelsep=5pt \leftmargin=21pt \topsep=5pt%
+\setlength{\listparindent}{\saveparindent}%
+\setlength{\parsep}{\saveparskip}%
+\setlength{\itemsep}{5pt}}}{\end{list}}
+
+\newenvironment{twolist}{%
+\begin{list}{{\rm (\arabic{ctr}.\arabic{ectr})}%
+\hfill}{\usecounter{ectr} \labelwidth=26pt%
+\labelsep=7pt \leftmargin=33pt \topsep=2pt%
+\setlength{\listparindent}{\saveparindent}%
+\setlength{\parsep}{\saveparskip}%
+\setlength{\itemsep}{2pt} }}{\end{list}}
+
+\newenvironment{collist}{%
+\begin{list}{{\rm (\arabic{ctr}.\arabic{ectr})}%
+\hfill}{\usecounter{ectr} \labelwidth=26pt%
+\labelsep=7pt \leftmargin=33pt \topsep=3pt%
+\setlength{\listparindent}{\saveparindent}%
+\setlength{\parsep}{\saveparskip}%
+\setlength{\itemsep}{3pt} }}{\end{list}}
+
+\newenvironment{centerlist}{%
+\begin{list}{\mbox{}}{\labelwidth=0pt%
+\labelsep=0pt \leftmargin=0pt \topsep=1pt%
+\setlength{\listparindent}{\saveparindent}%
+\setlength{\parsep}{\saveparskip}%
+\setlength{\itemsep}{1pt} }}{\end{list}}
+
+\newenvironment{newcenter}[1]{\begin{centerlist}\centering%
+\item #1}{\end{centerlist}}
+
+% =========================================================================
+
+
+\newcounter{mynote}[section]
+\newcommand{\notecolor}{blue}
+\newcommand{\thenote}{\thesection.\arabic{mynote}}
+\newcommand{\note}[2]{\refstepcounter{mynote}{\bf \textcolor{\notecolor}{$\ll$#1: {\textcolor{black}{\sf #2}}$\gg$}}}
+\newcommand{\mnote}[1]{\refstepcounter{mynote}{\bf \textcolor{\notecolor}{$\ll$MB~\thenote: {\sf #1}$\gg$}}}
+\newcommand{\fixme}[1]{\ifnum\authnotes=1\textbf{\textcolor{red}{[FIXME: #1]}}\fi}
+\newcommand{\snote}[1]{\refstepcounter{mynote}{\bf
+\textcolor{\notecolor}{$\ll$SK~\thenote: {\sf #1}$\gg$}}}
+\newcommand{\notetoms}[1]{\note{TomS}{#1}}
+\newcommand{\notetomr}[1]{\note{TomR}{#1}}
+\newcommand{\noteari}[1]{\note{Ari}{#1}}
+
+%\newcommand{\assign}[2]{\fixme{\hl{\bf Assigned to #1:} #2}}
+%\newcommand{\assigntom}[1]{\assign{Tom}{#1}}
+%\newcommand{\assignari}[1]{\assign{Ari}{#1}}
+
+
+%\newcommand{\fixmehl}[1]{\fixme{\hl{#1}}}
+%\newcommand{\fxnotehl}[1]{\fxnote{\hl{#1}}}
+%\newcommand{\hlfixme}[1]{\fixme{\hl{#1}}}
+%\newcommand{\hlfxnote}[1]{\fxnote{\hl{#1}}}
+
+\newtheorem{example}{Example}
+
+
+\input{tomsdefs.tex}
+
+
+\newcommand{\mytitle}{SaTC: Medium: Distribution-Matching Encryption} 
+
+%--- Begin document text -------------------------
+\begin{document}
+
+%-- Title page -----------------------------------
+\vspace*{1.0in}
+\begin{center}
+
+
+{\Large\bf \mytitle}
+
+\vspace*{.5in}
+
+{\large
+  {\em  Ari Juels, Thomas Ristenpart, Thomas Shrimpton}
+}
+\\ \hfill \\
+Solicitation: \url{http://www.nsf.gov/pubs/2014/nsf14599/nsf14599.htm}
+
+
+\end{center}
+\thispagestyle{plain}
+
+
+%-- Project description --------------------------
+\clearpage
+\renewcommand{\thepage}{D-\arabic{page}}
+\setcounter{page}{1}
+
+\section{Introduction}
+\label{sec:intro}
+
+Contemporary encryption schemes are almost exclusively {\em distribution-agnostic}. Their security properties are independent of the statistical characteristics of plaintexts and they always yield ciphertexts that are uniformly distributed in the view of an adversary. Distribution-agnostic cryptography is conceptually simple and often convenient in practice. It fails, however, to meet certain basic, common security needs. Password-based encryption using a conventional, distribution-agnostic cipher, for example, is vulnerable to brute-force cracking---especially given the weak passwords typically chosen by users. Ciphertexts produced using distrbution-agnostic encryption are distinguishable from typical plaintext messages thus cannot conceal the existence of encrypted communications, i.e., support steganography. 
+
+There is consequently a growing, unaddressed need for rigorously studied cryptographic primitives that are specifically tailored to non-uniform plaintext and/or ciphertext distributions. We call a cryptographic primitive meeting this notion {\em distribution-sensitive} . This proposal aims to frame the concept of {\em distribution-sensitive cryptography} (DSC) within a unifying formal framework that draws on and informs new applications in cryptography.
+
+The starting point of the proposal will be three thrusts of applied research, each addressing a distinct practical application in which DSC plays a central role. These are: censorship resistance and steganography (focusing on DPI-circumvention), honey encryption (focusing on password-based encryption), and mangement of human secrets (focusing on secure sketches for password typo detection and biometrics). We will leverage the strong interrelationships among these applications to unify them within our formal DSC framework. By combining formal definitions and security proofs with empirical study, and by embellishing systems we have already built and/or fielded, we will publicly deploy artifacts from our research.
+
+\paragraph{The Three Thrusts} A number of applications call for DSC schemes dictated by a particular operational environment. Researchers have begin to explore foundational principles for DSC, but until recently, their focus has not been on application-specific settings. As a result, practical tools tend either not to incorporate research-driven concepts or to do so in an ad hoc way without any rigorous means of assessing their security. Our aim is to fill this gap by designing new DSC schemes with {\em empirically-driven, provable security}. Our three thrusts are:
+
+\begin{itemize}
+\item{\em Censorship resistance / steganography:} Several nation states conduct focused or blanket censorship by using deep-packet inspection (DPI) to detect and block particular protocols, such as 
+Tor~\cite{Tor:iran_block-2011,Tor:iran_block,Tor:china_block_one,Tor:china_block,
+Tor:china_active_probe,Winter2012,Clayton06ignoringthe}, TLS~\cite{TLS:iran_block}, and 
+Skype VOIP~\cite{China_skype_ban,UAE_skype_ban}. Recent research in provably secure encryption for this problem has yielded a primitive called format-transforming encryption (FTE). FTE can bypass DPI filters that rely on regular-expression matching, but  {\em cannot} defeat statistically-based traffic filtering. Relevant steganographic techniques are rigorous but impractical~\cite{Stegotoros} or practical but lacking strong security assurances~\cite{Hopper}. We will develop DME techniques that permit fast encoding  of packets carrying of ciphertexts to match the statistical properties of normal traffic. We will thereby carry the provable security benefits of FTE into a stronger adversarial model. Our research will benefit on the foundational side from connections with honey encryption by way of our DSC framework; on the empirical side, it will be informed by measurement studies on internet traffic.
+\item{\em Honey encryption:} Users tend to select weak passwords. As a result, their password-based encryption (PBE) ciphertexts are vulnerable to brute-force attacks. PBE is commonly used to protect highly sensitive data such as password vaults, both on mobile devices and in the cloud.\footnote{At least one password management service, LastPass, has already suffered a breach in which PBE vaults were apparently exposed~\cite{}.} Honey encryption can strengthen PBE ciphertexts by generating fake plaintexts that statistically resemble real ones---an instance of distribution matching. The first generation of these schemes, however, are narrowly focused (on credit-card numbers and private) and in some cases inefficient, as in the linear ciphertext expansion for RSA private keys in~\cite{}. We will expand this reperatoire of honey encryption techniques, aiming, for example, to reduce the ciphertext expansion sizes to practical levels. We will also, through connections in our DSC framework, extend honey encryption techniques to enable password-based DPI-circumvention applications.
+\item{\em Management of human-generated secrets:} Users make typos when they key in passwords. Biometrics, such as fingerprints, are noisy. Researchers have developed techniques, such as fuzzy extraction~\cite{}, that permit the use of such noisy data for cryptographic goals. These techniques, however, have not yet seen been rigorously explored in practical settings and thus have not yet been deployed in real-world systems. We will explore the construction of secure sketches for typo detection in support of honey encryption. We will do so through a novel construction that we call a {\em distribution-matching secure sketch} (DMSS). We will aim to close the gap between theory and practice with an efficient DMSS construction on study of password databases leaked in the wild.
+\end{itemize}
+
+
+
+\paragraph{Unifying framework}  We will unify these three disparate threads of research into DSC-related concepts into a single, formal framework. This framework will yield new insights, permit a cross-pollination of concepts and techniques, and spawn new tools and techniques for a range of practical DSC applications. To do so, we will build on the concept of a {\em distribution-transforming encoder} (DTE), the linchpin of the honey encryption construction in~\cite{}. 
+
+A DTE is a 
+pair $\DTE = (\encode,\decode)$ of algorithms, where $\encode$ is a mapping from a message space $\mspace$ to a space $\sspace$ of what are called {\em seeds}, and $\decode$ maps seeds to messages. In the original DTE definition, a good DTE is one in which, when seeds are selected uniformly at random and encoded, they yield a distribution close to a target one $\mdist$ over $\mspace$. By extending this definition to non-uniform seed spaces and expanding the accompanying security definitions, it is possible to encompass honey encryption, FTE, steganography, and other primitives within the same definitional framework. 
+
+A range of new steganographic constructions then come to light that we will explore in this proposal. First, by enabling information-theoretic security in applications that use low-entropy secrets (such as passwords), honey encryption offers potential paths to: (1) Password-based steganography and (2) Steganography for password-based key-agreement protocols. Additionally, as we explain below, a special class of DTEs offers a novel approach in some settings to: (3) Highly efficient yet provably secure steganography.
+
+This expanded view of DTEs also brings into view another foundational connection, between DTE constructions and techniques from simulation-based proofs of security. These proofs often involve ``cooking'' values returned by an oracle to create an environment that encodes a user secret but is statistically indistinguishable by an adversary from a real environment---a goal analogous to that in DSC settings. In preliminary work, we have found that such techniques, when imported into DTE construction, can substantially improve efficiency in a key class of DTEs (based on rejection sampling). Such improvement can lead to more efficient honey encryption and steganographic schemes.
+
+\paragraph{Experiments and Artifact deployment} We will inform our explorations into  foundations and new constructions with empirical study of deployment environments and the construction of practical tools. The starting point for this work will be statistical evaluation and modeling of packets captured in a large-scale traffic measurement study. For empirically observed traffic, we will aim to design efficient DTEs that can be parlayed into techniques for circumvention of statistical DPI filtering on the internet. Building on our existing, deployed DPI-circumvention tools, we publicly release novel tools resulting from the research in this proposal.
+
+The DTEs in honey encryption cause silent decryption failures when keys contain errors, e.g., when there are typos in passwords. 
+Drawing on real-world password and password-vault breach data we will explore practical improvements to secure sketches that can detect typos in a client with minimal degradation in password entropy. In preliminary work, we have observed structure (high average edit distance) in popular passwords in the wild, an observation that we will leverage to construct a novel form of secure sketch. We will deploy this code in conjunction with SweetPass, a honey-encryption-based password vault under development. We will aim to extend this line of work to biometrics. 
+
+
+\paragraph{Team}
+
+
+\paragraph{Organization}
+
+\section{DPI-Circumvention and Distribution-Matching Encryption (DME)}
+\subsection{Background: The Censorship Problem}
+\subsection{Our FTE Research and Deployments}
+\subsection{Next Step: Distribution-Matching Encryption (DME) for Censorship-Circumvention}
+
+\subsection{Challenges in Censorship-Circumvention}
+In principle, censorship-circumvension systems are fragile. As observed in~\cite{ParrotIsDead}, a such a system is detectable by a censor if it fails in even a single observable particular to mimic (parrot) valid traffic of a particular type. Against a sophisticated censor, a censorship-circumvention system mimicking a specific communication protocol must in principle capture a specific implementation of the protocol in its entirety, including its quirks and bugs. This plausible mimicry needs to be sustained, additionally, against active and adaptive probing by the censor.
+
+We believe this challenge to be surmountable {\em in practice}, despite its theoretical difficulties. We will explore two distinct but complementary approaches:
+
+\begin{itemize}
+\item {\em Bounded-adversary models:} As censorship tools must operate at wire speeds, they are computationally highly constrained. Consequently, censors typically perform two-stage processing, in which the first stage makes use of a DPI product tool; while the capabilities of commercial DPI censorship tools are not widely advertised, there is strong evidence that they perform simple regex matching. The second stage of processing may involve more computationally intensive classification, but only involves a very small fraction of suspect traffic identified in the first stage. Existing tools take advantage heuristically of these bounded resources available to censors. We will define and explore DME security within a formal framework that can instantiate concrete bounds in terms of adversarial computational resources or classes of statistical classification methods.
+\item {\em Protocol piggybacking:} The techniques we explore in this proposal, such as Distribution Transforming Encoders (DTEs) (see Section~\ref{}) are very general. They may be used to simulate messages in the message layer of a concealing protocol, resulting in a system that {\em piggybacks on} a target protocol, rather than {\em mimicking} it. For example, StegoTorus~\cite{} embeds client messages in the URIs and cookies in HTTP requests, producing traffic statistically distinguishable from normal. In our approach, steganographic messages might instead, for example, be embedded in the images in a videoconferencing tool. \noteari{I presume this obvious approach has been explored or is ruled out for some reason. In any case, perhaps we can briefly discuss.}
+\end{itemize}
+
+\section{Honey Encryption}
+\subsection{Background}
+\subsection{Example Applications: SweetPass, GenoGuard}
+\subsection{More Efficient HE}
+\subsection{New HE Applications}
+
+\section{Human-Generated Secrets}
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+%%%-- Data Management plan ------------------------------
+\clearpage
+\renewcommand{\thepage}{M-\arabic{page}}
+\setcounter{page}{1}
+
+
+
+%--- End matter ----------------------------------
+\clearpage
+\renewcommand{\thepage}{R-\arabic{page}}
+\setcounter{page}{1}
+
+%\bibliographystyle{abbrv}
+\bibliography{DistributionalCrypto}
+\end{document}
+
+
+
+

@@ -1,0 +1,108 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+
+\begin{figure}
+\centering
+\hfpages{0.475}
+{
+Given \varfont{ChannelContext}=\\[-0.5ex]
+\nudge$\langle$ModeKey $K$, PRFKey $L$, ChannelStatus
+``open''$\rangle$ 
+%Given $\varfont{Msg} =\langle V,H,C \rangle$
+
+\medskip
+Alg.\ \algfont{Deserialize}(\varfont{Msg}):\\
+\nudge $V \gets \varfont{Msg}.V$; $H \gets \varfont{Msg}.H$; $C \gets
+\varfont{Msg}.C$\\
+\nudge Return $\left((V, H),C\right)$
+
+\medskip
+Alg.\ \algfont{Decrypt}({\bf var} \varfont{ChannelContext},$(V,H)$, $C$):\\
+\nudge Parse $C$ into tag $T$ and remainder $Z$\\ 
+%\nudge $K \gets \varfont{ChannelContext.ModeKey}$\\
+%\nudge $L \gets \varfont{ChannelContext.PRFKey}$\\
+\nudge if $F_L(V,A,Z) \neq T$ then \varfont{InternalVals} $\gets$ ``TagFail''\\
+\nudge\varfont{ExternalVals} $\gets \calD_K^{V}(Z)$\\
+\nudge Return (\varfont{ExternalVals},\varfont{InternalVals})
+
+\medskip
+Alg.\ \algfont{IsValid}(\varfont{InternalVals}):\\
+\nudge \varfont{Verdict} $\gets$ ``Valid''\\
+\nudge if \varfont{InternalVals} =  ``TagFail'' then \varfont{Verdict} $\gets$ ``Invalid''\\
+\nudge Return \varfont{Verdict}
+
+\medskip
+Alg.\ \algfont{ErrHandler}({\bf var} \varfont{ChannelContext},\varfont{Verdict},\varfont{ExternalVals}):\\
+\nudge if \varfont{Verdict} = ``Invalid'' then \\
+\nudge\nudge \varfont{ExternalVals} $\gets$ ``Invalid'' \\
+\nudge\nudge \varfont{ChannelContext.ChannelStatus} $\gets \langle
+\mbox{Status ``closed"} \rangle$\\
+\nudge Return \varfont{ExternalVals}
+}
+%
+{
+Given \varfont{ChannelContext}=\\[-0.5ex]
+\nudge $\langle$ModeKey $K$, PRFKey $L$, ChannelStatus ``open'',\\
+\nudge\nudge TokenList $ \mathit{TL}\rangle$
+%Given $\varfont{Msg} =\langle V,H,C \rangle$
+
+\medskip
+Alg.\ \algfont{Deserialize}(\varfont{Msg}):\\
+\nudge $V \gets \varfont{Msg}.V$; $H \gets \varfont{Msg}.H$; $C \gets \varfont{Msg}.C$\\
+\nudge $\mathrm{sid} \gets H.\varfont{StreamID}$\\
+\nudge Return $\left((V, H, \mathrm{sid}),C\right)$
+%\nudge Return $\left((V, H),C\right)$
+
+\medskip
+Alg.\ \algfont{Decrypt}({\bf var} \varfont{ChannelContext},$(V,H,\mathrm{sid})$, $C$):\\
+%\nudge $\varfont{ExternalVals} \gets H.\varfont{StreamID}$\\
+\nudge Parse $C$ into tag $T$ and remainder $Z$\\ 
+%\nudge $K \gets \varfont{ChannelContext.ModeKey}$\\
+%\nudge $L \gets \varfont{ChannelContext.PRFKey}$\\
+\nudge if $F_L(V,H,Z) \neq T$ then \varfont{InternalVals} $\gets$ ``TagFail''\\
+\nudge $\mathrm{tid} \concat M \gets \calD_K^{V}(Z)$\\
+\nudge if $\mathrm{tid}\not\in \mathit{TL}$ then\\
+\nudge\nudge \varfont{InternalVals} $\gets \langle
+\varfont{InternalVals}, \mbox{``BadToken"}, \mathrm{tid} \rangle$\\
+\nudge \varfont{ExternalVals} $\gets \langle \mathrm{sid}, M \rangle$\\
+\nudge Return (\varfont{ExternalVals},\varfont{InternalVals})
+
+\medskip
+Alg.\ \algfont{IsValid}(\varfont{InternalVals}):\\
+\nudge \varfont{Verdict} $\gets$ ``Valid''\\
+\nudge if ``TagFail'' $\in$ \varfont{InternalVals} then\\
+\nudge\nudge \varfont{Verdict} $\gets$ ``Invalid''\\
+\nudge if ``BadToken'' $\in$ \varfont{InternalVals} then\\
+\nudge\nudge \varfont{Verdict} $\gets \langle
+\varfont{Verdict},\mbox{``BadToken"} \rangle$\\
+\nudge Return \varfont{Verdict}
+
+\medskip
+Alg.\ \algfont{ErrHandler}({\bf var} \varfont{ChannelContext},\varfont{Verdict},\varfont{ExternalVals}):\\
+\nudge if ``Invalid'' $\in$ \varfont{Verdict} then \\
+\nudge\nudge \varfont{ExternalVals} $\gets$ ``Invalid'' \\
+\nudge\nudge \varfont{ChannelContext.ChannelStatus} $\gets \langle
+\mbox{Status ``closed"} \rangle$\\
+\nudge else if ``BadToken'' $\in$ \varfont{Verdict} then \\
+\nudge\nudge \varfont{ExternalVals} $\gets$ ``Invalid'' \\
+%\nudge\nudge \varfont{ChannelContext.ChannelStatus} $\gets$ none \\
+\nudge Return \varfont{ExternalVals}
+} 
+\caption{ Specifying the functionalities surfaced by our
+  decryption API.  {\bf
+    Left:} Encrypt-then-MAC decryption over IV-based
+  symmetric-key decryption $\calD$ and vector-input PRF~$F$. A tag-check failure results in the
+suppression of all plaintext/errors output by $\calD^V_K(Z)$, and
+causes a single error message to be exposed.  Also,
+in the event of a tag-check failure, the error-handling algorithm
+updates the \varfont{ChannelStatus} to
+``closed''.  Note that this specification carries out decryption
+$\calD^V_K(Z)$ even if there is a tag-check failure, thereby hiding a
+potential timing side-channel. 
+%
+{\bf
+  Right: } EtM-like decryption, with support for valid-token checking and
+multiple error-handling behaviors.
+  }
+\label{fig:EtM-aead}
+\end{figure}

@@ -1,0 +1,191 @@
+\section*{Collaboration Plan}
+\label{sec:collabplan}
+\paragraph{The team.} We have assembled an accomplished team of three PIs with
+lengthy track records of successful collaborations, as well as expertise in the
+target domains of this proposal. The team participants are:
+
+\begin{newitemize}
+\item {\bf Prof.~Ari Juels} works on applied cryptography and system security. His pioneering work on fuzzy cryptography bears directly on this proposal, as does his recent research on honey objects. Having spent many years in industry, most recently as Chief Scientist of RSA, The Security Division of EMC, Juels offers a valuable perspective on commercial deployment in support of the project's goal of translation to practice. He has also been an active researcher, having published over 75 scholarly, peer-reviewed research articles on security and cryptography.
+%
+
+\item {\bf Prof.~Thomas Ristenpart} works in systems security and both applied
+and theoretical cryptography, focusing on solving real-world problems with
+theoretically sound cryptographic tools. His work has lead to standards used
+widely in industry~\cite{BRRS09}; research prototypes downloaded $>$100,000
+times~\cite{RMKK08}; discovery of security vulnerabilities in the
+cloud~\cite{ristenpart2009hey,VFKRS12,zhang2012cross,ZhangEtAl:2014}, embedded
+systems~\cite{Woot,davidson2013fie}, the use of machine
+learning~\cite{fredrikson2014privacy}, and in cryptographic
+protocols~\cite{PRS11,DRSS12:hmac,checkoway2014practical}; and
+first-of-their-kind empirical measurement studies of the
+cloud~\cite{he2013next,wang2014whowas}. 
+He has published 42 peer-reviewed papers on security and cryptography, mostly in
+top tier venues and including one best paper award. 
+
+%
+\item {\bf Prof.~Thomas Shrimpton} is an expert on practice-motivated and provably-secure 
+cryptography, particularly in the areas of authenticated encryption, hash functions and symmetric primitives. Prior to cryptography, Shrimpton made contributions in signal processing, signal detection, and communication theory.  Most recently, he has worked on cryptographic systems for censorship-circumvention.  He has published 27 peer-reviewed articles, nearly all at top-tier venues, one winning a best paper award.
+\end{newitemize}
+As can be seen, the PIs cover all core areas of expertise in the proposed
+research, with extensive experience in conducting empirical measurement studies,
+forging new cryptographic primitives, developing cryptographic theory, and
+building practical systems. Should the need arise for other areas of expertise,
+we will seek out appropriate collaborators; the PIs have a strong
+track record of cross-disciplinary collaboration.
+
+\paragraph{Collaboration history.} The three PIs have an extensive history of
+collaboration. Juels and Ristenpart have published five papers together in top
+security and cryptography venues over the past few
+years~\cite{HoneyEnc-SP:2014,HoneyEnc-EC:2014,zhang2012cross,ZhangEtAl:2014,farley:cloudmeter12},
+including two on honey encryption. Although in a different technical domain than
+this proposal, they are co-PIs on the NSF Frontier grant ``TWC: Frontier:
+Collaborative: Rethinking Security in the Era of Cloud Computing.'' Ristenpart
+and Shrimpton have published nine papers together in top tier security and
+cryptography venues, including on topics related to this proposal, such as
+censorship
+circumvention~\cite{dyer2012peek,Dyer-2013,luchaup2014libfte,luchaup2014formatted}.
+
+\paragraph{Team coordination.} The three PIs in this proposal have a
+longstanding practice of collaboratively advising graduate students.  
+%Indeed, a majority of our joint projects and publications have benefitted from
+%this approach, including~\cite{}\fixme{}. 
+Juels and Ristenpart have served on the dissertation committee of one student,
+Yinqian Zhang (UNC), whom they collaboratively advised over several years
+alongside his formal advisor (Prof.~Michael Reiter). Juels is already informally
+advising one of Ristenpart's student Rahul Chatterjee on ongoing work on
+SweetPass (see \secref{sec:he} in the main proposal).  
+Ristenpart has informally co-advised Shrimpton's student Kevin
+Dyer on anti-censorship topics~\cite{dyer2012peek,Dyer-2013,luchaup2014formatted}.  
+Ristenpart frequently co-advises students with colleagues at Wisconsin in
+different areas such as operating systems (Prof.~Michael Swift), networking
+(Prof.~Aditya Akella), and programming languages (Prof.~Somesh Jha). 
+
+We have found close joint advising of students to be an effective foundational
+means of both tightly coordinating activities and exposing students to a diverse
+range of research styles and perspectives. We will continue to use collaborative
+advising as a basic vehicle to advance and coordinate our research. 
+
+Building on our various strong collaborative foundations, we will build a
+three-way team that achieves tight communication, a sense of ownership, and
+overall team cohesion in the following ways:
+
+\begin{itemize}
+\item{\bf Videoconferences:} Juels and Ristenpart and Ristenpart and Shrimpton have a long history of regular, joint videoconferences with students, as well as a weekly one-on-one videoconferences to coordinate their research. We will supplement these longstanding meetings with bi-weekly, three-way group meetings via videoconferences for brainstorming, idea development, and execution. The frequency of meetings around specific projects will be determined according to technical need, with biweekly meetings by default. 
+
+\item{\bf Visits:} The three PIs have pairwise face-to-face meetings several times a year in visits to one another's institutions and at major security and cryptography conferences (e.g., ACM CCS, CRYPTO, USENIX Security). Additionally, Ristenpart and Shrimpton have recently instituted the practice of sending graduate students to visit one another's institutions. We will extend these practices into a three-way program of physical meetings between and among PIs on at least a quarterly basis. For the purposes of student enrichment and enhanced coordination among the participating universities, we will also engage in brief cross-institution student exchanges among Cornell Tech, PSU, and Wisconsin during the academic year as well as month-long exchanges during the summers.
+
+\item{\bf Joint industry engagement:} As tight integration of empiricism with theory and translation to practice are key elements of our proposal, we will leverage collaborative engagement with industry partners in the practice-oriented end of our work. As one example, Juels and Ristenpart are serving on the cryptography advisory board of Skyhigh Networks, where they work together with academic colleagues to translate research results, such as FTE, into advances in commercial practice. As another, Shrimpton has regular meetings with security researchers at Intel, whose group is located just a few miles from his campus.  Ristenpart and Shrimpton were asked by Google Ideas to organize a workshop on obfuscation techniques, in theory and practice; their collaboration with Google Ideas is ongoing.  We will seek out further such opportunities as conduits for the results of our proposal and as means of coordinating its translational aspects.
+\end{itemize}
+
+We will additionally make use of standard tools, including e-mail, SVN, and Git to ensure timely and well documented coordination of our research and code development.
+
+
+\subsection*{Roles, assignments, and timeline}
+\label{subsection:timeline}
+
+In the spirit of methodological enrichment, at least two PIs will be involved in
+each facet of the proposed work.  To ensure against diffusion of responsibility,
+however, each PI will serve as a ``supervisor'' on certain portions of the
+project.  The goal of the supervisor is to take primary responsibility for
+progress on the given task and to ensure that any potential hurdles are
+overcome.  Table~\ref{table:tasks} presents a list of tasks, a rough timeline,
+and supervisory roles.
+Note that multiple students/PIs will be working on a task simultaneously. We have
+organized the work across the various themes of HE, Empirical work, DSE,
+Password-based Steganography, DSSS,
+and the Unifying Framework.  
+%and laid out a timeline to pipeline tasks in a way that will
+%ensure consistent effort across time and respect project dependencies.
+
+\bigskip
+
+%Nearly all tasks would require collaborative
+%efforts between one or more PIs and their students.
+%However, to ensure progress, we have assigned a PI
+%as a supervisor of each task. The goal of the supervisor
+%is to take primary responsibility for progress
+%in the given task, and to flag hurdles to the rest
+%of the group, if any occurs.
+%Table~\ref{table:tasks} presents a list of tasks,
+%a rough timeline, supervisory roles, and the number
+%of student person-years committed to each task. Note that multiple
+%students may work on a task simultaneously.
+
+\begin{table}[th]
+\small
+\centering
+\begin{tabular}{|l|l|c|c|c|}
+\hline
+{\bf Topic} & {\bf Task} & {\bf Supervisor} & {\bf Timeline Years} \\
+\hline\hline
+HE & (\ref{task:rej-samp}) Improved DTEs & Juels & 1 \\
+HE & (\ref{task:he-defs}) HE security notions & Ristenpart & 1 \\
+HE & (\ref{task:he-adv-beh}) Models and practical HE constructions& Juels & 1--2 \\
+\hline
+Empirical & (\ref{task:dpi-study}) Trace collection infrastructure & Ristenpart & 1 \\
+Empirical & (\ref{task:formal-attack-models}) Analysis methods / attacks & Shrimpton & 1--4 \\
+\hline
+%DSE & Empirical adversarial modeling & Ristenpart & 1--3 \\
+%DSE & Resource-bounded classifiers & Juels & 2--4 \\
+DSE & (\ref{task:foundations-gen-dte}) Foundations of generalized DTEs& Ristenpart & 1--3 \\
+DSE & (\ref{task:use-gen-dte}) Generalized DTEs for censorship apps & Shrimpton & 1--3 \\
+DSE & (\ref{task:tun-dte}) Tunneling DTEs & Juels & 2--4 \\
+DSE & (\ref{task:stateful-dte}) Stateful schemes & Shrimpton & 2--4 \\
+\hline
+Password-based steganography & (\ref{task:pwstego-defs}) Formal definitions & Ristenpart & 2--3 \\
+Password-based steganography & (\ref{task:attack-hopper}) Analyzing Hopper et al.~& Shrimpton & 2 \\
+Password-based steganography & (\ref{task:pwstego-approaches}) New constructions & Juels & 2--4 \\
+\hline
+DSSS & (\ref{ECS-task}) Formal definitions & Ristenpart & 2--3 \\
+DSSS & (\ref{task:dsss-cons}) Password-focused tool development & Juels & 2--4 \\
+\hline
+Unifying framework & (\ref{task:unified-framework}) Framework development  & Shrimpton & 1--4 \\
+Unifying framework & (\ref{task:libdsc}) libdsc development & Ristenpart & 3--4 \\
+\hline
+\end{tabular}
+\caption{Tasks, supervisory roles of different PIs, and approximate timeline.}
+\label{table:tasks}
+\end{table}
+
+\ignore{
+\begin{table}[th]
+\small
+\centering
+\begin{tabular}{|l|l|c|c|c|}
+\hline
+{\bf Topic} & {\bf Task} & {\bf Person Years} & {\bf Supervisor} & {\bf Timeline Years} \\
+\hline\hline
+HE & Improved DTEs & 1 & Juels & 1 \\
+HE & HE security notions & 1 & Juels & 1 \\
+HE & Models and practical HE constructions& 1 & Juels & 1 \\
+\hline
+Empiricism & Trace collection infrastructure & 1 & Ristenpart & 1 \\
+Empiricism & Analysis methods / attacks & 3 & Shrimpton & 1-3 \\
+\hline
+DSE & Empirical adversarial modeling & 2 & Ristenpart & 2-3 \\
+DSE & Resource-bounded classifiers & 3 & Juels & 1-3 \\
+DSE & Generalized DTEs for censorship apps& 1 & Shrimpton & 3 \\
+DSE & Generalized DTEs, foundations & 1 & Juels & 2 \\
+DSE & Stateful schemes & 2 & Shrimpton & 1-2 \\
+\hline
+Password-based steganography & Formal definitions & 2 & Ristenpart & 2-4 \\
+Password-based steganography & Analyzing Hopper et al.~& 2 & Shrimpton & 1 \\
+Password-based steganography & New constructions& 3 & Juels & 2-4 \\
+\hline
+DSSS & Formal definitions & 2 & Ristenpart & 2-4 \\
+DSSS & Password-focused tool development & 2 & Juels & 2-3 \\
+\hline
+Unifying framework & DTE definition expansion & 1 & Shrimpton & 1 \\
+\hline
+\end{tabular}
+\caption{Tasks, supervisory roles of different PIs, and approximate timeline.}
+\label{table:tasks}
+\end{table}
+}
+
+\ignore{
+\subsection{Research presentations and reviews}
+A central aspect of graduate student development is both formal and informal research presentations.
+We will therefore have our students routinely present their research in
+the department seminars, group meetings, conferences, and workshops. 
+}

@@ -1,0 +1,64 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\short{1}   %0 means 11 times, 1 means 10 palatino
+\def\authnotes{1}
+
+%
+% File: proposal.tex
+% NSF Proposal for Nov 15-30, 2012 deadline -  SaTC
+% Author: Ristenpart, Shrimpton
+% Title:
+%
+
+\ifnum\short=1
+\documentclass[10pt,times]{article}
+\else
+\documentclass[11pt]{article}
+\fi
+
+\usepackage{setspace}
+\input{defs}
+%\input{macros}
+
+% ==========================================================================
+
+\begin{document}
+
+%\begin{center}
+%{\LARGE\bf Project Description -- Proposal Section (d)}
+%\end{center}
+
+%\vspace{0.2in}
+
+\noindent\textbf{Title:}\ \textsf{TWC: Option: Small: Collaborative:   
+New Encryption Paradigms to Circumvent Internet Censorship}
+
+\medskip
+
+\noindent\textbf{Principal Investigator:} Thomas Shrimpton (Portland
+State University)\\
+\noindent\textbf{Principal Investigator:} Thomas Ristenpart
+(University of Wisconsin)\\
+\medskip
+
+\noindent\hrulefill
+%\vspace{-15pt}
+%\tableofcontents
+%\noindent\hrulefill
+\setstretch{1.00}
+
+\input{tr-intro}
+
+%\noindent\begin{priorthebibliography}{M}
+%\medskip
+
+%\end{priorthebibliography}
+
+
+% =========================================================================
+
+\bibliographystyle{plain}
+\bibliography{fte}
+
+
+
+\end{document}

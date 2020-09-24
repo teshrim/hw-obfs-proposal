@@ -1,0 +1,105 @@
+\begin{thebibliography}{10}
+
+\bibitem{Tor:china_block_one}
+Anonymous.
+\newblock Torproject.org blocked by gfw in china: Sooner or later?
+\newblock Available at:
+  \url{https://blog.torproject.org/blog/torprojectorg-blocked-gfw-china-}
+  \url{sooner-or-later}, June 2008.
+
+\bibitem{Tor:pluggable}
+Jacob Appelbaum and Nick Mathewson.
+\newblock {Pluggable transports for circumvention}.
+\newblock Available at:
+  \url{https://gitweb.torproject.org/torspec.git/HEAD:/proposals/180-pluggable-transport.txt},
+  2010.
+
+\bibitem{TLS:iran_block}
+Jon Brodkin.
+\newblock Iran reportedly blocking encrypted internet traffic.
+\newblock Available at:
+  \url{http://arstechnica.com/tech-policy/2012/02/iran-reportedly-blocking-encrypted-internet-traffic/},
+  2012.
+
+\bibitem{Clayton06ignoringthe}
+Richard Clayton, Steven~J. Murdoch, and Robert N.~M. Watson.
+\newblock Ignoring the great firewall of china.
+\newblock In {\em in G. Danezis \& P. Golle, eds, Privacy Enhancing
+  Technologies workshop (PET 2006), LNCS}. Springer-Verlag, 2006.
+
+\bibitem{Same_day_fix}
+Roger Dingledine.
+\newblock {Iran blocks Tor; Tor releases same-day fix}.
+\newblock Available at:
+  \url{https://blog.torproject.org/blog/iran-blocks-tor-tor-releases-}
+  \url{same-day-fix}, 2011.
+
+\bibitem{Dingledine04tor:the}
+Roger Dingledine, Nick Mathewson, and Paul Syverson.
+\newblock Tor: The second-generation onion router.
+\newblock In {\em In Proceedings of the 13th USENIX Security Symposium}, pages
+  303--320, 2004.
+
+\bibitem{Dyer-2012}
+K.~Dyer, S.~Coull, T.~Ristenpart, and T.~Shrimpton.
+\newblock Peek-a-boo, i still see you: Why efficient traffic analysis
+  countermeasures fail.
+\newblock In {\em Oakland' 12: Proceedings of the 33nd IEEE Symposium on
+  Security and Privacy}, Oakland, CA, 05/2012 In Press. IEEE.
+
+\bibitem{Tor:china_block}
+Andrew Lewman.
+\newblock {China block Tor: Round Two}.
+\newblock Available at:
+  \url{https://blog.torproject.org/blog/china-blocking-tor-round-two}, 2010.
+
+\bibitem{Tor:iran_block}
+Andrew Lewman.
+\newblock {Update on Internet Censorship in Iran}.
+\newblock Available at:
+  \url{https://blog.torproject.org/blog/update-internet-censorship-iran}, 2011.
+
+\bibitem{China_skype_ban}
+Jack McCarthy.
+\newblock China bans skype.
+\newblock Available at:
+  \url{http://www.infoworld.com/t/business/china-bans-skype-911}, 2005.
+
+\bibitem{Tor:iran-block-2012}
+Phobos.
+\newblock {Iran partially blocks encrypted network traffic}.
+\newblock Available at:
+  \url{https://blog.torproject.org/blog/iran-partially-blocks-encrypted-}
+  \url{network-traffic}, 2012.
+
+\bibitem{Syria_tor_usage}
+Tor~Metrics Portal.
+\newblock Usage of tor in syria.
+\newblock Available at: \url{https://metrics.torproject.org/}, 2012.
+
+\bibitem{Tor:obfsproxy}
+{Tor obfsproxy}.
+\newblock Available at: \url{https://gitweb.torproject.org/obfsproxy.git},
+  2012.
+
+\bibitem{stegotorus}
+Zachary Weinberg, Jeffrey Wang, Vinod Yegneswaran, Linda Briesemeister, Steven
+  Cheung, Frank Wang, and Dan Boneh.
+\newblock Stegotorus: a camouflage proxy for the tor anonymity system.
+\newblock In {\em ACM Conference on Computer and Communications Security},
+  pages 109--120, 2012.
+
+\bibitem{Tor:china_active_probe}
+Tim Wilde.
+\newblock {Knock Knock Knockin' on Bridges' Doors}.
+\newblock Available at:
+  \url{https://blog.torproject.org/blog/knock-knock-knockin-bridges-doors},
+  2012.
+
+\bibitem{Winter2012}
+Philipp Winter and Stefan Lindskog.
+\newblock {How the Great Firewall of China is Blocking Tor}.
+\newblock In {\em Free and Open Communications on the Internet}, Bellevue, WA,
+  USA, 2012. USENIX Association.
+
+\end{thebibliography}

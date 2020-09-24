@@ -1,0 +1,173 @@
+\section{Misuse-Forgiving Primitives}
+Towards the goal of building cryptography that is forgiving of misuse, prior
+work by PI Shrimpton defined the notion of nonce-misuse-resistant authenticated
+encryption~\cite{RS06}, and showed how to achieve it using standard
+symmetric-key tools.  Rogaway had previously argued~\cite{Rog04} that the
+classical viewpoint that symmetric encryption schemes are randomized primitives
+was misaligned with practice, and what we should be delivering encryption
+schemes that are deterministic, surfacing an explicit IV input. (This is an
+early effort to close the gap between a theoretical primitive and its real-world
+presentation.)  Moreover, to make schemes easier to use correctly, we should
+target security when the IV is a non-repeating value (i.e., a nonce) rather than
+demanding the IV be random.  In~\cite{RS06}, we sought to make these nonce-based
+encryption schemes even easier to use, by designing them so that their security
+guarantee degrades gracefully when the nonce IV repeats.  Nonce-misuse
+resistance has been recognized as an important goal in practice, and was one of the
+desiderata of the CAESAR competition~\cite{caesar}.
+%
+%\cpnote{Note that I talk about misuse-resistant and robust AE under the ``Secure
+%channels'' heading.}
+
+We are interested to learn other ways in which cryptographic
+primitives are prone to being misused in practices.
+\begin{task}
+We will leverage institutional and personal connections to industry (Intel,
+Comcast, Honeywell, Harris, Cisco, Agilent, BMW, IBM, Juniper, Mentor
+Graphics, Qualcomm, to name just a few\footnote{See
+  \texttt{http://fics.institute.ufl.edu/sponsors/} for a more complete
+  list.}) to learn what things developers don't understand about the
+primitives that theory provides them (in particular when implementing
+or using them), and how these primitives are commonly abused (knowingly or
+unknowingly).  We will use the lessons learned from this to formalize
+new primitives and new notions of misuse-resistant security.
+\end{task}
+
+\paragraph{Scrutinizing standards. }
+Later work by PI Shrimpton~\cite{NRS} reconsidered the traditional wisdom about
+building authenticated encryption (AE) via generic composition of an encryption
+scheme and a MAC.   The seminal work by Bellare and Namprempre~\cite{BN} showed
+that of the three classical compositions ---~encrypt-and-mac, mac-then-encrypt,
+encrypt-then-mac~--- only the last is secure given any secure encryption scheme
+and MAC.   This wisdom was heeded by an ISO standard, which would have been a
+good thing, except that the ISO standard was mandating a nonce-based AE scheme,
+whereas the Bellare-Namprempre results were about randomized AE.  As a result,
+the ISO scheme was actually broken, despite the standard's (applaudible) efforts
+to do what it seemed the crypto community told them.  Here again, the mismatch
+between theoretical primitives and their real-world realization was problematic.
+In~\cite{NRS}, we readdressed generic composition from the nonce-based
+perspective, finding an interesting (albeit less simple) picture of what
+compositions are (and are not) generically secure.  (Curiously, one of the
+secure compositions that our work uncovered was SIV-mode, which
+appeared in~\cite{RS06} as the first nonce-misuse-resistant AE scheme.)
+
+\begin{task}
+Borrowing tools (and expert colleagues) from NLP and data mining, we
+will examine standards ---~the full body of IEEE and ISO standards,
+minimally~--- to surface those that are likely to contain cryptographic
+errors.\footnote{Very recent work by PI Shrimpton and coauthors finds many
+errors in an important IEEE standard for protecting electronic
+intellectual property; this will appear at ACM CCS '17.}  We will
+write a survey/systemization-of-knowledge paper based on our findings, and work with standards
+bodies to address the mistakes we find.  
+\end{task}
+
+
+\ignore{
+\tsnote{Hey Chris: what other types of misuse might be considered?
+  Think about not just how one might misuse the inputs (say) to a
+  primitive, but also how a primitive might be ``misused'' within an
+  application, e.g. there may parallel communication channels, there
+  may be metadata in the clear, there may be downgrading or other
+  things that happen ``under the hood'' from the application's perspective, etc.}
+\cpnote{Good fodder for this question might be the underhanded crypto
+  competition. Many submissions put forward APIs that look easy to use, but
+actually are broken.}
+}
+
+Going in a different direction, the traditional syntax for encryption assumes that
+the plaintext data is a bitstring.  For many practical applications this
+suffices, as structured data can be serialized (or ``flattened'') prior to
+application of encryption.  But there are important applications in which this
+won't work.  For example, database encryption.  Here the data (i.e. the
+database) is highly structured, and in order to support efficient queries on
+portions of the (encrypted) data, one cannot simply flatten the data into a
+single string and apply traditional IND-CPA-secure encryption.  Various works
+have proposed to use combinations of deterministic
+encryption~\cite{BBO07}, searchable
+encryption~\cite{CJJ+13}, and order-preserving/revealing
+encryption~\cite{KW16}. All such property-revealing encryption schemes leak some
+information in order to support computations, and typicallly this leakage is
+formally captured with the attendant security notion.  But as recent attacks
+show~\cite{Cash15,NKW15,GSB+17}, capturing what is
+leaked does not necessarily say anything about how damaging that leakage is, in
+practice.
+
+We see this as an example of seemingly good theory unknowingly
+``setting up'' developers to misuse it.  What is needed is a proper
+cryptographic primitive for handling highly structured data ---~not
+just databases, but XML and JSON documents, sequences of plaintext
+fragments and their associated headers/metadata, filesystem
+encryption, and the like~--- and a framework for reasoning
+about security.  Such a framework will need to capture not only what
+is leaked by the scheme, but also what types of malleability the scheme
+allows. For the latter, we mean ciphertexts that the
+adversary \emph{should} be able to create given a set of observed
+ciphertexts.  (Think: ciphertexts that decrypt to a reordering of rows
+or columns in a table, ciphertexts of trees that are missing a
+subtree.  For traditional encryption, the adversary should only be
+able to ``create'' replays.)  Having explicit malleability models will allow us to
+reason about active attacks, which have often plagued efforts to
+develop database encryption schemes~\cite{GRS17}.
+
+\begin{task}
+We will develop a framework of security notions for primitives that
+encrypt structured plaintexts.  These notions will capture both what
+is leaked by ciphertexts, and also what explicit malleability models.
+We will establish new primitives for encrypting structured data, with
+support for structural metadata and plaintext associated-data.
+\end{task}
+
+
+
+\paragraph{Hedged Cryptography. }
+Recent work by PI Shrimpton and coauthors~\cite{BPS} revisits the theory of
+hedged public-key encryption (PKE)~\cite{BBN+} from an API-centric perspective.
+%
+The motivation for hedged PKE is quite practical. Traditional PKE schemes are
+proved secure under the assumption that they have access to a source of uniform
+random bits; but in practice, PKE schemes are implemented on systems that have
+faulty RNGs, or where entropy is difficult to harvest.  In these cases, the
+security guarantees proved in theory are, at best, voided; at worst, failure of
+the RNG can lead to recovery of the plaintext.
+%
+Hedged PKE is designed to satisfy traditional notions of security when provided
+uniform randomness, and still deliver useful security properties as the quality
+of randomness degrades.  The most elegant construction of hedged PKE works like
+this~\cite{BBN+,BH15}: synthesize fresh random bits by hashing all of the
+encryption inputs (the public key, the message, the provided randomness), and
+then use these bits as the randomness for an underlying PKE scheme.  In
+practice, implementing this simple construction is surprisingly difficult, as
+the high- and mid-level APIs presented by the most commonly used crypto
+libraries (e.g. OpenSSL and significant forks thereof) \emph{do not} permit one
+to specify the per-encryption randomness.\footnote{Other constructions of hedged
+PKE that do not explicit require the ability to manipulate the encryption coins
+are, likewise, difficult or impossible to implement via existing high- and
+mid-level APIs.  In their cases, it is because the primitives that are needed do
+not exist in common libraries.}
+In~\cite{BPS}, the theory of hedged
+PKE is reconsidered from the perspective of what can be easily constructed given
+what real APIs expose, and what provable security guarantees these can
+achieve.
+
+Still, \cite{BPS} leaves open some important matters.  First of all, the
+randomness sources in their models are stateless.  Most crypto libraries export
+\emph{pseudorandom number generators with inputs}~\cite{BH05,DPR+13,ST15} for
+providing random bits to library code and applications. These allow the
+programmer to add entropy into the PRNG's internal state.  Additionally,
+\cite{BPS} only considers PKE.
+
+
+\begin{task}
+We will push hedged PKE closer to practice by exploring the
+consequences of sources that are PRNGs with input.  Minimally, this will require
+a reconsideration of security notions and new constructions.  We will
+implement the best schemes to evaluate performance (e.g. overhead
+relative to plain PKE and the schemes from~\cite{BPS}) and interact
+with library maintainers to facilitate deployment of our constructions.
+\end{task}
+
+\begin{task}
+We will work to hedge other primitives against faulty randomness,
+using appropriate models of the randomness sources, all from the
+viewpoint of what real-world APIs expose.
+\end{task}

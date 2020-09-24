@@ -1,0 +1,96 @@
+---------
+Section 1
+---------
+
+ADEQUATELY RESOLVED[???][ o In the first paragraph, it might be punchier to get straight to the problems, i.e.
+
+  "Distribution-agnostic cryptography is conceptually simple and its generality
+  makes for convenience in practice. However, it fails to meet basic security needs in
+  several important, real-world contexts.  Here are three:" <problems 1,2,3>
+ 
+ Then finish the section with the current end of the first paragraph,
+ "To address these needs, and those of applications yet uncovered, we will pursue a line of work centered on
+ what we call \emph{distribution-sensitive cryptography}.  “]
+
+RESOLVED:[o Brute-force attacks problem: Throw one prominent, concrete example, maybe just in parentheses, at the end of the description.]
+
+RESOLVED: [o Censorship of encrypted protocols problem: here, too, might try to sell the importance a bit harder.  Something along the lines of "Censorship in some countries is so pervasive and heavy handed that Reporters Without Borders labels them "Internet Black Holes".\cite{}”]
+
+RESOLVED: [o Preliminary DSC-style approaches:  When talking about extending HE to other plaintext spaces, perhaps name one or two that are important.  Fends off the complaint that HE is a limited-use primitive.]
+
+o Preliminary DSC-style approaches: Final paragraph has a weak start: we just say "We will build on these previous lines of research."  Can we sell this a bit better?  Something like,
+
+RESOLVED:[”While making good initial progress to addressing shortcomings of conventional cryptography, our initial work also highlights the scope of the challenges, and the need for a concerted push to develop and deploy DSC.”]
+
+RESOLVED: [o Unifying framework: "Our [Distribution-Sensitive Cryptography] framework will be a principled methodological 
+blend of hands-on empiricial study, cryptographic theory, and system design."  Framework seems the wrong word, at least the way it is used in this sentence  (Doesn't plain "cryptography framework" sound odd?)  It's more like, our approach to developing a theory of DSC.  Or, "Our development of DSC will be built upon a novel four-part framework…”]
+
+RESOLVED: [o (1)Practice-driven modeling: need some punctuation in here, some commas at least, to break up run-on sentences.  (All but the first sentence, actually.)  [[FIXED, but I left this here because it's a reoccuring problem.]]
+
+RESOLVED: [o (2)Robust... : "We will also explicitly target robustness."  This sentence comes out of nowhere.  Robustness of what?  Of the definitions?  Of the schemes that meet definitions?]
+
+o (3)Practical constructions... : nit-pick, but drop the word "pertinent".  It's superfluous -- why would you try to prove security relative to impertinent defs? [[DONE, but left here as an argument against putting it back.]]
+
+RESOLVED:[o (4)Experimental and formal analysis: "Where possible, we will empirically validate these
+assumptions via appropriate application-specific experiments."  This sounds hard.  Where, for instance, will this be possible?]
+
+RESOLVED:[o Last sentence of paragraph just before "Public artifacts":  "We will seek out other opportunities, and either work on them
+ourselves or simply advertise implied open problems to the broader research community."  This is a weak ending, a sentence that doesn't seem to add anything to the paragraph.]
+
+RESOLVED: [o Team:  too many uses of "cross-cutting" in this section. ("cross-disciplinary" appears, too)]
+
+RESOLVED: [We didn’t indicate what DSE and DSSS were when we first introduced them.]
+
+
+---------
+Section 2
+---------
+
+RESOLVED[o Building HE with DTEs: why is MR a good security goal?  (This is sort of addressed in the sentences that follow.  But much better addressed at the start of Section 2.1 "Beyond MR for HE”.)]
+
+RESOLVED:[o End of "Building HE with DTEs": Robustness mentioned again, but still no good handle on this term. (Would be addressed by addressing earlier complaint.)]
+
+RESOLVED[o "Password managers" and "Genetic Information" look just like our paragraph headers]
+
+RESOLVED[o Typo-safety: Short heading, no task (unlike other headings in this section).  And it looks like you'll solve the problem in Section 4, 
+anyway…]
+
+
+---------
+Section 3
+---------
+
+o Modeling real adversaries: perhaps point out that studying real DPI was instrumental in developing regular-expression-based FTE, because it gave us a real target at which to aim.
+
+o Modeling real adversaries: addressing TomR's comment, reorder this paragraph to put the leaked docs comment last.
+
+o Modeling real adversaries: perhaps surface measurement study as a task, since this is a major undertaking, likely to result in its own publication
+
+o Just following Task 7: "...one can submit as protocol messages to the implementation..."  awkward wording.  Missing word(s)?
+
+---------
+Section 4
+---------
+
+o opening paragraph: "For such a secret K,..." this sentence seems out of place.  Better to drop it and end the paragraph with the following sentence.  (Better flow.)
+
+o Headings "Problem setting." and "Background."  These sound alike.
+
+o Background: nit-pick, but union operates on sets, so it should be \{\bot\} not just \bot
+
+o Just after Task 13: "messiness"?  "complexity"
+
+o DSSS for typo-safety in HE, Honeywords as DSSS: two headings, no tasks.  Is there something to do here, or is this just "good to know"?
+
+
+---------
+Section 5
+---------
+
+o Opening paragraph needs rewording.  Can probably tighten up to say that common/cross-cutting steps emerge, and here they are:  1,2,3,4.  
+
+o (1) Practice-driven modelling: we list what will be needed for this "key enabler", but not how we play to meet those needs.  Might be sufficient to point back to sections where we have specificall addressed this.
+
+o I'd insert a small amount of space between the end of "(4) Experimental..." and the following paragraphs.  These may even warrent their own heading?
+
+

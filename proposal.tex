@@ -1,0 +1,299 @@
+\documentclass[10pt]{article}
+\usepackage{palatino}
+\usepackage{csquotes}
+\usepackage{pslatex}
+\usepackage{hyperref}
+\usepackage{breakurl}
+%-- Classes to use -------------------------------
+\usepackage{latexsym}
+\usepackage{enumerate}
+\usepackage[compact]{titlesec}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{graphicx}
+%\usepackage{subfigure}
+\usepackage{subfig}
+\usepackage{capt-of}
+\usepackage{url}
+\usepackage{cite}
+\usepackage{color}
+%\usepackage{soul}          % for highlighting comments
+%\usepackage[draft,inline,nomargin]{fixme}
+\usepackage{xspace}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{wrapfig}
+\usepackage{epsfig}
+\hypersetup{colorlinks=false, pdfborder= 0 0 0}
+\usepackage{fancyhdr}
+
+\pagestyle{plain}
+\lhead{}
+\chead{Draft of \today.  Please do not distribute.}
+\rhead{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+%-- Macros ---------------------------------------
+\newcommand{\myemph}[1]{\textbf{\emph{#1}}}
+
+\newenvironment{packeditemize}{
+\begin{list}{$\bullet$}{
+\setlength{\labelwidth}{8pt}
+\setlength{\itemsep}{0pt}
+\setlength{\leftmargin}{\labelwidth}
+\addtolength{\leftmargin}{\labelsep}
+\setlength{\parindent}{0pt}
+\setlength{\listparindent}{\parindent}
+\setlength{\parsep}{0pt}
+\setlength{\topsep}{3pt}}}{\end{list}}
+
+\newcommand{\ignore}[1]{}
+
+\newcounter{tasknmbr}
+\newcounter{tasklabel}
+\renewcommand{\thetasklabel}{\textbf{\thetasknmbr}}
+\newenvironment{task}{
+\begin{list}{\textbf{Task }\thetasklabel:}{\usecounter{tasklabel}\stepcounter{tasknmbr}\item\em}}{\\[-7pt]\end{list}}
+
+
+
+% ========================================================================
+% Lists
+
+\newlength{\saveparindent}
+\setlength{\saveparindent}{\parindent}
+\newlength{\saveparskip}
+\setlength{\saveparskip}{\parskip}
+
+\newcounter{ctr}
+\newcounter{savectr}
+\newcounter{ectr}
+
+\newenvironment{newitemize}{%
+\begin{list}{$\bullet$}{\labelwidth=9pt%
+\labelsep=7pt \leftmargin=16pt \topsep=1pt%
+\setlength{\listparindent}{\saveparindent}%
+\setlength{\parsep}{\saveparskip}%
+\setlength{\itemsep}{4pt} }}{\end{list}}
+
+\newenvironment{newenum}{%
+\begin{list}{{\rm (\arabic{ctr})}\hfill}{\usecounter{ctr} \labelwidth=18pt%
+\labelsep=7pt \leftmargin=25pt \topsep=3pt%
+\setlength{\listparindent}{\saveparindent}%
+\setlength{\parsep}{\saveparskip}%
+\setlength{\itemsep}{2pt} }}{\end{list}}
+
+\newenvironment{tiret}{%
+\begin{list}{\hspace{2pt}\rule[0.5ex]{6pt}{1pt}\hfill}{\labelwidth=15pt%
+\labelsep=3pt \leftmargin=22pt \topsep=4pt%
+\setlength{\listparindent}{\saveparindent}%
+\setlength{\parsep}{\saveparskip}%
+\setlength{\itemsep}{4pt}}}{\end{list}}
+
+\newenvironment{bigtiret}{%
+\begin{list}{\hspace{2pt}\rule[0.5ex]{6pt}{1pt}\hfill}{\labelwidth=15pt%
+\labelsep=3pt \leftmargin=22pt \topsep=10pt%
+\setlength{\listparindent}{\saveparindent}%
+\setlength{\parsep}{\saveparskip}%
+\setlength{\itemsep}{10pt}}}{\end{list}}
+
+\newenvironment{bigblock}{%
+\begin{list}{\hfill}{\labelwidth=0pt%
+\labelsep=0pt \leftmargin=0pt \topsep=6pt%
+\setlength{\listparindent}{\saveparindent}%
+\setlength{\parsep}{\saveparskip}%
+\setlength{\itemsep}{6pt}}}{\end{list}}
+
+\newenvironment{blocklist}{\begin{list}{}{\labelwidth=0pt%
+\labelsep=0pt \leftmargin=0pt \topsep=10pt%
+\setlength{\listparindent}{\saveparindent}%
+\setlength{\parsep}{\saveparskip}%
+\setlength{\itemsep}{20pt}}}{\end{list}}
+
+\newenvironment{blocklistindented}{\begin{list}{}{\labelwidth=0pt%
+\labelsep=25pt \leftmargin=25pt\topsep=2pt%
+\setlength{\listparindent}{\saveparindent}%
+\setlength{\parsep}{\saveparskip}%
+\setlength{\itemsep}{2pt}}}{\end{list}}
+
+\newenvironment{onelist}{%
+\begin{list}{\textbf{\arabic{ctr}.}\hfill}{\usecounter{ctr} \labelwidth=16pt%
+\labelsep=5pt \leftmargin=21pt \topsep=5pt%
+\setlength{\listparindent}{\saveparindent}%
+\setlength{\parsep}{\saveparskip}%
+\setlength{\itemsep}{5pt}}}{\end{list}}
+
+\newenvironment{twolist}{%
+\begin{list}{{\rm (\arabic{ctr}.\arabic{ectr})}%
+\hfill}{\usecounter{ectr} \labelwidth=26pt%
+\labelsep=7pt \leftmargin=33pt \topsep=2pt%
+\setlength{\listparindent}{\saveparindent}%
+\setlength{\parsep}{\saveparskip}%
+\setlength{\itemsep}{2pt} }}{\end{list}}
+
+\newenvironment{collist}{%
+\begin{list}{{\rm (\arabic{ctr}.\arabic{ectr})}%
+\hfill}{\usecounter{ectr} \labelwidth=26pt%
+\labelsep=7pt \leftmargin=33pt \topsep=3pt%
+\setlength{\listparindent}{\saveparindent}%
+\setlength{\parsep}{\saveparskip}%
+\setlength{\itemsep}{3pt} }}{\end{list}}
+
+\newenvironment{centerlist}{%
+\begin{list}{\mbox{}}{\labelwidth=0pt%
+\labelsep=0pt \leftmargin=0pt \topsep=1pt%
+\setlength{\listparindent}{\saveparindent}%
+\setlength{\parsep}{\saveparskip}%
+\setlength{\itemsep}{1pt} }}{\end{list}}
+
+\newenvironment{newcenter}[1]{\begin{centerlist}\centering%
+\item #1}{\end{centerlist}}
+
+% =========================================================================
+
+\def\authnotes{1}
+
+\newcounter{mynote}[section]
+\newcommand{\notecolor}{black}
+\newcommand{\thenote}{\thesection.\arabic{mynote}}
+\newcommand{\note}[2]{\refstepcounter{mynote}{\bf \textcolor{\notecolor}{$\ll$#1: {\textcolor{black}{\sf #2}}$\gg$}}}
+\newcommand{\mnote}[1]{\refstepcounter{mynote}{\bf \textcolor{\notecolor}{$\ll$MB~\thenote: {\sf #1}$\gg$}}}
+\newcommand{\todo}[1]{\ifnum\authnotes=1\textbf{\textcolor{red}{[To-Do: #1]}}\fi}
+\newcommand{\snote}[1]{\refstepcounter{mynote}{\bf
+\textcolor{\notecolor}{$\ll$SK~\thenote: {\sf #1}$\gg$}}}
+\newcommand{\notetoms}[1]{\note{\sf \textcolor{cyan}{TomS}}{\textcolor{cyan}{#1}}}
+\newcommand{\tsnote}{\notetoms}
+\definecolor{darkgreen}{RGB}{50,127,0}
+\newcommand{\cpnote}[1]{\note{Chris}{\textnormal{\textcolor{blue}{#1}}}}
+
+%\newcommand{\assign}[2]{\fixme{\hl{\bf Assigned to #1:} #2}}
+%\newcommand{\assigntom}[1]{\assign{Tom}{#1}}
+%\newcommand{\assignari}[1]{\assign{Ari}{#1}}
+
+
+%\newcommand{\fixmehl}[1]{\fixme{\hl{#1}}}
+%\newcommand{\fxnotehl}[1]{\fxnote{\hl{#1}}}
+%\newcommand{\hlfixme}[1]{\fixme{\hl{#1}}}
+%\newcommand{\hlfxnote}[1]{\fxnote{\hl{#1}}}
+
+\newtheorem{example}{Example}
+
+\newcommand{\heading}{\paragraph} 
+
+\input{tomsdefs.tex}
+\input{chrisdefs.tex}
+
+\newcommand{\mytitle}{SaTC: CORE: Small:\\
+  \smallskip API-Centric Cryptography} 
+%\newcommand{\mytitle}{TWC: TTP Option: Medium: Distribution-Sensitive Cryptography} 
+
+%--- Begin document text -------------------------
+\begin{document}
+
+%-- Title page -----------------------------------
+\vspace*{1.0in}
+\begin{center}
+
+{\Large\bf \mytitle}
+
+\vspace*{.5in}
+
+\medskip
+\noindent\textbf{Principal Investigator:} Thomas Shrimpton (University of Florida)\\
+
+%{\large
+%  {\em  Ari Juels, Thomas Ristenpart, Thomas Shrimpton}
+%}
+%\\ \hfill \\
+
+\medskip
+Solicitation: \url{http://www.nsf.gov/pubs/2017/nsf17576/nsf17576.htm}
+
+\end{center}
+\thispagestyle{empty}
+
+\iffalse
+%-- Project summary --------------------------
+
+\clearpage
+\setcounter{page}{1}
+
+\input{onepage}
+\fi
+
+%-- Project description --------------------------
+\clearpage
+\renewcommand{\thepage}{D-\arabic{page}}
+\setcounter{page}{1}
+
+%%%-- Intro and overview  ------------------------------
+\input{intro}
+
+%%%-- API-centric crypto ------------------------------
+\input{api-centric-crypto}
+
+%%%-- misuse-forgiving primitives ------------------------------
+\input{misuse-forgiving}
+
+%%%-- implementation-oriented formalism  ------------------------------
+\input{implementation-oriented-formalism}
+
+
+%%%-- implementation difficulty as security measure ------------------------------
+%\input{security-implementation}
+
+%%%-- Outreach plan  ------------------------------
+\input{outreach}
+
+%%%-- Prior work by PIs  ------------------------------
+\input{prior}
+
+%%%-- Collaboration plan (required for medium) ------------------------------
+%\clearpage
+%\renewcommand{\thepage}{C-\arabic{page}}
+%\setcounter{page}{1}
+%\input{collabplan}
+
+%%%-- Data management  ------------------------------
+\clearpage
+\renewcommand{\thepage}{M-\arabic{page}}
+\setcounter{page}{1}
+\input{datamanagement}
+
+
+
+%%%-- Transition to Practice plan (if we want to go this route) ------------------------------
+%\clearpage
+%\renewcommand{\thepage}{M-\arabic{page}}
+%\setcounter{page}{1}
+%\input{./transition/transitions}
+
+
+%%%-- Data Management plan ------------------------------
+%\clearpage
+%\renewcommand{\thepage}{M-\arabic{page}}
+%\setcounter{page}{1}
+
+
+
+%--- End matter ----------------------------------
+\clearpage
+\renewcommand{\thepage}{R-\arabic{page}}
+\setcounter{page}{1}
+
+\begin{center}
+{\LARGE\bf References Cited -- Proposal Section (e)}
+\end{center}
+%\bibliographystyle{abbrv}
+\bibliographystyle{alpha}
+\bibliography{proposal}
+%\bibliography{dsc-collab-master}
+
+\end{document}
+
+
+
+

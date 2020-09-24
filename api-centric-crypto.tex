@@ -1,0 +1,472 @@
+\section{API-centric Cryptography}
+The security community has published extensively on the \emph{usability} of
+APIs; recent developments in this area include \cite{ABF+,HHL+17,IKND16}.
+Intuitively, if an API is easy to use correctly (and hard to use
+\emph{incorrectly}), developers are more likely to build secure applications on
+top of it.
+%
+Our approach is complementary, focusing on the relationships between
+functionalities that APIs present and the primitives that crypto theory
+provides. In practice, API design is primarily driven by non-security
+requirements (e.g. functionality, adoption, deployment).
+%
+As such, we suggest to take an
+\emph{API-centric} view of the primitives and protocols that we
+formalize.
+
+We are not the first to recognize the benefits of this viewpoint.
+Recent works by Fischlin \etal~\cite{FPMG15} and Huang
+\etal~\cite{HRRV15}, for example, make clear efforts to mimic actual
+APIs in their formalizations.  Quoting~\cite{HRRV15}, ``To
+accurately model the underlying goal... we adopt an \emph{API-based
+  view}, where the segmentation of a plaintext is determined by the
+caller.'' (Our emphasis.)  What we propose is to fully embrace this
+viewpoint, and to apply it broadly to cryptography.
+
+In the remainder of this section, we discuss some specific areas to which we will apply
+this API-centric perspective.
+%
+%\cpnote{I think we need to define \emph{API-centric} in the intro.}
+
+%Note that this is a preliminary list of areas, based on prior results and current considerations.
+
+\paragraph{Understanding the Landscape. }
+It is important to recognize that there are at least two types of ``customers''
+to consider when taking an API-centric viewpoint on cryptography. The first we
+have already mentioned, namely \emph{application developers}. Application developers
+are primarily concerned about functionality, and typically have little
+to know real expertise in cryptography.  (Nor should they, frankly.)
+%
+%\cpnote{We could say something stronger: that the needn't have \emph{any}
+%expertise in cryptography, and merely understand that the connection needs to be
+%secure (in some sense).}
+%
+For them, the interface to cryptographic functionalities should be
+simple and have intuitive semantics, e.g.,
+\begin{align*}
+\varfont{SecureSocketHandle}&\gets\algfont{SecureOpen}(\varfont{ReceiverID}), \\
+\varfont{Status}&\gets\algfont{SecureSend}(\varfont{SecureSocketHandle, Msg}),\\
+  (\varfont{Msg}, \varfont{Status}) &\gets\algfont{SecureReceive}(\varfont{SecureSocketHandle}), \\
+\varfont{Status}&\gets\algfont{SecureClose}(\varfont{SecureSocketHandle}).
+\end{align*}
+%
+as an API for securely exchanging messages with an specified partner.
+The API would also specify the structure of the inputs and outputs.
+For example, the \varfont{Msg} object may include associated data or attributes, in addition
+to the actual plaintext.
+%
+%The object \varfont{Status} indicates the channel's health. For example, the
+%channel may have been torn down by the peer, or the destination address may be
+%unreachable.
+
+
+The above API neatly hides an enormous amount of plumbing implemented by the
+\emph{security engineer}. There are a number of components to put together. The
+high-level tasks are to authenticate the peer, exchange a key, use the key to
+transmit the message, and securely tear down the session. Designing and
+implementing such a protocol gets into the weeds quite quickly. This is an area
+where having good APIs for things like digital signatures, message
+authentication codes, and encryption is extremely helpful; even so, it is rarely
+apparent how these are to be securely composed. This difficulty is compounded by
+the fact that the protocol needs to be as efficient as possible, as application
+developers (and users of the applications in turn) are generally unwilling to
+pay a heavy price for security.
+%
+To illustrate these issues, consider the following API for
+unilaterally\footnote{By unilaterally, we mean that the party opening the
+channel authenticates the peer, but not the other way around.}
+authenticated key exchange:
+\begin{align*}
+  \varfont{SocketHandle} &\gets\algfont{Open}(\varfont{ReceiverAddr}), \\
+  (\varfont{Key}, \varfont{Status}) &\gets \algfont{NegotiateKey}(
+    \varfont{SocketHandle}, \varfont{ReciverCert}, \varfont{CertAuth})
+\end{align*}
+where $(\varfont{ReceiverAddr}, \varfont{ReceiverCert})$ comprise
+\varfont{ReceiverID} (above).  First, note that the root-of-trust,
+\varfont{CertAuth}, is implicit in the first API. Unless we are to trust the
+developer to manage certificates (as many existing APIs do), then
+the security engineer needs to make this transparent to upper levels. This has
+inherent risks, which may not be obvious to the security engineer~\cite{FHM+12}. Second,
+there are numerous ways to realize \algfont{NegotiateKey}, each with varying
+degrees of security and efficiency. Third, modern protocols, such as TLS, are
+designed so that application data may be piggy-backed on the handshake. (This is
+called 0-RTT, or zero round trip time, data.) As such,
+providing an opaque interface is likely not desirable. In general, the ``right''
+level of exposure to the application developer or security engineer is highly
+task-dependent.
+%
+\if{0}
+  (Consider for example, the well-known deficiency in TLS version $1.2$ (and
+  older); The final \textsc{Finish} message being MACed renders it impossible to
+  prove security in the key-indistiguishiblity sense, which means the handshake
+  is not directly composable with the record protocol.)
+\fi
+%
+\if{0}
+\cpnote{It might be helpful to give an example of something exposed to the
+``security engineer.''}\tsnote{Agreed.  So what would be the
+corresponding API for security engineers?  I'm not sure, myself.  I
+would think that the SE actually has an API for the components that
+are needed to build up things like $\algfont{SecureSend}$, not a
+version of $\algfont{SecureSend}$ that surfaces more inputs/outputs.
+But if you look at that ``semantic API'' paper, the API they give to
+the security engineer is very spartan, with all of the crypto actually
+assumed in a Java library.  So I'm not sure what the right thing to do
+is, here.  Thoughts?}
+\todo{Need to finish out this text before leading into the task...}
+\fi
+
+\begin{task}
+  We will carry out a detailed survey of existing APIs exposed by
+  cryptographic libraries. The goals will be to understand exactly
+  what are the effective primitives being exported, to build a
+  framework for understanding design patterns common across libraries,
+  to set metrics for comparing the complexity of the primitives
+  exposed, and so on.
+\end{task}
+\noindent
+The above will support multiple subsequent tasks.  We note that the
+\emph{effective} cryptographic primitives that are presented to the application
+developer may be considerably different that those considered cryptographers.
+
+\begin{task}
+Beginning with application developer APIs for secure exchange of messages
+and secure read/write from storage, we will formalize the
+cryptographic primitives they imply, and develop security notions that
+capture the security properties that developers assume are provided.
+(See also the related Task 3.)
+\end{task}
+
+
+
+\paragraph{Secure Channels. }
+Perhaps the most practically important cryptographic functionality is the
+secure channel, the task of which is to provide privacy and authenticity for
+message flows between peers.
+%
+Over the last decade or so, \emph{authenticated encryption with associated data}
+(AEAD) has emerged as an important ingredient for constructing secure channels.
+%
+Its syntax is easy to reason about from a theoretical point of view, and yet is
+robust enough to encompass most tasks that practitioners encounter. Moreover,
+notions like \emph{nonce-misuse resistant}~\cite{RS06} and
+\emph{robust}~\cite{HKR15} authenticated encryption make AEAD schemes difficult
+to (inadvertently) use incorrectly. These properties make AEAD an attractive
+tool for designing protocols.
+
+It is tempting to think that AEAD, on its own, provides a secure channel.  But
+as pointed out by Badertscher \etal~\cite{BMM+15}, classical security
+notions, such as those for AEAD ``do not capture in which contexts a scheme
+satisfying them can securely be used.''  Indeed, bugs in the
+\emph{protocol logic} have been exploited to circumvent the
+security provided by the underlying
+crypto~\cite{Vau02,BKN02,APW09}.\footnote{See
+\url{https://www.mitls.org/pages/attacks\#protocol} for a list of
+protocol-level attacks on TLS.}  This gap has spurred the study of
+\emph{stateful} authenticate encryption schemes that model secure channels more
+closely, such as the highly influential SSH paper~\cite{BKN02} and the analysis
+of the TLS $1.2$ record layer by PI Shrimpton and coauthors~\cite{PRS11}. Boldyreva
+\etal~\cite{BDPS12} later extended~\cite{BKN02} to encompass the protocol-level
+attack of~\cite{APW09} that exploits fragmented delivery of the
+ciphertext stream. 
+
+Fischlin \etal~\cite{FPMG15} observe that this line of work still
+misses an important point about the APIs (i.e. the effective cryptographic
+primitives) that are presented in practice.  Namely, the prior work treated
+channels as providing secure transport of atomic messages between two parties.
+%
+%\cpnote{This is a bit redundant in the context of the first section
+%``understanding an API's customers. Maybe we should pair this down a bit?}
+%
+%Providing a reliable (but not secure) channel between any two hosts on the
+%Internet is the job of the TCP/IP protocol stack. TCP in particular is designed
+%so that application developers need not worry about the details at all.
+But TCP is ubiquitous for the delivery of web content, and virtually
+all programming languages export an API for \emph{streaming data} over
+TCP.  Likewise, implementations of
+the TLS record layer also export a streaming data API. 
+%
+\ignore{
+In OpenSSL (the most widely-deployed implementation of TLS), \codefont{SSL\_write()} is used to write
+bytes to the stream and \codefont{SSL\_read()} is used to read bytes from the
+stream.  An application developer can use this API just as she would use the
+lower-level functionality for reliable transport, but with the added assurance
+that the channel is secure.
+}
+Fischlin \etal~\cite{FPMG15} were the first to give a cryptographic
+treatment of secure channels as data streams. (Prior
+work~\cite{BDPS12,BFK+13} treated plaintexts and/or
+ciphertexts as atomic.)
+%
+Their syntax directly captures a streaming API, and their security notions
+(privacy and authenticity) model an adversary who transmits ciphertext
+``fragments'' over the channel, and may drop, inject, and reorder fragments at
+will.  This allows them to model streaming protocols (such as TLS) that divide
+the message stream into discrete ``records'' and encrypt each individually
+before transmitting. The peer may receive only a piece of a record, or multiple
+records simultaneously.
+
+We regard~\cite{FPMG15} as an important step in an API-centric
+treatment of secure channels, but a number of important practical
+issues remain.
+%
+In order to apply their methodology to a real protocol, one would need to
+precisely specify it as a streaming secure channel (according to their
+formalism) and provide a proof of security. This on its own is a complex
+undertaking (cf.~\cite{DLFK+17}), but it also places a heavy burden on security
+engineers. It is incumbent on them to implement this protocol \emph{precisely},
+and if the protocol needs to be changed (say, to address some engineering
+constraint), then the cryptographer needs to provide a fresh proof.
+
+A largely-overlooked work by Rogaway and Stegers~\cite{RS09}
+affords an opportunity to bridge this gap.\footnote{Degabreile
+  \etal~\cite{DPW11} also note this: ``this is an intriguing approach
+  that we expect to see further developed.''} Their observation is that when
+cryptographers design protocols, they provide an abstraction that omits many
+details relevant to implementing them on real systems.
+%
+This is not without reason, of course; the needs of systems are complex and always
+changing.
+%
+TLS is a prime example. The record layer is the piece of the protocol
+encompassing all messages between client and server. The specification document
+for the upcoming version 1.3~\cite{tls13} is comprised of a rich set of rules
+for how the stream of messages are mapped to records: some types of messages may
+be coalesced into a single record, others must be the only message in a record,
+and so on. These rules may seem, at first glance, irrelevant from a security
+perspective, but it quickly becomes clear that the analysis must address
+them.
+%
+\if{0}{Transmission of early data was added to the protocol in
+order to address a real-world problem: that the TLS handshake incurs lots of
+network latency, which makes it difficult to implemented at scale. This lead to
+the ``False Start'' extension for TLS 1.2~\cite{RFC7918}, and 0-RTT data will be
+a core component of TLS 1.3. But these extensions adds complexity and render the
+analysis more difficult.}\fi
+%
+Rogaway and Stegers provide a framework for analyzing \emph{partially-specified
+protocols}, where the ``cryptographic core'' of the protocol is separated from
+the ``protocol details'' relevant to engineers. In the analysis, one assumes the
+latter is utterly controlled by the adversary. Thus, a proof of security under
+this pessimistic assumption affords the protocol designer a high degree of
+flexibility, while providing a certain amount of robustness to bugs in
+implementations.
+
+\begin{task}\label{task:sc}
+  We propose to apply Rogaway-Stegers methodology to streaming secure channels
+  towards providing guidance in the design of the TLS 1.3 record layer.
+\end{task}
+
+
+\if{0}{
+  \cpnote{Fischlin \etal say that OAE is unrelated to their work, although they
+  didn't read~\cite{HRRV15}. (Their OAE citations are prior work.)
+  Nonetheless, I tend to agree with them. First, the syntax is sufficiently
+  different. Second, the goals are different; \cite{HRRV15} want to model
+  \emph{online} and \emph{constant-space} encryption/decryption;
+  in~\cite{FPMG15} neither of these are mandated.}\todo{Chris: is there actual
+  text to add from your note?} \cpnote{Nope. This was just a response to one of
+  your earlier comments.}
+}\fi
+%\todo{I feel like we are missing an important task here, having to do
+%with understanding what are the current APIs for secure channels,
+%how those align with theoreticians' viewpoint(s) on secure channels,
+%looking for the ``right'' API/syntax for secure channels, i.e. one
+%that supports what applications expect, etc.}
+%
+%\cpnote{To me this is already done. \cite{FPMG15} syntax is quite close to real
+%APIs. The syntax I've worked out for this paper is \emph{even closer}, but I
+%don't think that's the main contribution of the paper. The main contribution is
+%the security model.}
+
+\paragraph{Authenticated Key Exchange. }
+The key agreement protocol used to establish the channel is also amendable to an
+API-centric treatment.
+%
+Since the seminal work of Bellare And Rogaway~\cite{BR93}, the vast majority of
+the literature on authenticated key exchange has focused on the case of
+\emph{mutual} AKE (MAKE), where both client and server wish to authenticate the
+other. In fact, virtually all TLS handshakes on the Internet are only
+\emph{unilaterally} authenticated (UAKE). (The client wishes to verify the
+server's identity.)
+%
+\if{0}{ % We're not actually dealing with this.
+Second, TLS offers features that break with the Bellare-Rogaway model
+altogether. For example, Bhargavan et al.~\cite{bhargavan2014proving} point
+out (a) that handshakes share states \emph{across session} (in
+Bellare-Rogaway each session has its own state), and that (b) the same
+material may be used by the same entity in \emph{different protocols}
+(requires the underlying algorithms be \emph{agile}, a
+la~\cite{acar2010cryptographic}).
+}\fi
+%
+We alluded to another issue above. An important consideration in the upcoming TLS 1.3
+specification~\cite{tls13} is the transmission of 0-RTT data.
+%
+This feature is crucial from an engineering perspective, but as is
+well-known~\cite[Section 2.2]{tls13}, we cannot provide the same level of
+security for the message on which we are piggy-backing the exchange as is
+possible for subsequent messages. In particular, \emph{forward security} is out
+of reach.
+
+These issues point to a gap between how programmers expect they should be able
+to use cryptography, and how cryptography is to be used securely. This presents
+an opportunity to distill from design patterns in existing KE protocols (e.g.,
+the TLS handshake) an abstraction (and corresponding API) that cleanly captures
+the needs of software engineers.
+%
+A promising direction is to begin with Dodis and
+Fiore~\cite{dodis2017unilateral}, who show that UAKE is much simpler to model
+than MAKE, which requires a more general protocol framework, such as
+Bellare-Rogaway.
+%
+Dodis and Fiore define a natural primitive they call
+\emph{confirmed encryption} for KEM-based UAKE, which has an API that, we
+feel, is intuitive for security engineers. Briefly, the sender encrypts its
+message with the public key of the recipient essentially as one would with a
+conventional encryption scheme. The receiver decrypts the ciphertext, then
+transmits a ``confirmation'' proving to the sender that the message was
+received.
+%
+This primitive immediately yields UAKE. Using an approach by
+Krawczyk~\cite{krawczyk2016unilateral-to-mutual}, it can also be used as a
+building block for a MAKE protocol.
+
+Distilling a complex problem in this way is invaluable to practice. A
+limitation of~\cite{dodis2017unilateral}, however, is that confirmed encryption
+cannot provide forward security on its own. As this has become a first-class
+concern, we feel it deserves a first-class primitive.
+%
+%\cpnote{Tom: I kind of stole the language of the last line from you.}
+
+\begin{task}
+  Extending the work of~\cite{dodis2017unilateral}, we will study UAKE protocols
+  that provide \emph{forward security} with the aim of providing an API that is
+  intuitive for security engineers.
+\end{task}
+
+\noindent
+Having such an API would simplify the task of designing real-world KE
+protocols, but it is only a component of the design process.
+
+Going in a different direction, Rogaway and Stegers~\cite{RS09} suggest their
+methodology can be extended from entity authentication to AKE.
+Perhaps due to the limited attention this paper has received in the
+cryptographic community, this natural extension as not been explored.
+\begin{task}
+  %\cpnote{Make it easier to use APIs correctly.}
+  We will apply the partially-specified-protocol methodology of~\cite{RS09} to
+  authenticated key-exchange.
+  %
+\end{task}
+
+
+%\todo{Is there more here?  What about the ideas that
+%  Trevor Perrin suggested, specifically for AKE?  I feel like we are
+%  missing a chance to build in more tasks and show more vision}
+%\cpnote{I haven't come up with anything.}
+
+\paragraph{Standardized APIs. }
+%\cpnote{Do you think there's too much detail here? The hedged PKE stuff has a
+%lot less...}
+%\tsnote{There may ultimately be too much here, but I don't
+%know yet.  Anyway, it's fine to have some sections more detailed than
+%others, especially if some allow you to really trumpet the PI's chops.}
+%
+In~\cite{SSW}, PI Shrimpton and coauthors gave a provable-security treatment to
+the design and analysis of so-called ``cryptographic APIs'', standardized in the
+PKCS\#11 document.\footnote{See
+\url{https://www.oasis-open.org/committees/tc_home.php?wg_abbrev=pkcs11} for the
+latest spec.} That standard details an interface by which one may interact with
+cryptographic tokens (e.g. smart cards, USB devices, enterprise-grade HSMs) that
+are trusted to perform key-management duties, enforcement of policies for the
+use of stored keys, and a limited number of asymmetric- and symmetric-key crypto
+operations.  These tokens support a variety of applications, including entity
+authentication, certification authorization, SSL/TLS acceleration, and interbank
+communication.
+%
+
+Our approach in this paper was API-centric, in that we took the PKCS\#11
+standard as the reference point, and defined from it a new cryptographic-API
+primitive.
+%
+%\cpnote{Why ``cryptographic API primitive'' instead of ``cryptographic
+%  API''?}\tsnote{Because I have never liked calling the object whose
+%  syntax we established, and whose security notions we developed, a
+%  cryptographic API.  A cryptographic API exposes some effective primitive.}
+%
+We then formalized some of the intuitive notions of security for a
+cryptographic API.  This was a complex undertaking, as one of the core
+key-management functionalities is to allow the exporting and importing of keys
+via ``key (un)wrapping'' operations.  (This supports, among other things, the
+transportation of cryptographically protected keys between tokens.)  These keys
+may have a variety of attributes associated to them that proscribe their usage,
+e.g.\ this key may/may not be used to encrypt data (via a given API call), that
+key may or may not be wrapped for future export, etc.  Thus, the internal state of
+the key-management functionality changes as an attacker carries out permitted
+API calls. (We note that works such as~\cite{KS13} exploit this changing of
+internal state, sometimes in concert with underspecification in standards and
+device documentation, to cause catastrophic security breaks in HSMs.) Moreover,
+a real adversary may be in possession of one or more tokens ---~keep in mind
+that these may be physically vulnerable devices, such as USB sticks or smart
+cards~--- and these are subject to corruption.  As a result, a victim token is
+asked to import adverasarially-known keys.  This can cause many other keys under
+management by the victim to become (effectively) corrupted, e.g. if the
+attributes of the imported key allow it to be used for wrapping.
+%
+
+While~\cite{SSW} makes important progress in the analysis of
+cryptographic APIs (in particular PKCS\#11), they do leave open some
+interesting avenues.  For example, their handling of attributes is
+quite abstract, only indicating their influence on tokens as part of
+the execution model.  But what one really wants are formal mechanisms and
+security notions for reasoning about the enforcement of specific
+policies, e.g. that certain keys may be used only by certain entities
+and only for a given set of cryptographic operations.  Also,
+\cite{SSW} does not consider the public-key primitives that are
+typically exposed by tokens.  Finally, it would be useful to
+understand the extent to which real tokens respect PKCS\#11 and, if we
+find the model of~\cite{SSW} to be significantly disconnected from
+these tokens (say, because tokens often take liberties with PKCS\#11,
+or because other standards are gaining traction) then we should
+revisit the models.
+
+\begin{task}
+  We will explore these interesting and important extensions
+  to~\cite{SSW}: (1) formal mechanisms and
+security notions for reasoning about the enforcement of specific
+policies, (2) incorporating the public-key primitives that are
+typically exposed by tokens, (3) establishing how closely tokens
+adhere to PKCS\#11 and revisiting the formal models based on what we find.
+\end{task}
+%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ignore{
+\paragraph{Ease of Correct Implementation as Security Property. }
+
+%\paragraph{Prior Work.}
+\todo{Write.}\tsnote{Chris, at your suggestion, I've downgraded this
+  former section to a paragraph-subsection within API-centric
+  crypto. Let's see how it works.}
+
+\tsnote{May need to do some digging outside of crypto here!}
+
+\todo{Rogaway's Authentication without Elision paper}
+\cpnote{This is what their framework buys us. The full protocol is divided into the
+``protocol core'' (PC) and the ``protocol details'' (PD). The PC is specified
+by the cryptographer and the PD is specified by the engineer. The PC ``calls''
+the PD in the course of the protocols execution. In the security analysis, we
+assume the PD is utterly controlled by the adversary. This allows cryptographers
+to ``partially specify'' a protocol that remains secure even as engineer's
+requirements change; the PC must be implemented precisely, but the PD may change
+to suit the programmers' needs.
+%
+So in this framework we're not formalizing ``implementation risk'' directly;
+instead, we're proving security of protocols that have flexibility in their
+implementation. It says precisely what parts you \emph{must} get right in order
+to have security, and what parts are not crucial.
+}
+
+}

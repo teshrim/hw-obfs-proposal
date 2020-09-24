@@ -1,0 +1,615 @@
+
+%---------------------------------------------------------------------------------
+
+\section{Circumventing Censorship: Distribution-Sensitive Encryption (DSE)}
+\label{sec:dse} 
+At a high level, honey encryption is about reproducing a target distribution
+under decryption.  We now turn our attention to the matter of
+reproducing a target distribution under encryption, taking as motivation the
+important problem of circumventing Internet censorship. 
+
+%\tsnote{The previous panel liked censorship circumvention as a
+%  motivation.  However, they thought that FTE wasn't a viable approach to
+%  thrwarting censorship, largely becauase of ``active warden''
+%  attacks, so we need to frame this better.}
+\heading{Background. }
+For years, nation-states and other network operators have filtered
+Internet traffic by inspecting IP addresses and TCP port numbers.
+Citizens subjected to such filtering have employed a variety of tools
+to obscure TCP/IP information---the Tor network~\cite{Dingledine04tor:the}, for example.  
+However, the introduction of deep-packet inspection (DPI)
+technology has enabled more nuanced censorship.  By peering into
+packet payloads, censors may now filter traffic based on what
+higher-level protocols and application data are being carried.
+Governments have used DPI to block based on blacklisted keywords
+appearing in HTTP request headers~\cite{ConceptDoppler}, TLS traffic~\cite{TLS:iran_block}, 
+Tor traffic~\cite{Tor:iran_block-2011,Tor:iran_block,Tor:china_block_one,Tor:china_block,Tor:china_active_probe,Winter2012,Clayton06ignoringthe}, and 
+Skype VoIP~\cite{China_skype_ban,UAE_skype_ban,DAC1142,Santolalla:2007,Dorfinger2010,Domingo2011}. 
+
+An obvious response is to apply steganographic tools to packet payloads. 
+However, traditional tools have been ad hoc and 
+offer uncertain security (at best).  Those with well reasoned security
+guarantees~\cite{Hopper:Provable_Stego} provide too little bandwidth for many real-world
+applications, like surfing the web.
+
+An alternative is to simply obfuscate packet payloads by using conventional
+encryption on them; after all, ciphertexts should look like random
+strings.  Recent work, however, shows that encrypted (or
+compressed) payloads are easily detected~\cite{KBMP13}.
+In any case, payloads randomized by conventional encryption will not pass
+whitelist-based filtering, which allow only payloads that conform to
+particular protocol formats.  
+
+
+%\heading{Efforts to circumvent DPI-powered Censors. }
+\heading{Protocol mimicry. }
+Recently, a sheaf of more sophisticated obfuscation techniques have
+been proposed, largely in support of the Tor Project's
+pluggable transports architecture~\cite{Tor:pluggable}. This provides 
+a layer below existing Tor encryption for mechanisms aimed at obfuscating 
+the existence of Tor traffic.  Several of these techniques seek to
+produce traffic that mimics particular applications or protocols. 
+Among these, Skypemorph~\cite{Skypemorph} reformats 
+traffic to look like Skype VOIP traffic. Stegotorus~\cite{Stegotorus}
+encrypts and (more or less) directly embeds data into fixed
+templates of HTTP message headers, Javascript objects and PDF files,
+{a la} traditional steganographic techniques.  Format-transforming
+encryption~\cite{Dyer-2013}, which we will discuss shortly, induces
+a (secretly keyed) mapping from plaintexts to elements of user-specified sets,
+e.g., strings
+in the language of a regular expression capturing the structure of 
+HTTP-request messages.
+
+
+%\subsection{Addressing mimicry (parroting) challenges}
+%\heading{???}
+In principle, censorship-circumvention
+systems that rely heavily on protocol mimicry are fragile in the
+presence of sufficiently sophisticated censors.  Recent
+work~\cite{HoumansadrBS13} observes that, in the limit, such a system
+must be able to mimic every aspect of a protocol, even a specific
+implementation of the protocol, including its quirks and bugs.  And
+the mimicry needs to be sustained against an ``active warden,'' a
+censor that performs active and adaptive probing of communicating
+parties.
+
+While sympathetic to warnings raised by this observation, we believe
+that protocol-mimicry can be of significant use {\em in
+  practice}, even if the mimicry is far from total.  This belief is
+supported by three observations.  First, there is little evidence that real
+censorship adversaries do, or even can, carry out highly sophisticated
+mimicry-catching tests at line speed.  (Work on implementing the
+well-known Bro system~\cite{Bro} at the university level might 
+suggest the contrary~\cite{DFPS-bro}.)
+Second, it is not known what
+fraction of real traffic would be flagged as ``mimicry'' by such
+tests.  Finally, recent work~\cite{Dyer-2013} shows that real DPI devices
+\textit{are} vulnerable to so-called protocol-misclassification attacks. 
+
+\heading{Format-transforming encryption.} In support of the last observation, PIs
+Ristenpart and Shrimpton recently introduced format-transforming encryption
+(FTE)~\cite{Dyer-2013}, which we can now view as a kind of DSC primitive that is
+well suited for the payload obfuscation task.  This is because FTE enables
+precise control of the format of ciphertexts, i.e.\ how they will appear to an
+observer on the wire.  
+
+The FTE system built in~\cite{Dyer-2013} used the fact that modern
+DPI systems seem to rely heavily on regular expression matching, or ad hoc tests
+that are reasonably approximated by regular-expression matching, in
+carrying out traffic classification. In particular, our FTE system
+allowed users to specify the desired format of the (ciphertext) packet
+payloads by inputting a regular expression. Subsequently, the FTE
+ciphertexts were guaranteed to be random
+strings from the language described by that regular expression.\footnote{Follow up work~\cite{luchaup2014formatted} gave new algorithmic techniques that
+admitted more efficient regular-expression-based FTE, as well as
+expanding the scope of formats to cover context-free languages.} 
+ 
+
+%In some ways, the FTE formalism is the natural result of elevating
+%the goal of DPI-avoidance to a first-class security property of traditional
+%encryption.
+%\tsnote{Needs updating to reflect CCS paper.  Drive home the point
+%  that we've proved FTE viable in lab tests against real DPI; mention
+%  the month-long China test.}
+In~\cite{Dyer-2013}, we showed that a battery of six modern DPI systems
+(including an commercial, enterprise-grade hardware DPI system) can be
+caused to classify FTE ciphertext messages as any protocol that we
+chose, no matter what was the actual underlying plaintext.  This was
+done by providing FTE with appropriate regular expressions.  In the
+simplest cases, these were lifted directly from the DPI system, or
+created manually using knowledge of protocol RFCs.  In other cases,
+the regular expressions were learned, by a simple procedure, from
+network traces.
+
+Moreover, we were able to set up an FTE-powered client inside of
+China, and tunnel arbitrary plaintext traffic (including Tor, and HTTP
+traffic from banned sites) to and from an FTE-powered proxy in the
+USA.\footnote{The client ran tests every five minutes for one month,
+  with no sign of detection by the GFC.  After
+  one month, we shut it down.} 
+
+We note that FTE is one of the few proposed obfuscation techniques
+actually integrated into the Tor distribution as a pluggable
+transport, and the only one that targets both blacklisting
+\textit{and} whitelisting filtering rules.\footnote{The other fielded pluggable transports rely on payload randomization.}
+%Neither Skypemorph nor StegoTorus are fielded by Tor.
+
+
+
+\subsection{From FTE to DSE}
+\label{subsec:beyond_FTE}
+The initial successes of FTE are encouraging because they show that
+regular-expression-based DPI can be fooled, and by systems that also
+support typical Internet usage (ie., watching YouTube videos).
+Moreover, our investigations suggest that regular-expression-based DPI
+is the norm in practice, as do some manufacturer
+documents, e.g.~\cite{bluecoat-best-practices}.
+
+That said, FTE targets only the goal of
+payload obfuscation, and achieves this producing ciphertexts that mimic \textit{individual} 
+protocol messages.  It makes no effort to respect properties that
+would be expected over an ensemble of real protocol messages, i.e.\
+distributional issues.  Fundamentally, this is because FTE ciphertexts
+are \textit{uniform and independent} samples from some language of strings.
+Thus, a \textit{sequence} of FTE ciphertexts is unlikely to display,
+say, a distribution of message lengths that mimics reality.  This shortcoming may foster
+detection by traffic analysis attacks.  Moreover, and in contrast to conventional
+encryption, formatted ciphertexts have observable structure by design.
+As a result, DPI may come to support more sophisticated statistical attacks
+based on protocol message structure or content.
+
+\heading{Modeling real adversaries. }
+We do not yet know if these kinds of attacks are a real
+threat, now or in the near future, because the community lacks
+understanding of real-world DPI tools and their capabilities at scales
+of interest.
+
+We do know that operating at wire speed places significant constraints on what
+computational tasks can be carried out.  Consequently, nation-state
+censors seem to perform two-stage processing.  The first stage
+operates at wire speed, where DPI is used to select out ``suspect''
+traffic for further, more computationally intensive analysis in the
+second stage.  As we've already said, there is some evidence to
+suggest that regular-expression matching
+forms the core of wire-speed processing at nation-state traffic
+volumes.  But we do not in fact know how accurate this is for
+current DPI, nor how predictive of the future.  (For example, if
+regular-expression-based tests are the current norm, is it a small
+step, or a large jump, to support tests requiring full payload
+parsing?) This brings us to our next task:
+%  
+\begin{task} 
+\label{task:dpi-study}
+We will explore the performance, capabilities and
+  potential configurations of DPI products (e.g., Blue Coat ProxySG
+  and Packetshaper) known to be used in censorship. 
+\end{task}
+\noindent
+Documentation for commercial DPI tools is typically not
+directly disclosed by manufacturers.  
+\iffalse{
+But documents have in fact leaked via,
+e.g., Wikileaks.\footnote{See, e.g.,
+  http://wikileaks.org/spyfiles/files/0/226\_BLUECOAT-SGOS\_CMG\_4.1.4.pdf.}
+offer one way in.
+\fi
+PIs Ristenpart and Shrimpton, however, along with other
+members of the circumvention research community and a major industrial
+partner are also part of a
+burgeoning effort to establish a DPI lab allowing direct experimental access to a
+number of systems. To see where DPI systems may be going, we 
+will also look to research efforts in this space, and seek collaborations where
+appropriate with colleagues at our respective institutions with relevant
+expertise.
+%\tsnote{More about how we plan to do this?  This seems kind of weak, at the moment.} 
+
+We will also carry out a measurement study, using traffic from our three
+respective institutions as well as external sources, to empirically characterize
+what ``benign'' traffic looks like, along various dimensions.  (PI Ristenpart
+already has a full-packet-capture network tap in place at the University of
+Wisconsin. All use of it is guided by appropriate IRB exemptions or reviews.)
+This corpus will also support investigations of efficacy of distinguishing
+attacks on FTE, DSE and other obfuscation methods. All this will require some
+engineering effort to develop software analysis tools for simulating attacks.
+The resulting software framework will be made available for other researchers to
+use.
+
+\ignore{
+In addition to better understanding how these devices carry out
+classification, we will work to understand their classification
+precision.
+
+the tool may still be useful in settings where a large false-positive rate
+cannot be tolerated, say, due to political or economic ramifications.  Of
+course, what constitutes a large fraction is subjective.  But without empirical
+security analyses, one cannot make even crude judgments about the potential
+collateral damage caused by the test. 
+Similarly, attackers in this setting are often resource-constrained, and
+so we will assess experimentally the whether theoretical attacks work
+as well in practice.
+}
+
+These empirical investigations will help to shape formal models of DPI-powered
+adversaries.  In turn, these formal models will enable principled security
+arguments and, in some cases, formal proofs about future designs. Our starting
+point is prior work by Hopper, Langford and von
+Ahn~\cite{Hopper:Provable_Stego}. They provided the first formal study of
+steganographic systems, including giving semantic-security style notions of
+security.
+%Unfortunately, their notions come with some strong negative results,
+%essentially that no scheme can meet the security goal without being able to
+%sample the true target distribution perfectly.  In practice, this is likely to
+%be unpalatable, if not completely unrealistic.
+Their security notion is very stringent, assuming that the adversary (in this
+case, the DPI-powered censor) has complete knowledge of the distribution of
+traffic on the channel at all points in time.  While conservative, this seems
+unfounded in practice, especially at nation-state volumes of traffic.  What's
+more, because the adversary is so powerful in their notion, they are able to
+prove security only for inefficient schemes.
+%Tunnelling plaintexts through existing implementations of applications or
+%protocols \textit{may} be able to approximate this, although there are
+%significant development challenges to be overcome in this approach.  Almost
+%certainly, the resulting system will be tightly bound to the existing
+%implementation, making it inflexible.  Moreover, if the tunneling application
+%or protocol is banned (for example, if one was tunneling through Skype when it
+%was banned in [where? when? citation?]), then the entire system must be
+%rethought.  (We will speak to ``tunneling'' approaches, which would seem to get
+%closest to this, at the end of the section.)
+Establishing models and security notions that more accurately reflect the
+realities of real DPI-powered censors should have the side-effect of allowing us
+to prove security for more efficient schemes.
+
+\begin{task} \label{task:formal-attack-models}
+%(Formally modeling resource-bounded classifiers.) 
+Drawing on complexity-theoretic characterizations of language recognition (e.g.,
+circuit complexity), we will seek to model formally and concretely the space of
+traffic classifiers (steganography detectors) implementable by a space- and
+computation-bounded censor. We will aim to construct DSE schemes that shape
+traffic that is provably undetectable within the resulting models.
+\end{task}
+
+
+\heading{Generalized DTEs and DSE.} 
+We will also set ourselves to building the next-generation of steganography
+primitives that are fast, yet secure relative to real-world adversaries. 
+Towards this end, we will start by generalizing a primitive from the study of honey
+encryption, namely DTEs.
+Consider two sets $\xspace,\yspace$ equipped with distributions $\xdist,\ydist$
+respectively. A \textit{generalized DTE} would be tasked to encode
+$\xdist$-distributed samples of~$\xspace$ so that they appear to be
+$\ydist$-distributed samples of~$\yspace$, and vice versa.
+Setting $\yspace$ to bitstrings and~$\ydist$ to uniform, and~$\xspace$ 
+to prime numbers and $\xdist$ to uniform gives the DTE we proposed
+previously~\cite{HoneyEnc-EC:2014}. 
+
+This generality now allows us to recognize the primary FTE constructions as an
+instance of what we call \emph{encrypt-then-DTE}.  Setting $\xspace$ to
+bitstrings and~$\xdist$ to uniform, and~$\yspace$ to some target language with
+distribution~$\ydist$, one could use encrypt-then-(generalized-)DTE to build FTE
+schemes that turn plaintext into ciphertexts that are samples from~$\yspace$
+that appear to be~$\ydist$-distributed.  Indeed current FTE is encrypt-then-DTE
+with a DTE whose outputs are uniform samples from a specified regular or
+context-free language. Being able to treat non-uniform
+distributions, would be a significant step forward: it would specifically help
+to defuse statistical attacks by DPI adversaries that look for uniform
+distributions.  We call the resulting approach distribution-sensitive encryption
+(DSE), which we view as an efficient kind of steganography that need not fool
+human observers. 
+
+%current state of the art in FTE, where $\yspace$ is a specified regular or
+%context-free languge, and $\ydist$ is uniform.
+
+%Towards this, we note that FTE can be viewed as an instantiation of \textit{encrypt-then-DTE}:
+%the plaintext is first encrypted using a conventional
+%aencryption scheme, and then a specific, bijective
+%encoder efficiently maps the (uniform) ciphertext to elements of the
+%language.
+%\tsnote{I haven't said specifically how this happens, ie.\
+%  rank/unrank. I don't see a strong reason to go to this level of
+%  detail.} 
+%Thus, even if the strings in the language
+%nicely resemble (say) real HTTP-request messages, FTE will return a
+%ciphertext that is a uniform sample of these strings.
+%To prepare for future challenges, we desire to control not only the
+%elements of the language (ie., the ciphertext format) but also the
+%\textit{distribution} by which these elements are sampled. 
+
+The encrypt-then-DTE viewpoint on DSE proves to actually capture prior work on
+steganography as well: Cachin proposed what amounts to an encrypt-then-DTE
+construction, where the DTE was based on universal coding schemes, to achieve
+information-theoretically secure steganography~\cite{Cachin:Info_Theory_Stego}.
+A similar approach was taken in follow-up work by Backes and Cachin for
+public-key steganography~\cite{BC04}.
+As far as we are aware, this work has not yet led to any practical mechanism.
+
+To achieve generalized DTEs, one might hope for schemes that work for 
+arbitrary sets $\xspace,\yspace$ with respective
+distributions $\xdist,\ydist$.
+Unfortunately, it is not hard to see that not all pairs of sets/distributions
+can be supported.
+Correctness mandates the ability to invert, so building a DTE that maps from
+a high-entropy distribution to a very low-entropy one will, in general, be
+information-theoretically infeasible. 
+Generalized DTEs will provide a principled way to explore 
+bandwidth/security trade-offs and, ultimately, lead us to understand the foundations of these
+trade-offs. 
+
+\begin{task} 
+\label{task:foundations-gen-dte}
+%Informed by our broader exploration of what generalized
+%  DTE schemes can achieve (Task~\ref{task:gen-dte}), we will consider
+We will formalize generalized distribution-transforming encoders
+(DTEs) and appropriate security notions. 
+We will investigate fundamental trade-offs between efficiency and security,
+providing formal bounds showing the impossibility of certain
+combinations of input/output distribution pairs. 
+\end{task}
+
+\noindent With these boundaries in place to help guide us, 
+we will turn to building generalized DTEs, particularly ones  
+suitable for the anti-censorship setting.  Guiding this search will be the
+the insight that in many cases an imperfect approximation of the covertext
+distribution will be sufficient, as per our adversarial modeling discussed
+above.
+ %The result will be
+%that encodes uniform bit strings to non-uniform outputs can be constructed using
+%rejection sampling: simply run $\gen(R\concat M)$ 
+%We will investigate
+%possibility and impossibility results.
+
+\begin{task}
+\label{task:use-gen-dte}  We will explore constructions of generalized
+DTEs for practical steganographic encryption.  %finding positive examples when possible and formally ruling out
+%efficient constructions elsewhere. 
+We will explore 
+  what can be done \textit{efficiently} in the censorship
+  circumvention setting, in particular relative to realistic attack models (Tasks~\ref{task:dpi-study},\ref{task:formal-attack-models}).
+\end{task}
+
+%We note that this moves us a step closer to
+%full-blown provably secure stegonagraphy in the sense of Hopper, Langford, and
+%van Ahn~\cite{Hopper:Provable_Stego}.
+
+\noindent An oft-suggested mechanism for protocol steganography is tunneling
+(c.f.,~\cite{HoumansadrBS13}).  That is, given a full implementation of some
+cover protocol, one can submit encrypted data as protocol messages to the implementation. This would seem to provide very high-fidelity mimicry, at least
+for one implementation and when the tunneling protocol is lossless. 
+Even so, tunneling may still admit detectable
+discrepancies with regards to normal use of the implementation. 
+For example, if the implementation applies
+lossless compression to incoming messages, then tunneling in this fashion will lead to
+larger-than-normal protocol transcripts. 
+
+\begin{task}
+\label{task:tun-dte}  We will explore the use of tunneling as a DTE, comparing
+its efficiency and security to our de novo DTE constructions.
+%finding positive examples when possible and formally ruling out
+%efficient constructions elsewhere. 
+\end{task}
+
+\heading{Mimicry above the message-level.}
+Finally, we note that we have been discussing statistical attacks on
+FTE at the level of protocol messages. Censors with
+resources sufficient to maintain a greater amount of state could mount
+statistical attacks at the connection level, e.g.,
+checking that a sequence of upstream and downstream FTE ciphertext
+protocol messages observe expected semantic patterns.  We do
+not yet understand how much state would be required to mount
+connection-level analysis at nation-state traffic volumes, although we will
+explore this in our evaluation of real-world DPI adversaries (see
+Task~\ref{task:dpi-study}).  We will use what we learn to 
+push distribution matching behaviors ``up the stack'' in a way that retains
+efficiency.
+
+\begin{task}
+\label{task:stateful-dte}
+We will explore stateful DSE, where the distributions to be matched
+are a function of state including previously exchanged messages---both the mimicked messages and the actual plaintexts.   
+\end{task}
+\noindent
+A natural way to approach this is to build sender and receiver state
+machines that determine which distribution will be
+used for the next message. Task-structured probabilistic I/O automata~\cite{cgUCL-CCKLLPS06}
+(or more general probabilistic
+automata~\cite{Stoelinga02anintroduction}) 
+may provide a convenient
+formal model for describing these stateful behaviors. 
+
+Stateful DSE can also take advantage of published state-machine models of various
+protocols.  They also allow for things such as mimicking the number
+(and type) of connections over which to send protocol messages.
+
+%\heading{Active adversaries.}
+%\tsnote{Insert text about dealing with active adversaries, if we want
+%  to address this at all.}
+Finally, we note that working above the message level also provides
+opportunities for dealing with active adversaries, which may send
+probing messages to possible proxy servers in order to see
+how they respond.  The Great Firewall of China is known to employ
+such tactics to help find and blacklist Tor servers~\cite{Winter2012}. The
+automata can include transitions to error states that result in innocuous 
+behavior  when malicious messages 
+are detected (e.g., by a message authentication failure when the client and
+server share a key).
+
+\ignore{
+Beyond simply blocking traffic, the Great Firewall of China actively
+engages with suspected Tor network edge-nodes.  It 
+inspects packet payloads for a particular 48-byte string that is uniquely
+associated with a recent version of Tor.
+Upon finding a packet with this string, it forces both ends to drop
+the TCP connection, and subsequently attempts to carry out a Tor
+handshake with the destination IP address.  If it determines that
+the destination indeed `speaks' Tor, the GFC adds that IP address to
+an blacklist (facilitating easier blocking in the future)~\cite{Winter2012}.
+%Skype can likewise be easily detected using 
+%known fingerprints~\cite{DAC1142,Santolalla:2007,Dorfinger2010,Domingo2011}. 
+%Similar attacks can be used against other possible circumvention tools, such as IPsec
+%tunnels. 
+}
+
+\ignore{
+\heading{Previous, provable-security work on Steganography.}
+Our DSE formalization shares commonalities with previous primitives targeting
+provably-secure steganographic systems~\cite{Hopper:Provable_Stego}.  But ours
+cleaves closer to reality than prior works because, for example, it mandates
+that DSE schemes must rely upon a compact representation of the true target
+distribution.  In practice, a real scheme would carry out some offline analysis
+of benign traffic in order to later mimic it online.  Also, our DSE
+formalization will be a generalization of FTE, so we will be able to leverage
+results and techniques established there.
+
+We also propose to establish new notions of security for DSE schemes. 
+
+We also propose to build DSE schemes, and to establish their provable-security
+guarantees with respect to these security notions.  We will give some initial
+ideas in this proposal how we might construct DSE schemes; one is a method to
+generically convert a traditional encryption scheme into a DSE scheme via rejection
+sampling mechanisms, the other is a ``dedicated'' DSE construction, based on Markov Chain Monte Carlo
+techniques.  In both cases, we propose to characterize what kinds of target
+distributions can(not) be accurately approximated, and likewise if we demand
+fast DSE.  The idea of using MCMC tools, and the like, to build cryptography is
+particularly intriguing.
+}
+
+
+\iffalse
+\heading{Protocol tunneling.} 
+Primitives like FTE can be seen as providing lightweight (and
+controllable) steganography on top of encryption, in order to achieve
+some protocol mimicry at the message-level.  DSE, and then stateful DSE,
+can be viewed as targeting increasing levels of fidelity in mimicry.
+At the extreme end of this range is tunneling, which is to
+embed messages into the user inputs of an existing implementation of a
+protocol or application, essentially using the latter as a black box.
+While excelling at realism, this approach is not without its own challenges. 
+Almost certainly, the resulting system will be tightly bound to the
+existing implementation, making it inflexible to changes in its
+operating environment.  (For example, if one was tunneling through Skype when it was
+banned in China~\cite{China_skype_ban} or the UAE~\cite{UAE_skype_ban}, then the entire system must be
+rethought.)  
+
+Nonetheless, tunneling may offer a viable approach, and
+the techniques we explore in this proposal (e.g.\ DTEs)
+can support tunneling schemes.  One example challenge 
+faced by tunneling methods is proper shaping of input messages, so that the tunnel
+traffic does not leak information about what is being tunneled. 
+Our work can offer a principled approach to message shaping. 
+%and a metric by which to measure
+%effectiveness against suitable model traffic, e.g., videoconference
+%samples obtained in the wild. 
+
+\tnote{Do we want a task?}
+
+From FTE to tunneling, we will investigate a variety of design points along
+the protocol-mimicry continuum, with a focus on exposing tradeoffs
+among security, performance, ease-of-implementation and operational flexibility
+\fi
+
+%Recent, early investigation of this approach, e.g.,~\cite{LiSchliepHopper:2014}, 
+%has adopted an ad hoc approach to shaping message distributions. (E.g., the Facet system in~\cite{LiSchliepHopper:2014} modifies YouTube videos; the effectiveness of the modification algorithm is tested against a basic statistical classifier.) The techniques we explore in this proposal, such as Distribution Transforming Encoders (DTEs) (see Section~\ref{}) offer a principled approach to message shaping and a metric by which to measure effectiveness against suitable model traffic, e.g., videoconference samples obtained in the wild. 
+
+
+
+%%%%%% GRAVEYARD %%%%%%%
+
+\ignore{
+\subsection{Our FTE Research and Deployments}
+\tsnote{We take FTE as a starting point, given demonstrated
+  successes.  But there's still a lot to do...}
+By intertwining the development of new theory with implementation and experimental 
+evaluation, we propose to construct empirically-driven, provable-security foundations
+for the DPI-avoidance problem.  New DPI-avoidance mechanisms will be both a component of 
+this construction process, and a result of it.  We will implement these mechanisms and 
+carry out experimental analysis of their efficacy using real network data.
+including:
+\begin{newenum} 
+\item Algorithmic improvements~---~our initial FTE scheme
+employs some classic results of Goldberg and Sipser~\cite{GS85}, but uses a
+time-space tradeoff in order to reduce the on-line complexity of encryption and
+decryption.  However, we found that the amount of space required to hold
+precomputed tables would be too large for widespread use.  Thus we propose to
+research new time-space tradeoffs.
+\tsnote{Algorithmic improvements for key components of FPE and FTE
+  schemes.  Talk up the ``newrank'' project.} 
+
+%
+% \tsnote{I don't know if we want to keep the
+%   CFG/template grammar stuff.  We did use it a little in the CCS'13
+%   paper, but I don't think our understanding has advanced much since
+%   the aborted USENIX'13 submission.} 
+% \item Increased format control~---~our FTE scheme uses regular expressions to
+% compactly describe the set of ciphertext formats we allow.  Qualitatively,
+% these initial results were positive, showing that we could transfer data
+% through an HTTP whitelisting tool $\lsevenfilter$\cite{l7-filter}.  This
+% supported our belief that FTE can provide useful stegonagraphic properties and
+% good bandwidth.  Still, this DPI is quite simple, and more picky DPI techniques
+% would likely have detected our ``HTTP'' traffic as being generated by FTE.
+% What is needed, both for better fidelity and increased bandwidth, is a more
+% descriptive representation of the set of ciphertext formats.  To that end, we
+% propose to investigate CFG-based representations; in particular, what we call
+% \textit{template grammars}. 
+%
+
+\item Increased format control~--~ [[Talk about developing higher-level
+  logic to control the current format, the length of ciphertext
+  messages, etc.]]
+
+% \tsnote{We got dinged in the panel reviews on this next point.  First,
+%   they didn't think it was realistic for people to learn from local
+%   traffic.  Second, they thought us not prepared to do any serious ML
+%   work, even suggesting to add an ML person to the proposal.}
+% \item Learning ciphertext formats from real data~---~our regular expression
+% representations of ciphertext formats were initially hand-crafted, based on
+% studying real data and protocol specifications.  Eventually, we developed a
+% rudimentary method for building regular expressions from real data, and then
+% hand-tweaking the expressions afterwards as necessary.  But really what one
+% wants is a well specified algorithm for learning ciphertext formats from a
+% large, representative corpus of collected data.  We propose to develop
+% algorithms that, given some initial structure to build upon, can learn full
+% CFG-based representations.
+%
+\item Provable-security analysis~---~our initial empirical analysis of FTE has
+been very useful, and now we would like to develop formal notions of security for
+FTE schemes, and establish their provable-security guarantees.  We propose to
+do this.
+%
+\end{newenum}
+
+
+\ignore{
+\begin{newenum}
+%
+\item \emph{How effective are traffic analysis attacks in the censorship
+setting?} Prior work~\cite{Skypemorph,Stegotorus} has analyzed efficacy of
+traffic analysis (TA) attacks in which the number of packets, their length,
+and other information not obfuscated by traditional encryption is exploited
+by the attacker. But no analysis has been conducted of whether such attacks 
+are efficient enough or have low enough false positive rates to be deployable by 
+network operators.
+For example, prior work by the PIs gave fast TA attacks that achieve 
+accuracy of around 80\% in identifying websites --- but even this 
+may lead to an unacceptable false positive rate by network operators. 
+%
+
+\item \emph{Do more direct attacks exist?} Even should traffic analysis be 
+undeployable, there may be more direct routes to attack. Our preliminary
+work, for example, surfaces a simple attack that can 
+identify Stegotorus traffic with a true positive rate of \fixme{92\%} and
+a false positive rate of less than \fixme{0.01\%}. 
+%
+\item \emph{Can we provide formal foundations for DPI avoidance?} 
+The above points to the need for new, formally sound approaches to building 
+defenses against DPI-based protocol identification. 
+\end{newenum}
+
+%Our preliminary work surfaces attacks against
+%some, and for others the existing security analyses, when present,  are
+%unsatisfying.\authfnote{TomR}{We should check this--- skypemorph seems the
+%outliar here?} Part of the complexity in evaluating obfuscation mechanisms,
+%including our preliminary attacks,  stems from the fact that the research
+%community does not have a clear understanding of what attacks existing and
+%future DPI systems can actually deploy.
+}
+
+}

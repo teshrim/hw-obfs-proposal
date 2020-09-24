@@ -1,0 +1,20 @@
+TODO(tom) Add collaborates for blackbox-hedge, authenticall, Animesh paper, ...
+
+Collaborators
+
+1. Collaborators for Thomas Shrimpton; Portland State University; co-PI
+    a. John Black; University of Colorado, Boulder
+    b. Scott Coull; Red Jack
+    c. Yevgeniy Dodis; New York University
+    d. Kevin Dyer; Portland State University
+    e. Marc Fischlin; TU-Darmstadt, Germany
+    f. Will Landecker; Portland State University
+    g. Anja Lehmann; IBM-Zurich, Switzerland
+    h. Onur Ozen; EPFL, Switzerland
+    i. Kenneth Paterson; Royal Holloway University, UK
+    j. Thomas Ristenpart; University of Wisconsin-Madison
+    k. Phillip Rogaway; University of California, Davis
+    l. Hovav Shacham; University of California, San Diego
+    m. Martijn Stam; University of Bristol, UK
+    n. Robert Terashima; Portland State University
+    o. Stefano Tessaro; University of California, Santa Barbara

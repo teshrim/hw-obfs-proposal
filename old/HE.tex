@@ -1,0 +1,347 @@
+%-------------------------------------------------------------------------------------
+\section{Addressing Brute-Force Attacks: Honey Encryption (HE)}
+\label{sec:he}
+
+Users frequently protect sensitive data using password-based encryption (PBE),
+applying conventional encryption using a key derived from a user-supplied
+password $P$. As noted above, users often choose weak passwords, so a
+conventional PBE ciphertext $\ctxt$ is typically vulnerable to brute-force
+attack. An adversary may perform trial decryptions of $\ctxt$ under guessed
+passwords until $P$ is identified based on characteristics of the resulting
+plaintext. As a simple example, if the plaintext is reasonably long ASCII-encoded text, 
+decryption under the wrong key will never yield a valid string with high
+probability.
+%(and
+%potentially also whether the source and destination IP addresses look plausible).
+Given use of authenticated encryption, $P$ may be identified simply because it
+decrypts $\ctxt$ successfully. We refer to this fundamental vulnerability of
+conventional PBE as the {\em brute-force barrier}.
+
+PBE is used to protect highly sensitive user data in practice, e.g.,
+credentials in password managers, health-related data, and so forth. Thus the
+brute-force barrier is a major problem in practice. The common approach of
+ciphertext hardening via password-based key derivation functions,
+(e.g.,~\cite{PKCS520}) fails to address the problem. Given typical guessing
+probabilities of about 1\% exhibited by password corpora studied in the
+wild~\cite{Bonneau12,Bonneau12b}, an adversary can expect to successfully crack
+one in one hundred ciphertexts on the first try.
+
+Honey encryption (HE) surmounts the brute-force barrier by creating a ciphertext
+for which decryption under {\em every} key / password yields a bogus
+plaintext that still looks valid. Viewed another way, an adversary {\em cannot tell
+whether a decryption attempt has succeeded}. As a result, HE gives an {\em
+information-theoretic} security guarantee, eliminating the brute-force barrier.
+If bogus plaintexts are distributed the same as real ones, even a computationally
+unbounded adversary cannot identify a correct plaintext with certainty.
+
+
+%\subsection{Cryptographically Useful Distribution Estimation via DTEs}
+%\label{sec:dte}
+\heading{Building HE with DTEs.} 
+In prior work, PIs Juels and Ristenpart introduced DTE schemes for the purposes of
+honey encryption. Briefly, a DTE scheme consists of a randomized encoding
+algorithm $\encode$ and a possibly randomized decoding algorithm $\decode$. The
+former maps elements drawn from a set $\mspace$, called the message space, to
+strings in $\bits^\ell$ for some $\ell$. We refer to the latter as the seed
+space, for reasons that will be clear momentarily. Decoding reverses
+encoding.  Suppose $\mdist$ is the distribution of messages in some application.
+A ``good'' DTE scheme is one such that an adversary
+cannot distinguish, with more than a small probability, between the pair $(\msg,\encode(\msg))$ for $\msg\getm
+\mspace$ (meaning, sample $\msg$ from $\mspace$ according to~$\mdist$) and the pair
+$(\decode(\seed),\seed)$ for  $\seed \getsr \bits^\ell$. 
+%
+Intuitively, then, $\decode$ behaves as a sampler of messages according
+to~$\mdist$, taking the requisite randomness as input.\footnote{Note that the security goal
+mandates something more. In particular, encoding must also encode a message by
+picking randomly from all seeds that decode to the message.}. Hence
+the moniker ``seed space'' for $\bits^\ell$. 
+%
+%In honey encryption, a DTE serves as a mechanism to generate the
+%plausible-looking fake plaintexts that emerge under decryption with an incorrect
+%key. (Specifically, decryption produces a seed $\seed$ that is mapped into the
+%message distribution as $\decode(\seed)$.) 
+%In a broader view, though, a DTE is a
+%form of invertible mapping between two distributions with accompanying formalism
+%to characterize the ``goodness'' of the mapping for cryptographic purposes. 
+%We
+%will explore a much more expansive application of DTEs across a range of
+%applications.  \tnote{The preceding paragraph seems somewhat unnecessary. Why
+%not just launch into HE instead of waxing more poetic about DTEs? Even if we
+%keep it then we should have a better segue for next paragraph, since it is quite
+%jarring currently}
+
+HE can encrypt a plaintext $\msg$ using, for instance, a simple procedure called
+{\em DTE-then-encrypt}. A DTE is applied to obtain an $\ell$-bit seed $\seed =
+\encode(\msg)$ and then the seed is encrypted using an ordinary symmetric-key
+encryption algorithm $\enc$ with domain $\{0,1\}^{\ell}$. The key
+$\key$ used to encrypt the seed may be derived from a password~$P$.  
+
+In our initial work on the topic,
+the security of an HE algorithm $(\encHE, \decHE)$ is defined in terms of a {\em
+message recovery} (MR) game in which the adversary attempts to recover $\msg$
+given an HE ciphertext $\ctxt = \encHE_{K}[\msg]$, for $\key \getk \kspace$ and
+$\msg \getm \mspace$. MR security applies to settings where an adversary's goal is to recover a full plaintext---as when aiming to compromise credentials for user accounts.
+
+%To ensure that bogus plaintexts are indistinguishable by an adversary from real ones, the
+%cornerstone of a strong HE construction is a good DTE. 
+%An exact security bound requires a technical (balls-and-bins) analysis of
+%collision %probabilities in the mapping of keys to messages. 
+Given a good DTE in the sense described above (and under certain technical
+conditions), an adversary's probability of winning the MR game is close to the
+min-entropy of the message distribution. Thus, for example, assuming encryption
+under a password from a distribution with guessing probability 1\%, the success
+probability of an unbounded adversary is about 1\%---in contrast to the 100\%
+success probability of such an adversary against a conventional PBE ciphertext
+with a bounded-length password. Additionally, HE adheres to the DSC principle of
+hedging or robustness: should the DTE be poor, MR security devolves to PBE
+security for the underlying conventional encryption scheme.
+
+\heading{Applications.} Given the vulnerabilities created by the brute-force
+barrier in some of the most sensitive password-encrypted user data, HE holds
+considerable promise for many applications. We have initiated practical
+exploration of HE with the following two applications:
+
+\vspace{2mm} \noindent
+{\em Password managers} are applications that permit users
+to encrypt suites of passwords and account information, e.g., website names,
+under a single password known as a {\em master password}. The resulting
+ciphertexts are often backed up in and synchronized through the cloud, where
+they are vulnerable to bulk compromise and brute-force cracking attacks. The
+LastPass service has already suffered a breach~\cite{whitney11}; a recent
+study~\cite{li2014emperor} has uncovered a spate of vulnerabilities in the most
+popular services. PIs Juels and Ristenpart have developed a password manager
+called SweetPass that leverages HE to prevent brute-force cracking. An ongoing
+project, SweetPass is slated for release in the near future as an open-source
+tool.
+
+\vspace{2mm}\noindent
+{\em Genetic information} is extremely privacy-sensitive. It can reveal
+susceptibility to disease and has extraordinary longevity: the disclosure of an
+individual's genome has not only lifetime impact, but also impact on an
+individual's  relatives and descendants. GenoGuard~\cite{GenoGuard:2014}, a
+system developed by PI Juels and colleagues in collaboration with a geneticist,
+takes advantage of HE to encrypt sequenced genomes so as to withstand
+brute-force attacks against password-based encryption. 
+
+%It employs a DTE that models not just the format of genetic sequence data, but also %statistical features, e.g., correlations among nucleotides (linkage disequilibria). 
+
+\subsection{Research challenges in HE}
+
+While these results hold promise, several major research challenges need to
+be addressed to lay the groundwork for widespread adoption of these and other HE
+tools. Our research program will address four major challenges. In Section~\ref{sec:human}, we discuss DSSS as a potential solution to one of these, the problem of {\em typo-safety}. The three others are:
+
+\paragraph{Improved DTEs.} The security of HE constructions hinges on DTE goodness and yet, as for the examples above, DTEs can be challenging to construct. The SweetPass and GenoGuard systems rely on complex, one-off constructions achieved without the benefit of underlying design principles. An important thrust of this proposal will be the development within the DSC framework of {\em broadly applicable DTE classes}.
+
+An especially promising such class is based on the principle of \emph{rejection sampling}, a common approach to generating samples according to a target distribution.  Consider a randomized algorithm $\gen$
+that takes as input a bit string from $\calR = \bits^r$ for some $r$ and outputs either a value in a set
+$\mspace$ or a distinguished error symbol $\bot \notin\mspace$.  
+%For example,
+%$\gen$ may treat its  input as an integer, run a (randomized) primality test on
+%it, and output the integer if it is prime and output $\bot$ otherwise. 
+Then to perform rejection sampling using $\gen$, one repeatedly chooses a value
+$R$ from
+$\calR$ uniformly and runs $\gen(R)$. The routine stops when the output from $\gen$
+is not $\bot$. We denote this routine as the randomized algorithm $\rejsam$ that
+takes as input $S = \calR^\alpha = \calR\times \cdots \times \calR$  for some number $\alpha$ sufficiently large for
+$\gen$ to yield an output in $\mspace$ with high probability.
+%random $r$-bit 
+%In it, one samples
+%repeatedly from $x \getmcand \mspacecand$ until a usually randomized rejection
+%test on $x$ is passed. Here $\mspacecand \supseteq \mspace$; $\mcanddist$
+%is some easy-to-sample distribution over $\mspacecand$; and $\getmcand$ denotes
+%freshly sampling a value according to $\mcanddist$.  
+%and then applies a (possibly randomized) rejection test
+%Then one applies a usually randomized rejection test to to $x$; if $x$ is
+%rejected, then a new value is sampled from $\mspacecand$. 
+%to decide whether to output the sampled value or to sample again. 
+A concrete example of cryptographic import is prime number generation, where
+%for values that are hard to generate directly but easy to detect as correct.
+$\mspace$ is the set of prime numbers in
+some range, and $R$ is treated as a bit string representing a 
+random integer in that
+range. Then $\gen$ runs a (randomized) primality test. 
+More generally, rejection sampling can be useful in a number of settings where
+$\mspace$ is hard to enumerate directly or sample from according to the desired
+distribution. 
+
+\iffalse
+In other contexts, rejection sampling is used for easy-to-enumerate sets but
+when one wants to sample from it non-uniformly according to some desired
+distribution $\mdist$. In this case a classic approach has $\gen(R)$ treat $R$ as a 
+value $x$ sampled independently from $\mspace$ according
+to some easy-to-sample distribution $\mcanddist$ (e.g., the uniform distribution). Upon
+running, $\gen$ chooses a random fraction $u \in [0,1]$ and tests 
+if $u < \mdist(x) / (c\cdot \mcanddist(x))$ where $c$ is a constant chosen
+so that $c\cdot\mcanddist(z) \ge \mdist(z)$ for all $z\in\mspace$. This
+embodies the classic Monte-Carlo viewpoint on rejection sampling, wherein one
+samples uniformly from the area under $\mdist$ by sampling uniformly from a
+larger and easier-to-sample region (the area under $\mcanddist$, scaled
+appropriately to ensure it is large enough). 
+\fi
+
+One might consider building a secure DTE for arbitrary rejection sampling procedures using an
+approach generalized from the DTE for prime numbers given
+in~\cite{HoneyEnc-EC:2014}. Fix an $\calR = \bits^r$ and an associated algorithm
+$\gen$.  Decoding of a string $S \in \calR^\alpha$ runs $\gen$  
+on each component of $S$, and outputs the first output value in $\mspace$. 
+Encoding of a message $M\in\mspace$ samples an $S  \in
+\calR^\alpha$ uniformly subject only to the constraint that $\rejsam(S) = M$, i.e.,
+samples uniformly from $\rejsam^{-1}(M)$, the preimage set of $M$. Such encoding can often
+be accomplished straightforwardly, through explicit inclusion of a value $R \in \gen^{-1}(M)$ in $S$. Unfortunately, this approach does not work in general.
+%One generic way of doing so is to sample $S$ uniformly; find 
+%the first component of $S$ that has $\gen$ output a value; 
+%and replacing that component of $S$ with a value before outputing the
+%now-modified vector $S$. 
+%\tnote{Did we ever prove this is in fact correct? Maybe
+%we should drop the details and work it out later.} 
+
+To ensure low failure probabilities can require large
+$\alpha$ and, in turn, large encodings. In the case of prime numbers, achieving
+tight asymptotic security bounds requires $\alpha$ superlinear in $r$. For $r=1024$ (the prime length for a 2048-bit RSA key), an
+example concrete parameterization in~\cite{HoneyEnc-EC:2014} is $\alpha = 35,393$, which yields a 4.5 MB encoding for a single RSA private key. Such encoding inefficiency is an impediment to practical use in applications such as HE.
+
+We propose to address this problem by developing a novel DTE scheme for arbitrary
+rejection sampling settings that achieves only (small) {\em constant} storage overhead.
+%It will, in particular, achieve just a small
+%constant encoding overhead and not something proportional to the probability of
+%failure. 
+%significantly improve the construction
+%from~\cite{HoneyEnc-EC:2014} for prime numbers, which will, 
+%In combination with the PI's prior work's general HE construction, our new DTE
+%will give HE schemes with compact ciphertexts for a number of settings including
+%the uniform prime number case.
+Our starting point is the use of a pseudorandom number
+generator (PRG) to stretch a short seed to a larger sequence of pseudorandom
+bits that can then be used to drive a sampling algorithm.  That is, we have
+$S \in \bits^k$ for some security parameter number of bits $k$ (e.g.,
+128) and modify $\decode$ to first stretch $S$ to a larger string $\calR^\alpha$ using any
+classic PRG construction. But this approach
+implies the ability to efficiently compute a PRG seed $S$, for $\alpha$ polynomial in $k$, such that $\calR^\alpha$ contains $R \in \gen^{-1}(M)$. Such computation can be shown in general to violate the security definition of a PRG. 
+
+We will side-step this challenge by drawing on a technique from simulation-based
+cryptographic proofs. We will use a special kind of ``programmable'' PRG
+construction in a scheme roughly as follows.  We use a seed $S =
+(\sigma,\overline{R}) \in \bits^k \times \calR$. Decoding generates a sequence
+of inputs for $\gen$ as $H(\sigma \concat 1) \oplus \overline{R}, H(\sigma
+\concat 2) \oplus \overline{R},\ldots$ where $H$ is a cryptographic hash
+function. In words, we use the PRG as before, but now also mask it with
+$\overline{R}$. The latter will give us the flexibility needed to sample
+preimages during encoding of a message $M$, since we can set $\overline{R} = M
+\oplus H(\sigma \concat i^*)$  for appropriately distributed~$i^*$ and random
+$\sigma$, needing to check only that no $i < i^*$ is such that
+$\gen(\overline{R}\oplus H(\sigma \concat i)) \ne \bot$. A key challenge will be
+proving that such an encoding procedure can be made efficient, as well as
+finding and using suitable assumptions on $H$ to prove security.
+
+
+\begin{task}
+\label{task:rej-samp}
+We will formalize and prove efficiency and security for 
+a compact DTE suitable for use with arbitrary rejection sampling procedures.
+\end{task}
+
+ 
+\iffalse
+In this construction, a DTE seed $S = (\sigma, \mask)$, where $\sigma$ is a
+PRNG seed and $\mask$ is a ``mask.'' In the {\sf decode} algorithm, a sequence
+of integers $r_1 \oplus \mask, r_2 \oplus \mask, \ldots$ is generated, where
+$r_j = \prng(\sigma, j)$ until a prime $\pi = r_i \oplus \mask$ is identified,
+i.e., $\primetest(r_i \oplus \mask) = {\tt true}$. We refer to this as the {\em
+seed sequence}.
+
+The mask $\mask$ allows a seed $s$ to be ``cooked'' for a given input $\pi$ to
+the {\sf encode} algorithm. Let $\gamma(i)$ denote the probability that the
+first prime in a sequence of random $\ell$-bit integers appears in the $i^{th}$
+position. By selecting the $\mask$ appropriately, we can meet two requirements:
+(1) $\pi$ is assigned randomly to a position $i$ sampled from $\gamma$ and (2)
+$\pi$ is the first prime in the seed sequence.
+
+In the algorithm ${\sf encode}$, an index $i$ is sampled from $\gamma$ by
+selecting trial random integers until a prime is found; counting the number of
+such trials yields $i$. A seed $s = (\sigma, \mask)$ is then generated in which
+$\pi$ is set to position $i$ according to requirement (1); this is done by
+selecting $\sigma$ at random and letting $\mask = r_i \oplus \pi$. Of course,
+it is possible then that $\pi$ is not the first prime in the seed sequence for
+$s$, i.e., that requirement (2) is violated. In this case, the seed is rejected
+and another generated. Such rejection sampling continues until requirement (2)
+is met.
+\fi
+
+
+\paragraph{Beyond MR security for HE.} The message recovery security goal for HE
+proposed and explored in our prior work addresses settings in which attackers
+must recover the full plaintext. As noted above, this goal makes sense when, e.g., plaintexts are  credentials needed by an attacker to compromise a user's accounts.
+An important question, though, is whether HE can be proven to meet stronger 
+security goals as well. To do so in DSC settings, however, requires new security
+notions as well as an understanding of fundamental security limits in
+low-entropy settings. 
+
+In ongoing work we have begun exploring new notions. The first is a
+semantic-security style notion that we call target-distribution semantic
+security (TDSS). An attacker is given the encryption of an unknown message drawn
+from $\mspace$ according to a target distribution $\mdist$. It must predict a
+predicate (one bit of information) of the encrypted message. We say that a
+scheme is secure, informally speaking, if it cannot predict this bit with higher
+probability than when not given any ciphertext at all. As with HE, we seek
+schemes that take advantage of distribution sensitivity to achieve this goal even
+when keys have such low-entropy that brute-force attacks can arise.  Our
+initial results show that one can prove the HE scheme from~\cite{HoneyEnc-EC:2014} 
+secure in this sense.
+
+A second thrust is understanding nonmalleability for low-entropy key settings.
+Note that the standard HE scheme described earlier is trivially malleable: an attacker can flip ciphertext bits in a way that yields predictable
+changes to the plaintext when decrypted. We have formalized a notion of
+targeted-distribution nonmalleability security that rules out such trivial mauling attacks, even in low-entropy settings. These initial works suggest that there in fact is a whole ecosystem
+of interrelated security notions when one considers distribution sensitivity
+and low-entropy keys. 
+
+\begin{task}
+\label{task:he-defs}
+We will map out the ecosystem of distribution-sensitive
+security notions for HE and devise and analyze constructions under them.
+\end{task}
+
+
+%\noindent
+%These notions will also be useful in the context of password-based
+%steganography, discussed later.
+
+
+%semantic-security style notion for unknown message attacks and a
+%non-malleability notion that 
+
+\iffalse
+\paragraph{Typo-safety.} Output of a valid-looking plaintext upon decryption with an incorrect key is essential to the security of an HE construction. This feature, however, creates a usability challenge, as it can also result in presentation of a incorrect but valid-looking plaintext to a legitimate user, e.g., one that has made a typo in entering a password. Despite promising proposed solutions, e.g., use of security skins~\cite{dhamija2005battle} and online testing for the case of password managers, the problem of typo-safety represents a major issue in the practical use of HE. In Section~\ref{sec:human}, we propose a solution in the form of DSSS, a new approach derived from application of the DSC framework to fuzzy cryptography.
+\fi
+
+\paragraph{Empirically-driven adversarial modeling.} The difficulty of
+constructing good DTEs for complex distributions poses a challenge for
+certain applications of HE as well as other DTE-driven tools that we will explore in this proposal. Natural language offers an example: a good DTE for a natural language document would imply the ability to generate synthetic documents that can fool a human being---a task well beyond the state of the art in artificial intelligence.
+
+Working in our favor, though, is the fact that adversaries' capabilities are bounded by the tools or computational resources available to them. For example, an adversary seeking to automate extraction of sensitive data from compromised documents might reasonably use commercial data-loss prevention (DLP) software, which is designed precisely to identify such data (for redaction or alerting). For adversaries of this limited but realistic class, an HE scheme that encrypts only DLP-identified fields is of potential practical interest. Such an HE scheme would protect the sensitive data likely to be targeted by an adversary while avoiding the complexity of constructing a DTE that models natural language. We further consider such empirically-driven adversarial modeling in the other thrusts of this proposal (e.g., studying DPI tools to develop censorship-circumvention techniques). 
+
+\begin{task}
+\label{task:he-adv-beh}
+We will identify real-world adversarial behaviors and limitations in applications of interest for HE and distill out models that drive provably secure and practical HE constructions.
+\end{task}
+
+%The result of the above investigations will be a broad array of techniques for
+%building and analyzing HE, which we will then apply to a number of application
+%contexts such as those discussed above as well as elsewhere.
+
+\iffalse
+\subsection{Extending the HE canvas via DSC}
+
+Our continued exploration of the DSC framework will furthermore drive new applications of and approaches to HE. For example, construction of SweetPass involved a modeling challenge, as there is a paucity of empirical data about password suite composition by users in the wild. A similar modeling gap exists, however, for an adversary attacking SweetPass. This observation inspires one thrust of our proposal, a retooling of the security definitions underlying HE to capture differential defender / attacker modeling of message distributions. This approach can in turn give rise to the construction of new HE schemes for poorly characterized message distributions and to techniques for analyzing the security of such constructions in data-poor environments. 
+
+Our research into distribution-matching encryption and censorship-circumvention in Section~\ref{sec:DME} surfaces a complementary observation, namely that adversaries and plaintext data may be modeled according to the often limited set of software and algorithms used by attackers in practice. For example, an adversary seeking to extract sensitive data automatically from password-encrypted documents might focus on credit-card, bank account, or Social Security numbers and/or passwords. A natural approach to identifying such sensitive data would be the use of commercial data-loss prevention (DLP) software, which aims precisely to detect and prevent the leakage of such data (typically by means of regular-expression matching). The limitations of such software can inform an adversarial model that gives rise to new approaches to HE. One potential such approach is focused application of HE to the highly structured, highly targeted data identified in documents by commercial DLP algorithms.
+
+
+\begin{task}
+We will apply the DSC framework to HE, studying real-world applications to uncover new adversarial models, message-distribution models, and security definitions. The expected outcome will be new approaches to HE that greatly enlarge its field of application.
+\end{task}
+\fi
+
+
+

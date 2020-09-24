@@ -1,0 +1,241 @@
+\section{Implementation-considerate Formalisms}
+\label{sec:formalisms}
+The modern ``provable security'' approach to cryptography loosely follows a
+four-step recipe: define a precise syntax for the primitive under study, define
+a formal notion of security for that primitive, realize the primitive,
+and prove it meets the security notion. The first step, defining the syntax,
+essentially defines the component objects that collectively make up the
+primitive, e.g. ``An encryption scheme $\Pi$ is a triple of algorithms
+$(\calK,\calE,\calD)$ ...''  The syntax typically describes the number and type
+of the inputs and outputs of these components, too, e.g. ``The decryption
+algorithm provides a mapping $\calD\colon\bits^{k}\times\bits^* \to \bits^* \cup
+\{\bot\}$ ...'', as well as requirements on the behavior of these components in
+any correct realization of them.
+
+%\cpnote{This is great.}
+%
+The syntax for a new primitive provides an API for researchers. For
+those wishing to \emph{realize} the primitive (in theory), it makes clear what
+are the functionalities that must be instantiated, and what are the assertions that
+must hold for any realization; for those wishing to \emph{use} the primitive, it
+makes clear what calls will be available to them, and what are the expected
+inputs and outputs of those calls.
+%
+Like a real software API, syntax is considered good if it serves the needs of
+its ``customers''; in this case, if it supports clear security notions,
+facilitates the writing (and verification) of proofs, and is easily built
+upon.\footnote{As an aside, PI Shrimpton has found the analogy of
+\emph{syntax-as-API} as a useful pedagogical tool. Computer science students
+often seem far more familiar and comfortable with programming abstractions than
+with mathematical ones.}
+
+%Of course, this analogy only goes so far.  When a researcher argues for a change
+%to the accepted syntax ---~a new API for a primitive~--- there is no real cost
+%incurred if it is adopted.  Prior works using the old syntax do not
+%suddenly``break''; in the worst case they may (eventually) be viewed as
+%outdated.  If anything, the new syntax presents an opportunity for researchers
+%revisit prior work and publish updated findings.
+
+%\cpnote{I think you should add a nonce to the AEAD syntax below, as I think is
+%usual. This also gives you an opportunity to discuss the issue with nonces in
+%practice: that there's not always an obvious choice for a nonce, programmer's
+%don't know how/why to use them, etc.}
+%
+Of course, there is a considerable gap between the formal syntax that papers
+provide and a \emph{real} API, i.e., the functionalities that need to be
+implemented. For example, the well-established syntax for symmetric-key
+decryption with associated data is a deterministic algorithm $\calD\colon\calK
+\times \calH \times \bits^* \to \bits^* \cup \{\bot\}$, where $\calK$ and
+$\calH$ are sets, the first finite and the second possibly infinite. We
+cryptographers would typically write something like $M \gets \calD^{\,H}_K(C)$
+for the decryption of ciphertext~$C\in\bits^*$, with associated data~$H \in
+\calH$, under key~$K \in \calK$.  But this quietly assumes a number of implicit
+functionalities that must be attended to in practice.
+
+First of all, the formal syntax assumes that~$H$ and~$C$ are simply presented as
+inputs. In reality the decryption process may need to parse (aka deserialize,
+unmarshall) what is received from the channel into the ciphertext~$C$ and any
+context information (aka associated data) that was sent with~$C$. (For example,
+the TLS ciphertext stream encodes the length of each encrypted record.)
+Moreover, the overall decryption process may depend on both the context that is
+associated to this ciphertext transmission \emph{and} on context that the
+receiver maintains for the channel. (Note that the syntax is silent as to the
+source of the associated data; it may have been transmitted with~$C$ or made
+available locally.) In practice the receiver may maintain local message
+counters, lists of nonces already observed on the channel,
+%\cpnote{More likely it
+%would just keep the largest valid nonce observed, since this requires only constant
+%space.}\tsnote{Can't do that if you want to allow for nonces that are
+%randomly generated, which is not uncommon.  Concretely, QUIC was
+%specified to keep a strike-list of observed nonces.}  
+information about the
+overall status and health of the channel (e.g. is it still considered active),
+and so on.  The decryption key~$K$ is also part of the context that the receiver
+maintains.
+
+Next, the formal syntax says that decryption returns a
+string or a distinguished symbol~$\bot$, the latter being traditionally
+understood by cryptographers to mean ``invalid''.  In practice, this means that
+some logic must be implemented to decide (in)validity, and that when the
+decision is ``invalid'' some error-handling mechanism ensures that the
+decryption process returns nothing but a distinguished error message.
+
+\begin{figure}[t]
+  \begin{center}
+    \fpage{0.58}{
+      \underline{\algfont{DECRYPT}(\rwordfont{var} \varfont{ChannelContext}, \varfont{Msg}):}
+      \begin{align*}
+        &(\varfont{SentContext},\varfont{Ciphertext}) \gets\algfont{Deserialize}(\varfont{Msg})\\
+        &(\varfont{ExternalVals, InternalVals}) \gets \algfont{Decrypt}(
+            \rwordfont{var}\;\varfont{ChannelContext},\varfont{SentContext}, \varfont{Ciphertext})\\
+        &\varfont{Verdict} \gets \algfont{IsValid}(\varfont{InternalVals})\\
+        &\varfont{ExternalVals} \gets
+                                    \algfont{ErrHandler}(\rwordfont{var}\;\varfont{ChannelContext},
+                                    \varfont{Verdict}, \varfont{ExternalVals})\\
+        &\varfont{Return} \varfont{ ExternalVals}
+      \end{align*}
+    }
+  \end{center}
+%
+\caption{Describing symmetric-key decryption of received message~\varfont{Msg} in terms of
+  explicit functionalities that must be realized. All variables are passed by
+  value except those preceded by the keyword \rwordfont{var}. The
+  \varfont{ChannelContext} is receiver-maintained information about the channel,
+  and may contain values shared with the sender (e.g., the key, channel ID),
+  along with local state.  The \varfont{SentContext} is context data associated
+  to this particular ciphertext. The \varfont{ExternalVals} include the message
+  and are intended to be released to the external caller, and the
+  \varfont{InternalVals} are intended for use only within the decryption process
+  boundary.  The types of all input and output values are implicit.}
+\label{fig:syntax-api-example}
+\end{figure}
+%
+In Figure~\ref{fig:syntax-api-example}, we give an example of a more
+API-like presentation of decryption.  In fact, what this gives a
+framework for specifying a wide variety of schemes.  We will specify
+two schemes within this framework shortly.
+
+Making these implied functionalities more explicit has several benefits.  The
+most obvious is helping developers to see what they need to implement, rather
+than assuming they will be able to correctly tease out what's needed.
+Conversely, it prompts the theoretician to think in terms of abstractions that
+appear in practice.
+%
+For both developer and theoretician, this style of presentation can surface a
+clearer picture of what security demands of these functionalities. For example,
+specifying error handling as an explicit functionality\footnote{Following
+Rogaway and Stegers~\cite{RS09}, variables are passed by value except where
+annotated by \rwordfont{var}. In this case they are passed by reference so that
+their value may be modified by the caller.}
+\[
+\varfont{ExternalVals} \gets
+                                  \algfont{ErrHandler}(\rwordfont{var}\;
+                                  \varfont{ChannelContext},
+                                  \varfont{Verdict}, \varfont{ExternalVals})
+\]
+more naturally prompts one to consider questions, like, what \varfont{ExternalVals} should
+be returned for a given \varfont{Verdict}, and what
+security-relevant information might be leaked by them?  How should the
+\varfont{ChannelContext} be updated for a given \varfont{Verdict}?
+
+In Figure~\ref{fig:EtM-aead} we give two potential realizations of the
+functions needed for decryption. In particular, they specify the components of
+Figure~\ref{fig:syntax-api-example} used to realize \algfont{DECRYPT}. 
+
+On the left side of the figure, we give a realization of conventional
+encrypt-then-MAC (EtM) AEAD, following what we theoreticians consider as best practice.  Namely, if the tag check fails, then
+one should label the ciphertext as invalid, and suppress all output other than
+the single error message ``Invalid''.
+Additionally, when ``Invalid'' is returned, the channel status field
+of \varfont{ChannelContext} is changed to ``closed''.
+%
+%\cpnote{This needn't be mandatory. Getting ``invalid'' from \algfont{DECRYPT}
+%indicates that the channel is possibly under attack. It may make sense to keep
+%the channel alive if this happens only once, and to close it if it happens a
+%lot.}\tsnote{True, but my statement is correct.  This \emph{is} what
+%the theory says is best practice.}
+
+On the right side, we give a more complex (and arguably realistic) EtM-style realization that includes
+in the \varfont{ChannelContext} a list of valid tokens that are used within
+the decryption process. It also allows for a stream ID (sid) as part
+of the transmitted AD (i.e. the \varfont{SentContext}).  In the
+absence of any decryption errors, the decryption process will return
+(as the output of \algfont{ErrHandler}) the stream ID and the
+plaintext.  If the tag check fails, then the
+\varfont{Verdict} that is returned by \algfont{IsValid} is either
+``Invalid'', or $\langle\mbox{"Invalid"},\mbox{"BadToken"}\rangle$,
+depending on whether or not the token ID (tid) recovered within
+\algfont{Decrypt} is in the token list.  In either case, the
+decryption process returns ``Invalid'' and the channel status field
+of \varfont{ChannelContext} is changed to ``closed'', as on the left.
+If the tag check \emph{succeeds} but the recovered tid is invalid,
+then the decryption process still returns ``Invalid'', but the
+\varfont{ChannelContext} is not changed.  One can imagine that this might be a real-world
+  behavior, where a ciphertext-validity failure is fatal to the
+  channel, but a bad token is considered less of an infraction. 
+  Say, if the cost to tear down/set up a new
+  channel is considered unreasonable for the given application. In the
+  latter case, perhaps the application requests retransmission, or sends an
+  \emph{application layer} error message back through the channel.
+We note that by making the specification of the functionalities
+explicit, we clearly surface at least two possible attack models.  If
+the adversary sees and can access the channel only, then only the
+\varfont{ExternalVals} are observed; whereas if the adversary sees
+things at the boundary of the decryption process, both the
+\varfont{ExternalVals} and portions of the \varfont{ChannelContext}
+may be visible.
+
+
+%\tsnote{Say that this may seem like overkill for ``simple'' primitives
+%like symmetric-key decryption, but that (1) it only seems that way
+%because we are already implicitly thinking about what it means for
+%things to be valid, etc., and (2) we ``know'' not to do certain things
+%because mistakes were made in the past, by people who didn't know at
+%the time --- hindsight is 20-20.}
+
+\begin{task}
+{We will reconsider the traditional formalisms for cryptographic primitive from an implementation considerate perspective, and establish security notions with respect to the new syntax. }
+\end{task}
+
+%\tsnote{Need to address head-on the complaint that this is going to
+%  make for more complicated analysis.}
+
+There are, of course, other ways to handle decryption errors than described in
+Figure~\ref{fig:EtM-aead}; the ``right way'' is highly dependent on the setting
+in which the scheme is used. However, its API
+(Figure~\ref{fig:syntax-api-example}) offers a feature that is useful in all
+real-world applications: it explicitly separates the \emph{message} and
+\emph{error} in the output.
+%
+Indeed, virtually all APIs that we are aware of separate these.  Errors have
+varying degrees of severity: some are \emph{fatal}, requiring the connection be
+torn down; some are simply \emph{warnings} that leave to the application the
+decision to process the message or to tear down the connection; and some might
+be completely benign, indicating, e.g., that more data is available for reading,
+or that the end-of-file has been reached.
+
+We are aware of no work that explicitly separates the message and error in this
+manner.
+%
+Some works consider a richer semantics for the error~\cite{BDPS13,FPMG15}, but
+even these couple the message and error so that one of these is output, but
+never both.  This suggest another secure-channels task.
+
+\begin{task}
+  In our study of secure channels (Task 3) we will explore the implications of
+  separating the message and error in the output of decryption.
+\end{task}
+
+\ignore{
+\paragraph{Prior Work. }
+%
+\todo{Look at Rogaway's online-AE paper.  I seem to remember him
+  saying that the main contribution of that paper was API oriented}
+\cpnote{\cite[Section 5]{HRRV15}: ``We provie a new notion for online-AE ... To
+accurately model the underlying goal, not only must the security definition
+depart from [prior work], but so too must a scheme's basic syntax. In
+particular, we adopt an API-based view, where the segmentation of a plaintext is
+determined by the caller.''}
+}
+
+\include{syntax-api-example}

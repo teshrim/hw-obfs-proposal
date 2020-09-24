@@ -1,0 +1,219 @@
+%-------------------------------------------------------------------------------------
+\section{Securing Human Secrets: Distribution-Sensitive Secure Sketches (DSSS)} 
+\label{sec:human}
+
+HE, DSE and password-based DSE treat the problems of reproducing
+target distributions for messages, ciphertexts, and both
+messages and ciphertexts, respectively.  We now consider the orthogonal problem of managing a
+secret $\secret$ sampled from a target distribution. Of particular interest are
+noisy, human-generated secrets such as  biometrics and (possibly mistyped) passwords. 
+We consider the specific problem of deriving an error-detecting or
+error-correcting value that helps deal with such noisy secrets, yet leaks as little
+information as possible.
+Applying the DSC framework to this challenge yields a new concept that
+we call a {\em distribution-sensitive secure sketch} (DSSS). 
+
+\paragraph{Problem setting.} Users often make typographical errors or
+misremember ``something-you-know'' secrets, such as passwords and answers to
+life questions. Similarly, biometrics, or ``something-you-are'' authentication
+values, are inherently noisy; e.g., fingerprint images vary due to variability in pressure,
+rotation, skin condition, and so forth.
+
+Systems that manage user credentials securely in explicit form can correct errors
+by explicit comparison. A server that stores a fingerprint template $\secret^*$ can
+compare it against a fingerprint reading $\secret$ proffered by  a user at login,
+accepting $\secret$ as valid if $\secret^*$ and $\secret$ are close under some suitable
+metric. Conventional cryptographic primitives, though, are specifically designed
+to be brittle in the face of noise and actually prevent direct comparison.
+Flipping a single bit of input, for example, yields a completely different
+output value when using a well-designed hash function. 
+
+Such intolerance to noise or error often impedes secure and usable system
+design. For instance, biometric templates {\em cannot be
+protected via hashing}. Similarly, hashed passwords offer no {\em typo-safety}.
+In hashed form, a valid password is indistinguishable from an incorrect one. In
+honey encryption and password-based DSE, lack of typo-safety is especially
+problematic: typos induce incorrect (but plausible-looking) decryptions that can
+mislead legitimate users. 
+
+\paragraph{Existing approaches.} {\em Fuzzy
+cryptography}~\cite{Boy04,DKRS06,DORS06,DORS08,FJ01,Juels:2006fk,JuelsWattenberg:1999}
+is one approach to reconciling conventional cryptography with noisy secrets. A
+foundational tool is a {\em secure sketch} (the underpinning of a tool known as
+{\em fuzzy extraction}). 
+
+A secure sketch is a pair of efficient probabilistic algorithms $(\ssketch,
+\rec)$ that operate over a secret space $\kspace$. The procedure $\ssketch$
+takes an input secret $\secret \leftarrow_{\kdist}\kspace$, where $\kdist$ is a
+probability distribution over $\kspace$; it outputs a ``helper'' string $s \in
+\{0,1\}^*$. The procedure $\rec$ inputs a (possibly corrupted) secret $\secret'
+\in \kspace$ and helper string $s$ and yields an output in $\kspace \,\cup\,
+\bot$ (where $\bot$ indicates a decoding failure). An $(e, \tilde{e}, t)$-secure
+sketch is one for which: (1) Recovery is possible for small errors, i.e.,
+$\rec(\secret', \ssketch(\secret)) = \secret$ if $\dist(\secret, \secret') \leq t$ for some
+distance metric $\dist$ and (2) The information leakage of the helper string in
+terms of average min-entropy is small. Specifically, if  $\tilde{H}_{\infty}
+(\kdist) \geq e$ then $\tilde{H}_{\infty} (\kdist \,|\, \ssketch(\kdist)) \geq
+\tilde{e}$.
+
+A secure sketch may be viewed as a systematic error-correcting code on 
+$\secret$. What distinguishes it from an ordinary such code is the bound
+(property (2)) on information leakage produced by the redundancy $s$ of the
+code.
+
+The security definition for a secure sketch is parameterized by the average
+min-entropy of the secret distribution $\kdist$. But existing {\em secure sketch
+constructions lack distributional sensitivity}. For example, Dodis et
+al.~\cite{DORS08} describe a secure sketch for edit distance, a measure apt for,
+e.g., typos in passwords. Their construction is agnostic to the underlying
+distribution, and thus achieves only loose (and only asymptotically
+bounded) security  
+%$e' = e - t(\log F)2^{O\big(\sqrt{\log(n \log F) \log \log(n \log F)}\big)}$,
+$e' = e - t\cdotsm(\log F )\cdotsm\exp(O\big(\sqrt{\log(n \log F) \log \log(n \log F)}\big))$, where $F$ is the alphabet size for characters
+of strings in $\kspace$, and $n$ their length. 
+
+As a simple example, a construction with $t=2$ on
+eight-digit passwords over ASCII characters would have an average
+min-entropy bound of at least $t \log F=16$ bits (excluding the exponential
+asymptotic factor and its potentially large constants), but 
+the average min-entropy of a typical password distribution in the wild~\cite{Bonneau12,Bonneau12b} is just under 7 bits!
+
+Such drawbacks, as well as a general inability by the research community hitherto to match theory to real applications, has meant that secure sketches (and fuzzy extraction) have seen little or no use in practice.
+
+\paragraph{Distribution-sensitive secure sketch (DSSS).} The DSC framework
+points the way to a dramatic reduction in entropy loss that can bring fuzzy
+cryptography into the realm of practicality. The result is DSSS, a secure sketch
+that is engineered for a specific target secret distribution.
+
+As a specific focus and example, we now consider a DSSS construction for
+typographical errors in password entry that promises to improve greatly on the edit-distance secure sketch of Dodis et al.~for this application. The goal is a secure sketch
+$(\ssketch, \rec)$ for a distribution $\kdist$ of user-selected passwords, i.e.,
+over passwords $\secret \leftarrow_{\kdist} \kspace$, where $\kspace$ is the set of
+permissible passwords in a system. The secure sketch should permit password
+recovery given a user-typed password $\secret'$---possibly with some typos---when
+$\dist(\secret, \secret') \leq t$. Here, $\dist$ is edit-distance, a standard metric
+for typographical errors, and $t$ is a system parameter that would in practice
+  be fairly small, e.g., $t = 2$ or $3$. 
+
+\iffalse
+As noted above, the edit-distance secure sketches outlined in~\cite{DORS08}
+produce an average min-entropy entropy loss potentially greater than that of
+real passwords. The reason is that these secure sketch constructions are
+agnostic to underlying message distributions.
+\fi
+
+In the case of passwords, it is possible to leverage two key observations to achieve a practical DSSS. 
+%\noindent\emph{Observation 1:} 
+First, relatively large outputs 
+are often acceptable in a password DSSS. For example, adding 10\,KB---or even 100\,KB---of
+secure sketch data to protect a ten-character master password in a password
+manager on a laptop is eminently practical, even though it creates a more than
+1,000x or 10,000x expansion relative to the password itself. Thus it is possible
+to base a secure sketch in such settings on an extremely low-rate
+error-correcting code, potentially an unorthodox, application-specific one.
+Second, popular user-selected passwords studied in the
+wild have a high average pairwise edit distance. In order of popularity, here
+are the top twenty passwords leaked from the RockYou data set that meet the
+(broadly representative) password composition policy of iCloud:\vspace*{-.4em}
+{\small
+\begin{verbatim}
+          Password1          Princess1          P@ssw0rd          Passw0rd          Michael1   
+          Blink182           !QAZ2wsx           Charlie1          Anthony1          1qaz!QAZ  
+          Brandon1           Jordan23           1qaz@WSX          Jessica1          Jasmine1
+          Michelle1          Diamond1           Babygirl1         Iloveyou2         Matthew1
+\end{verbatim}
+}
+\vspace*{-.4em}\noindent
+One pair has edit distance $1$ ({\tt P@ssw0rd}, {\tt Passw0rd}) and another pair has edit distance $2$ ({\tt Password1}, {\tt Passw0rd}), but the vast majority have edit distance  at least $3$. Thus the set of frequently used passwords itself largely constitutes a {\em good codebook for edit-distance}. The construction in~\cite{DORS08} provides no way to make use of this essential insight.
+
+To illustrate how these two observations can give rise to a practical DSS for
+the special case of passwords, suppose that the complete set $\kspace$ of
+passwords selected by a given population of users had minimum edit distance $4$.
+Then a simple DSSS for $t = 2$ would be the pair $(\dsssketch, \dsrec)$, where
+$\dsssketch(\secret) \rightarrow \kspace$ and $\dsrec(\secret')$ maps $\secret'$
+to the closest $\secret \in \kspace$ by edit-distance. In practice, given the
+major password leaks such as the RockYou breach, $\kspace$ may be effectively
+viewed as public knowledge. Thus this DSSS has {\em no conditional entropy
+loss}, i.e., $\tilde{H}_{\infty} (\kdist) -  \tilde{H}_{\infty} (\kdist \,|\,
+\dsssketch(\kdist)) = 0$. In practice real password spaces will not have all
+passwords as far apart as four, a challenge we discuss below.
+
+Our two observations regarding passwords apply in other key settings (e.g.,
+biometrics) and form an important foundation for exploration of DSSSs. They
+illustrate respectively the two following general design principles:
+
+\paragraph{\em DSSS Design Principle 1: Use of low-rate codes:} Unlike typical
+settings for error-correcting codes, in many
+settings of interest for DSSSs, it is feasible to use a very low-rate code,
+i.e., a code with high redundancy. 
+
+\paragraph{\em DSSS Design Principle 2: Use of embedded codebook structures:}
+Target distributions of interest (e.g., biometrics and passwords) for DSSSs
+typically have high average pairwise distance among high-probability secrets.
+Sets of such secrets may be leveraged as codebooks to facilitate
+error-correction / error-detection. We refer to such sets
+of secrets as {\em embedded codebook structures}. 
+This design principle gives rise to the following definitional retooling task:
+
+\begin{task}
+\label{ECS-task}
+We will develop formal definitions and a general framework for identifying and quantifying the utility of embedded codebook structures in target message distributions for DSSS constructions.
+\end{task}
+
+Task~\ref{ECS-task} is challenging because of the messiness of real-world
+message distributions. Recall in our example above that many password pairs will have low 
+edit distance (e.g., ({\tt P@ssw0rd}, {\tt Passw0rd})), so not all
+of $\kspace$ can serve as the codebook. 
+A challenging optimization problem results: $\dsssketch$ must
+output a subset of $\kspace$ that is pruned to eliminate low-distance pairs but
+still encompasses as many high-weight, i.e., popular, passwords as possible. To
+take a graph-theoretic perspective, consider a graph $G = (V,E)$ in which nodes
+correspond to passwords in $\kspace$ and an edge $(\secret_i, \secret_j)$ is
+present if $\dist(\secret_i, \secret_j) < t$. Intuitively, to yield a suitable
+codebook, $\ssketch$ must output an independent set $\tilde{V} \subseteq V$; to preserve
+conditional average min-entropy, $\tilde{V}$ must have close to maximal cumulative
+weight under $\kdist$.  The maximal independent set problem is NP-hard, as  are
+weighted variants, so practical solutions must rely on heuristics.
+
+Another challenge is that the set $\kspace$ of possible user-selected passwords is
+of vast size and not explicitly storable. A second challenge in constructing a
+DSSS for this example application is handling relatively rare passwords that
+might not appear in an explicitly stored password list. In general, we will
+undertake the following task:
+
+\begin{task}
+\label{task:dsss-cons}
+Building on DSSS Design Principles 1 and 2, we will use the DSC framework to explore the construction of DSSSs for a wide range of settings of interest, including passwords and biometrics. We will leverage knowledge obtained in specific applications to surface foundational concepts, such as embedded code structures.
+\end{task}
+
+Our DSC framework will guide empirical validation in this task. As the problems
+underpinning our DSSS design approach are NP-hard, our constructions will rely
+on approximation heuristics developed by the research community for related
+problems, e.g.,~\cite{BermanFurer:1994,Halldorsson:2000}. Our analysis of our DSSS constructions will thus require validation of
+these heuristics against real-world password data. Specifically, we will
+experimentally measure the conditional entropy yielded in our DSSS construction
+according to the formal security definitions for secure sketches.
+
+\paragraph{DSSS for typo-safety in HE.} Because HE has the property that
+decryption under an incorrect key yields a valid-looking plaintext, a problem
+arises in the use of HE with noisy or error-prone keys / secrets (e.g.,
+biometrics or user-typed passwords). An error in a decryption key can present a
+legitimate user with an incorrect plaintext that the user may accept as valid. Despite promising proposed solutions, e.g., use of security skins~\cite{dhamija2005battle} and online testing for the case of password managers, this problem represents a major issue in the practical use of HE. DSSSs offer a potential solution.
+
+In the setting of password-based HE, this issue of noisy secrets emerges specifically as a
+problem of {\em typo safety}, namely the ability to detect a mistyped password
+and trigger a decryption failure. It would be very helpful in practice to have a
+mechanism that provides typo safety while {\em causing only minimal conditional
+entropy degradation for an HE password}.
+
+A DSSS for edit-distance over passwords provides exactly this property.
+Additionally, in practical settings of interest, such as the SweetPass tool
+described above, it suffices to detect rather than correct errors. Given a code with minimum distance $d$ in a DSSS construction (e.g., $\tilde{V}$ in the graph-based approach), error-correction can correct up to $t = \lfloor d/2 \rfloor$ errors in general. Error-detection, though, permits detection of a much improved $t = d-1$ errors using the same code.
+
+\paragraph{Honeywords as DSSS.} DSSS also provides a new perspective on the honeywords system of Juels and Rivest~\cite{Honeywords:2013}. That system stores for each user a list of (hashed) passwords $s = \{\secret_1, \ldots, \secret_n\}$, of which $\secret_j$ is the true password for a random $j \leftarrow_R [1,n]$. The other passwords are fakes selected from a model distribution $\ddist$, i.e., $\secret_i \leftarrow_{\ddist} \kspace$ for $i \neq j$. The index $j$ is stored in an isolated system called a honeychecker. When a user proffers a password $K$ at authentication, if $\secret = \secret_i$ for $\secret_i \in s$, the index $i$ is sent to the honeychecker for verification. An adversary that breaches the system and learns $s$ still faces the challenge of guessing the right index $j$; a wrong guess signals the adversary's compromise of $s$.
+
+The list $s$ may be viewed as the helper string in a DSSS $(\dsssketch, \dsrec)$ with $t=0$. An ideal password model, i.e., $\ddist = \mdist$, yields a $(e, \tilde{e}, 0)$-secure DSSS with $e - \tilde{e} = \log n$. (Indices may be replaced with values yielded by fuzzy extraction, to complete the conceptual connection.) If $\ddist$ poorly models $\mdist$, less security is obtained. This new DSSS-based perspective promises to yield innovations in honeywords construction. For instance, combining our ``programmable'' PRG with a model for sampling $\ddist$ yields a novel representation $s$ of {\em constant size for any $n$}.
+
+
+
+
